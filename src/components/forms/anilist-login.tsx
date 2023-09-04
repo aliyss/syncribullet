@@ -25,9 +25,11 @@ export default component$(() => {
             Create an app
           </a>{" "}
           and set the redirect_uri to{" "}
-          <span class="rounded-full text-primary bg-surface">
-            {loc.url.protocol + "//" + loc.url.host + "/oauth/anilist/"}
-          </span>
+          <p>
+            <span class="rounded-full text-primary bg-surface">
+              {loc.url.protocol + "//" + loc.url.host + "/oauth/anilist/"}
+            </span>
+          </p>
         </p>
         <Field name="client_id">
           {(field, props) => (

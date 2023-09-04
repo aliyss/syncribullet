@@ -7,7 +7,7 @@ import { getSimklItem } from "~/utils/simkl/get";
 // Types
 import type { RequestHandler } from "@builder.io/qwik-city";
 
-export const onGet: RequestHandler = async ({ json, params }) => {
+export const onGet: RequestHandler = async ({ json, params, env }) => {
   const userConfigString = params.config.split("|");
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
@@ -25,6 +25,10 @@ export const onGet: RequestHandler = async ({ json, params }) => {
   if (!catchall[0] || !catchall[1]) {
     json(200, { subtitles: [] });
     return;
+  }
+
+  if (userConfig["simkl"] && !userConfig["simkl"].clientid) {
+    userConfig["simkl"].clientid = env.get("PRIVATE_SIMKL_CLIENT_ID") || "";
   }
 
   try {
