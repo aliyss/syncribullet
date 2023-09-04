@@ -2,10 +2,10 @@ import { description } from "../../package.json";
 
 const manifest = {
   id: `com.aliyss.syncribullet`,
-  name: "SyncriBullet",
-  version: "0.0.1",
+  name: "syncribullet",
+  version: "1.0.3",
   description,
-  logo: "",
+  logo: "https://github.com/aliyss/syncribullet/blob/master/public/android-chrome-192x192.png?raw=true",
   background: "",
   catalogs: [],
   resources: ["catalog", "meta", "stream", "subtitles"],

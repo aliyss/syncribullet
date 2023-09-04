@@ -1,7 +1,13 @@
 import type { RequestHandler } from "@builder.io/qwik-city";
 import manifest from "~/utils/manifest";
 
-export const onGet: RequestHandler = async ({ json, params }) => {
+export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
+  cacheControl({
+    public: false,
+    maxAge: 0,
+    sMaxAge: 0,
+    staleWhileRevalidate: 0,
+  });
   const userConfigString = params.config.split("|");
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
