@@ -37,7 +37,7 @@ export default component$(() => {
         `https://api.simkl.com/oauth/pin?client_id=${
           values.client_id
         }&redirect=${
-          location.url.protocol + location.url.host + "/oauth/simkl/"
+          location.url.protocol + "//" + location.url.host + "/oauth/simkl/"
         }`,
       );
       const responseData = await data.json();
@@ -63,7 +63,10 @@ export default component$(() => {
               </a>{" "}
               and set the redirect_uri to{" "}
               <span class="rounded-full text-primary bg-surface">
-                {location.url.protocol + location.url.host + "/oauth/simkl/"}
+                {location.url.protocol +
+                  "//" +
+                  location.url.host +
+                  "/oauth/simkl/"}
               </span>
             </p>
             <Field name="client_id">

@@ -26,7 +26,7 @@ export default component$(() => {
           </a>{" "}
           and set the redirect_uri to{" "}
           <span class="rounded-full text-primary bg-surface">
-            {loc.url.protocol + loc.url.host + "/oauth/anilist/"}
+            {loc.url.protocol + "//" + loc.url.host + "/oauth/anilist/"}
           </span>
         </p>
         <Field name="client_id">
