@@ -111,9 +111,9 @@ export default component$(() => {
               `simkl_clientid-=-${configuredReceivers["simkl"].data.client_id}`,
             );
           }
-          const info = `stremio://${location.url.host}/${configURL.join(
-            "|",
-          )}/manifest.json`;
+          const info = `stremio://${location.url.host}${
+            location.url.host.startsWith("localhost") ? "" : ".baby-beamup.club"
+          }/${configURL.join("|")}/manifest.json`;
           nav(info);
         }}
       >

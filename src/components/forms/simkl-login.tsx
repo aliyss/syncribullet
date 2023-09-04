@@ -55,7 +55,15 @@ export default component$(() => {
     if (!client_id.value) {
       try {
         const data = await getCode(
-          location.url.protocol + "//" + location.url.host + "/oauth/simkl/",
+          location.url.protocol +
+            "//" +
+            location.url.host +
+            `${
+              location.url.host.startsWith("localhost")
+                ? ""
+                : ".baby-beamup.club"
+            }` +
+            "/oauth/simkl/",
         );
         code.value = data;
         if (code.value.user_code) {
