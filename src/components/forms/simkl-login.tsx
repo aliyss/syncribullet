@@ -36,7 +36,9 @@ export default component$(() => {
       const data = await fetch(
         `https://api.simkl.com/oauth/pin?client_id=${
           values.client_id
-        }&redirect=${location.url + "oauth/simkl/"}`,
+        }&redirect=${
+          location.url.protocol + location.url.host + "oauth/simkl/"
+        }`,
       );
       const responseData = await data.json();
       code.value = responseData;

@@ -111,11 +111,9 @@ export default component$(() => {
               `simkl_clientid-=-${configuredReceivers["simkl"].data.client_id}`,
             );
           }
-          console.log(configURL.join("|"));
           const info = `stremio://${location.url.host}/${configURL.join(
             "|",
           )}/manifest.json`;
-          console.log(info);
           nav(info);
         }}
       >

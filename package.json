@@ -20,7 +20,7 @@
         "fmt.check": "prettier --check .",
         "lint": "eslint \"src/**/*.ts*\"",
         "preview": "qwik build preview && vite preview --open",
-        "start": "node server/entry.express",
+        "start": "ORIGIN=http://56bca7d190fc-syncribullet.baby-beamup.club node server/entry.express",
         "start:dev": "vite --open --mode ssr",
         "qwik": "qwik"
     },
