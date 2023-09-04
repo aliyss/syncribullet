@@ -1,9 +1,9 @@
-import { description } from "../../package.json";
+import { description, version } from "../../package.json";
 
-const manifest = {
+export const manifest = {
   id: `com.aliyss.syncribullet`,
   name: "syncribullet",
-  version: "1.0.3",
+  version: version,
   description,
   logo: "https://github.com/aliyss/syncribullet/blob/master/public/android-chrome-192x192.png?raw=true",
   background: "",
@@ -15,5 +15,3 @@ const manifest = {
     configurationRequired: true,
   },
 };
-
-export default manifest;

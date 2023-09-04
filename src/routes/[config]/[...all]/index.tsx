@@ -1,5 +1,5 @@
 import type { RequestHandler } from "@builder.io/qwik-city";
-import manifest from "~/utils/manifest";
+import { manifest } from "~/utils/manifest";
 
 export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
   cacheControl({
