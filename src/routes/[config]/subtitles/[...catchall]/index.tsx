@@ -52,31 +52,28 @@ export const onGet: RequestHandler = async ({ json, params }) => {
     const seasonCount = parseInt(catchall[1].split(":")[1]);
     const episodeCount = parseInt(catchall[1].split(":")[2]);
 
-    setTimeout(
-      async function () {
-        console.log("Syncing...");
-        const syncedItems = [];
-        const anilistUpdateResult = await setAnilistItem(
-          anilistResult,
-          episodeCount,
-          userConfig["anilist"],
-        );
-        const simklUpdateResult = await setSimklItem(
-          simklResult,
-          seasonCount,
-          episodeCount,
-          userConfig["simkl"],
-        );
-        if (anilistUpdateResult) {
-          syncedItems.push("anilist");
-        }
-        if (simklUpdateResult) {
-          syncedItems.push("simkl");
-        }
-        console.log("Synced", syncedItems);
-      },
-      timeout / 60 / 100,
-    );
+    setTimeout(async function () {
+      console.log("Syncing...");
+      const syncedItems = [];
+      const anilistUpdateResult = await setAnilistItem(
+        anilistResult,
+        episodeCount,
+        userConfig["anilist"],
+      );
+      const simklUpdateResult = await setSimklItem(
+        simklResult,
+        seasonCount,
+        episodeCount,
+        userConfig["simkl"],
+      );
+      if (anilistUpdateResult) {
+        syncedItems.push("anilist");
+      }
+      if (simklUpdateResult) {
+        syncedItems.push("simkl");
+      }
+      console.log("Synced", syncedItems);
+    }, timeout);
   } catch (e) {
     console.log(e);
   }

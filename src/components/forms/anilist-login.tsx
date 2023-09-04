@@ -2,10 +2,11 @@ import { component$, $, useSignal } from "@builder.io/qwik";
 import { useForm } from "@modular-forms/qwik";
 import type { SubmitHandler } from "@modular-forms/qwik";
 import type { ApiClientForm } from "~/routes";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
 
 export default component$(() => {
   const nav = useNavigate();
+  const loc = useLocation();
   const [, { Form, Field }] = useForm<ApiClientForm>({
     loader: useSignal({ client_id: "" }),
   });
@@ -19,6 +20,15 @@ export default component$(() => {
   return (
     <Form onSubmit$={handleSubmit}>
       <div class="flex flex-col gap-4 items-center">
+        <p>
+          <a href="https://anilist.co/settings/developer" class="text-primary">
+            Create an app
+          </a>{" "}
+          and set the redirect_uri to{" "}
+          <span class="rounded-full text-primary bg-surface">
+            {loc.url.protocol + loc.url.host + "/oauth/anilist/"}
+          </span>
+        </p>
         <Field name="client_id">
           {(field, props) => (
             <input
@@ -26,7 +36,7 @@ export default component$(() => {
               type="text"
               value={field.value}
               placeholder="Client Id"
-              class="py-2.5 px-3 w-full h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+              class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
             />
           )}
         </Field>
