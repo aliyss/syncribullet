@@ -15,6 +15,7 @@ import qwikCityPlan from "@qwik-city-plan";
 import { manifest } from "@qwik-client-manifest";
 import render from "./entry.ssr";
 import express from "express";
+import cors from "cors";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
@@ -48,6 +49,8 @@ const { router, notFound } = createQwikCity({
 // https://expressjs.com/
 const app = express();
 
+app.use(cors());
+
 // Enable gzip compression
 // app.use(compression());
 
@@ -61,10 +64,6 @@ app.use(router);
 
 // Use Qwik City's 404 handler
 app.use(notFound);
-
-app.use((_req, res, next) => {
-  next();
-});
 
 // Start the express server
 app.listen(PORT, () => {
