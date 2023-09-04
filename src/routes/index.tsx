@@ -113,7 +113,7 @@ export default component$(() => {
           }
           const info = `stremio://${location.url.host}${
             location.url.host.startsWith("localhost") ? "" : ".baby-beamup.club"
-          }/${configURL.join("|")}/manifest.json`;
+          }/${encodeURI(configURL.join("|"))}/manifest.json`;
           nav(info);
         }}
       >

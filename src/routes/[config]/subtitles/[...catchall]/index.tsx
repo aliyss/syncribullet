@@ -8,7 +8,7 @@ import { getSimklItem } from "~/utils/simkl/get";
 import type { RequestHandler } from "@builder.io/qwik-city";
 
 export const onGet: RequestHandler = async ({ json, params, env }) => {
-  const userConfigString = params.config.split("|");
+  const userConfigString = decodeURI(params.config).split("|");
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
   for (let i = 0; i < userConfigString.length; i++) {
