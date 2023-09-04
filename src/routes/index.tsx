@@ -7,13 +7,13 @@ import {
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 // Components
 import { Button } from "~/components/buttons/Button";
+import AnilistLogin from "~/components/forms/anilist-login";
+import SimklLogin from "~/components/forms/simkl-login";
 // Utils
 import { configureReceivers, receivers } from "~/utils/connections/receivers";
 // Types
 import type { ReceiverConfig } from "~/utils/connections/receivers";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import AnilistLogin from "~/components/forms/anilist-login";
-import SimklLogin from "~/components/forms/simkl-login";
 
 export type ApiClientForm = {
   client_id: string;

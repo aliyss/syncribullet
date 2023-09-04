@@ -2,7 +2,7 @@
 import { getCinemetaMeta } from "~/utils/cinemeta/meta";
 import { getAnilistItem } from "~/utils/anilist/get";
 import { setAnilistItem } from "~/utils/anilist/set";
-import { setSimklItem } from "~/utils/simkl/set";
+import { setSimklMovieItem, setSimklShowItem } from "~/utils/simkl/set";
 import { getSimklItem } from "~/utils/simkl/get";
 // Types
 import type { RequestHandler } from "@builder.io/qwik-city";
@@ -53,8 +53,8 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
 
     console.log(`Queued ${info?.meta.id} running in ${info?.meta.runtime}`);
 
-    const seasonCount = parseInt(catchall[1].split(":")[1]);
-    const episodeCount = parseInt(catchall[1].split(":")[2]);
+    const seasonCount = parseInt(catchall[1].split(":")[1] || "0");
+    const episodeCount = parseInt(catchall[1].split(":")[2] || "0");
 
     setTimeout(async function () {
       console.log("Syncing...");
@@ -64,12 +64,20 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
         episodeCount,
         userConfig["anilist"],
       );
-      const simklUpdateResult = await setSimklItem(
-        simklResult,
-        seasonCount,
-        episodeCount,
-        userConfig["simkl"],
-      );
+      let simklUpdateResult;
+      if (catchall[0] === "series") {
+        simklUpdateResult = await setSimklShowItem(
+          simklResult,
+          seasonCount,
+          episodeCount,
+          userConfig["simkl"],
+        );
+      } else {
+        simklUpdateResult = await setSimklMovieItem(
+          simklResult,
+          userConfig["simkl"],
+        );
+      }
       if (anilistUpdateResult) {
         syncedItems.push("anilist");
       }
