@@ -8,10 +8,8 @@ export const getCode = server$(async function (
   redirect_url: string,
   client_id?: string,
 ) {
-  if (client_id) {
-    client_id =
-      this.env.get("PRIVATE_SIMKL_CLIENT_ID") ||
-      process.env.PRIVATE_SIMKL_CLIENT_ID;
+  if (!client_id) {
+    client_id = this.env.get("PRIVATE_SIMKL_CLIENT_ID");
   }
   if (!client_id) {
     return { user_code: "", verification_url: "" };
@@ -59,7 +57,6 @@ export default component$(() => {
         const data = await getCode(
           location.url.protocol + "//" + location.url.host + "/oauth/simkl/",
         );
-        console.log(data);
         code.value = data;
         if (code.value.user_code) {
           client_id.value = true;
