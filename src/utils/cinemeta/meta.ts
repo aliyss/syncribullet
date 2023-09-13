@@ -10,3 +10,12 @@ export const getCinemetaMeta = async (type: string, id: string) => {
 
   return await data.json();
 };
+
+export interface CinemetaEpisode {
+  id: string;
+  name: string;
+  season: number;
+  episode: number;
+  number: number;
+  released: string;
+}
