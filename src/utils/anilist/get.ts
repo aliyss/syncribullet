@@ -1,6 +1,8 @@
 import { Anilist as NewAnilist } from "@tdanks2000/anilist-wrapper";
 import Anilist from "anilist-node";
 import type { CinemetaEpisode } from "../cinemeta/meta";
+import { MediaListStatus } from "@tdanks2000/anilist-wrapper/dist/types";
+import { AnilistLibrary } from "./types";
 
 export async function getAnilistItem(
   cinemetaInfo: any,
@@ -72,4 +74,38 @@ export async function getAnilistItem(
     }
   }
   return firstMatch;
+}
+
+export async function getAnilistUserList(
+  status: MediaListStatus,
+  userConfig: Record<string, string> | undefined,
+): Promise<AnilistLibrary> {
+  if (!userConfig || !userConfig.accesstoken) {
+    return {
+      data: {
+        MediaListCollection: {
+          lists: [],
+        },
+      },
+    };
+  }
+
+  try {
+    const node_anilist = new NewAnilist(userConfig.accesstoken);
+    const user = await node_anilist.user.getCurrentUser();
+    return (await node_anilist.lists.anime(
+      (user as any).data.Viewer.id,
+      status,
+    )) as AnilistLibrary;
+  } catch (e) {
+    console.log(e);
+  }
+
+  return {
+    data: {
+      MediaListCollection: {
+        lists: [],
+      },
+    },
+  };
 }

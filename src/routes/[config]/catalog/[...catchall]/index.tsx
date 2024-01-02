@@ -6,8 +6,10 @@ import {
   SimklLibraryObjectStatus,
   SimklLibraryType,
 } from "~/utils/simkl/types";
-import { convertToCinemeta } from "~/utils/simkl/convert";
 import { ReceiverTypes } from "~/utils/connections/types";
+import { getAnilistUserList } from "~/utils/anilist/get";
+import { convertSimklToCinemeta } from "~/utils/simkl/convert";
+import { convertAnilistToCinemeta } from "~/utils/anilist/convert";
 
 export const onGet: RequestHandler = async ({ json, params, env }) => {
   const userConfigString = decodeURI(params.config).split("|");
@@ -65,12 +67,30 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       userConfig["simkl"],
     );
 
-    const metas = await convertToCinemeta(catalogInfo[1], list, {
+    const metas = await convertSimklToCinemeta(catalogInfo[1], list, {
       skip: skipCount,
       genre: genre,
     });
     json(200, { metas: metas });
     return;
+  } else if (catalogInfo[0] === "anilist") {
+    const list = await getAnilistUserList(
+      catalogInfo[2] as any,
+      userConfig["anilist"],
+    );
+
+    if (list.data.MediaListCollection.lists[0]) {
+      const metas = await convertAnilistToCinemeta(
+        "shows",
+        list.data.MediaListCollection.lists[0].entries,
+        {
+          skip: skipCount,
+          genre: genre,
+        },
+      );
+      json(200, { metas: metas });
+      return;
+    }
   }
 
   json(200, { metas: [] });

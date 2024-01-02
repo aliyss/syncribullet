@@ -1,6 +1,6 @@
 import type { SimklLibrary, SimklLibraryType } from "./types";
 
-export async function convertToCinemeta(
+export async function convertSimklToCinemeta(
   type: SimklLibraryType,
   list: SimklLibrary,
   options: {

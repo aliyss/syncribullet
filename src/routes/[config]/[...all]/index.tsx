@@ -1,5 +1,6 @@
 import type { RequestHandler } from "@builder.io/qwik-city";
-import { manifest } from "~/utils/manifest";
+import { createAnilistCatalog } from "~/utils/anilist/helper";
+import { ManifestCatalogItem, manifest } from "~/utils/manifest";
 import { createSimklCatalog } from "~/utils/simkl/helper";
 
 export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
@@ -15,6 +16,7 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
 
   const catalogConfig = {
     simkl: false,
+    anilist: false,
   };
 
   for (let i = 0; i < userConfigString.length; i++) {
@@ -26,12 +28,21 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
     };
     if (keyConfig[0] === "simkl" && lineConfig[1]) {
       catalogConfig.simkl = true;
+    } else if (keyConfig[0] === "anilist" && lineConfig[1]) {
+      catalogConfig.anilist = true;
     }
   }
 
+  let catalogs: ManifestCatalogItem[] = [];
   if (catalogConfig.simkl) {
-    manifest.catalogs = [...createSimklCatalog()];
+    catalogs = [...catalogs, ...createSimklCatalog()];
   }
+
+  if (catalogConfig.anilist) {
+    catalogs = [...catalogs, ...createAnilistCatalog()];
+  }
+
+  manifest.catalogs = catalogs;
 
   json(200, {
     ...manifest,
