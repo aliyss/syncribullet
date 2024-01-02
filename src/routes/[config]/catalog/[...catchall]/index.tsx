@@ -36,7 +36,7 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
   let genre: string | undefined;
 
   for (let i = 0; i < catchallParams.length; i++) {
-    let item = catchallParams[i].split("=");
+    const item = catchallParams[i].split("=");
     if (item[0] === "skip") {
       skipCount = parseInt(item[1]);
     } else if (item[0] === "genre") {
