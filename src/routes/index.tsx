@@ -41,6 +41,51 @@ export default component$(() => {
   const currentReceiver = useSignal<string | null>(null);
 
   useVisibleTask$(() => {
+    const configInfo = window.location.search.split("config=")[1];
+    if (configInfo) {
+      const configInfoData = configInfo.split("|");
+      for (let i = 0; i < configInfoData.length; i++) {
+        const dataReceiver = configInfoData[i].split("-=-");
+        if (!dataReceiver[1]) {
+          continue;
+        }
+        const receiverName = dataReceiver[0].split("_");
+        if (receiverName[0] === "anilist") {
+          if (receiverName[1] === "accesstoken") {
+            window.localStorage.setItem(
+              "anilist",
+              JSON.stringify({ access_token: dataReceiver[1] }),
+            );
+          }
+        } else if (receiverName[0] === "simkl") {
+          let simklData = {};
+          const simkl = window.localStorage.getItem("simkl");
+          if (simkl) {
+            simklData = JSON.parse(simkl);
+          }
+          if (receiverName[1] === "accesstoken") {
+            window.localStorage.setItem(
+              "simkl",
+              JSON.stringify({
+                result: "OK",
+                access_token: dataReceiver[1],
+                ...simklData,
+              }),
+            );
+          } else if (receiverName[1] === "clientid") {
+            window.localStorage.setItem(
+              "simkl",
+              JSON.stringify({
+                result: "OK",
+                client_id: dataReceiver[1],
+                ...simklData,
+              }),
+            );
+          }
+        }
+      }
+    }
+
     const anilist = window.localStorage.getItem("anilist");
     if (anilist) {
       configuredReceivers["anilist"].enabled = true;
@@ -112,7 +157,9 @@ export default component$(() => {
             );
           }
           const info = `stremio://${location.url.host}${
-            location.url.host.startsWith("localhost") ? "" : ".baby-beamup.club"
+            location.url.host.endsWith("syncribullet")
+              ? ".baby-beamup.club"
+              : ""
           }/${encodeURI(configURL.join("|"))}/manifest.json`;
           nav(info);
         }}

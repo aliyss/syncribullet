@@ -1,5 +1,5 @@
 import type { RequestHandler } from "@builder.io/qwik-city";
 
-export const onGet: RequestHandler = async ({ redirect }) => {
-  redirect(307, "/");
+export const onGet: RequestHandler = async ({ redirect, params }) => {
+  throw redirect(307, `/?config=${params.config}`);
 };
