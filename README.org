@@ -122,7 +122,8 @@ npm run start:dev
 #+end_src
 
 * Known Issues
- * Configuring the Addon, after it is already installed doesn't work yet, since I havent added that route. Current Workaround: Uninstall and Reinstall
+ * +Configuring the Addon, after it is already installed doesn't work yet, since I havent added that route. Current Workaround: Uninstall and Reinstall+
+   - This should work now.
  * Authentication Tokens are stored in localstorage. This is because of the issue above, so you don't have to reauthenticate everytime you configure the addon. Current Workaround: Manually clear localstorage after the setup if you want to.
  * Authtokens are not updated if they expire. I'm working on that.
 
