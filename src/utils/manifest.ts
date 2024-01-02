@@ -1,6 +1,30 @@
 import { description, version } from "../../package.json";
 
-export const manifest = {
+export interface ManifestCatalogItem {
+  id: string;
+  type: "movie" | "series" | "channels";
+  name: string;
+  genres?: string[];
+  extra?: { name: string; isRequired: boolean }[];
+}
+
+export interface Manifest {
+  id: string;
+  name: string;
+  version: string;
+  description: string;
+  logo: string;
+  background: string;
+  catalogs: ManifestCatalogItem[];
+  resources: ["catalog", "meta", "stream", "subtitles"];
+  types: ["series", "movie"];
+  behaviorHints: {
+    configurable: boolean;
+    configurationRequired: boolean;
+  };
+}
+
+export const manifest: Manifest = {
   id: `com.aliyss.syncribullet`,
   name: "syncribullet",
   version: version,

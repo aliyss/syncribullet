@@ -1,5 +1,6 @@
 import type { RequestHandler } from "@builder.io/qwik-city";
 import { manifest } from "~/utils/manifest";
+import { createSimklCatalog } from "~/utils/simkl/helper";
 
 export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
   cacheControl({
@@ -11,6 +12,11 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
   const userConfigString = params.config.split("|");
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
+
+  const catalogConfig = {
+    simkl: false,
+  };
+
   for (let i = 0; i < userConfigString.length; i++) {
     const lineConfig = userConfigString[i].split("-=-");
     const keyConfig = lineConfig[0].split("_");
@@ -18,6 +24,13 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
       ...(userConfig[keyConfig[0]] ? userConfig[keyConfig[0]] : {}),
       [keyConfig[1]]: lineConfig[1],
     };
+    if (keyConfig[0] === "simkl" && lineConfig[1]) {
+      catalogConfig.simkl = true;
+    }
+  }
+
+  if (catalogConfig.simkl) {
+    manifest.catalogs = [...createSimklCatalog()];
   }
 
   json(200, {

@@ -1,7 +1,7 @@
 {
   "name": "syncribullet",
   "description": "App that mixes your syncs",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "engines": {
     "node": ">=15.0.0"
   },
@@ -13,7 +13,7 @@
     "build.preview": "vite build --ssr src/entry.preview.tsx",
     "build.server": "vite build -c adapters/express/vite.config.ts",
     "build.types": "tsc --incremental --noEmit",
-    "deploy": "beamup-cli",
+    "deploy": "beamup",
     "dev": "vite --mode ssr",
     "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",

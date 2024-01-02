@@ -8,6 +8,7 @@
   - [[#import-sync][Import Sync]]
   - [[#advanced-sync][Advanced Sync]]
   - [[#two-way-sync][Two-Way Sync]]
+  - [[#catalogs][Catalogs]]
 - [[#use-the-addon][Use the Addon]]
 - [[#modify-and-build-yourself][Modify and Build yourself]]
   - [[#build][Build]]
@@ -93,6 +94,15 @@ Advanced Sync is when the theoretical _Receivers_ share their data between each 
 
 ** Two-Way Sync
 Of course I'm going for the two-way sync. However this is harder than it actually seems at the moment. Due to not knowing what the prefered sync order is.
+
+** Catalogs
+Stremio Catalog Support, self explanatory if you are using stremio.
+
+- [X] Simkl
+- [ ] Anilist
+- [ ] Kitsu
+- [ ] MyAnimelist
+- [ ] Trakt
 
 * Use the Addon
 
