@@ -98,8 +98,10 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
         genres: animeInfo.genres,
         description: animeInfo.overview,
         trailers: (animeInfo.trailers || []).map((t) => {
-          source: t.youtube;
-          type: "Trailer";
+          return {
+            source: t.youtube,
+            type: "Trailer",
+          };
         }),
         imdbRating: animeInfo.ratings?.simkl.rating,
         runtime: animeInfo.runtime + " min",
