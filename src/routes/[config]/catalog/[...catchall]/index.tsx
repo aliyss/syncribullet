@@ -18,9 +18,10 @@ export const onGet: RequestHandler = async ({
   cacheControl,
 }) => {
   if (!params.catchall.includes("skip")) {
+    // 20 min
     cacheControl({
       public: true,
-      maxAge: 60 * 5,
+      maxAge: 60 * 20,
       staleWhileRevalidate: 60 * 60 * 24 * 365,
     });
   }
@@ -78,9 +79,6 @@ export const onGet: RequestHandler = async ({
       catalogInfo[1],
       catalogInfo[2],
       userConfig["simkl"],
-      {
-        skip: skipCount,
-      },
     );
 
     if (list) {
