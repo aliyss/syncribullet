@@ -98,10 +98,10 @@ Of course I'm going for the two-way sync. However this is harder than it actuall
 ** Catalogs
 Stremio Catalog Support, self explanatory if you are using stremio.
 
-- [X] Simkl
-- [ ] Anilist
+- [X] Anilist
 - [ ] Kitsu
 - [ ] MyAnimelist
+- [X] Simkl
 - [ ] Trakt
 
 * Use the Addon
