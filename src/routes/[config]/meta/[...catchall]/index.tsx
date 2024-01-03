@@ -83,7 +83,6 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
   }
 
   if (animeInfo) {
-    console.log("simkl");
     const metadata = {
       meta: {
         type: animeInfo.anime_type === "movie" ? "movie" : "series",

@@ -11,7 +11,20 @@ import { getAnilistUserList } from "~/utils/anilist/get";
 import { convertSimklToCinemeta } from "~/utils/simkl/convert";
 import { convertAnilistToCinemeta } from "~/utils/anilist/convert";
 
-export const onGet: RequestHandler = async ({ json, params, env }) => {
+export const onGet: RequestHandler = async ({
+  json,
+  params,
+  env,
+  cacheControl,
+}) => {
+  if (!params.catchall.includes("skip")) {
+    cacheControl({
+      public: true,
+      maxAge: 60 * 5,
+      staleWhileRevalidate: 60 * 60 * 24 * 365,
+    });
+  }
+
   const userConfigString = decodeURI(params.config).split("|");
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
@@ -65,6 +78,9 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       catalogInfo[1],
       catalogInfo[2],
       userConfig["simkl"],
+      {
+        skip: skipCount,
+      },
     );
 
     if (list) {

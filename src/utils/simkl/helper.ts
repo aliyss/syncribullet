@@ -15,7 +15,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       type: "movie",
       name: "Simkl Plan to Watch",
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -25,7 +24,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       type: "movie",
       name: "Simkl Completed",
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -35,7 +33,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       type: "movie",
       name: "Simkl Dropped",
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -45,7 +42,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       type: "series",
       name: "Simkl TV Watching",
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -55,7 +51,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       type: "series",
       name: "Simkl TV Plan to Watch",
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -65,7 +60,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       type: "series",
       name: "Simkl TV Completed",
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -75,7 +69,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       type: "series",
       name: "Simkl TV On Hold",
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -85,7 +78,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       type: "series",
       name: "Simkl TV Dropped",
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -96,7 +88,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       name: "Simkl Anime Watching",
       genres: ["tv", "special", "ova", "movie", "music video", "ona"],
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -107,7 +98,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       name: "Simkl Anime Plan to Watch",
       genres: ["tv", "special", "ova", "movie", "music video", "ona"],
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -118,7 +108,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       name: "Simkl Anime Completed",
       genres: ["tv", "special", "ova", "movie", "music video", "ona"],
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -129,7 +118,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       name: "Simkl Anime On Hold",
       genres: ["tv", "special", "ova", "movie", "music video", "ona"],
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
@@ -140,7 +128,6 @@ export function createSimklCatalog(): ManifestCatalogItem[] {
       name: "Simkl Anime Dropped",
       genres: ["tv", "special", "ova", "movie", "music video", "ona"],
       extra: [
-        { name: "search", isRequired: false },
         { name: "genre", isRequired: false },
         { name: "skip", isRequired: false },
       ],
