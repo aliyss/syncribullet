@@ -16,7 +16,12 @@ export interface Manifest {
   logo: string;
   background: string;
   catalogs: ManifestCatalogItem[];
-  resources: ["catalog", "meta", "stream", "subtitles"];
+  resources: [
+    "catalog",
+    "meta" | { name: "meta"; types: ["movie", "series"]; idPrefixes: string[] },
+    "stream",
+    "subtitles",
+  ];
   types: ["series", "movie"];
   behaviorHints: {
     configurable: boolean;
@@ -32,7 +37,16 @@ export const manifest: Manifest = {
   logo: "https://github.com/aliyss/syncribullet/blob/master/public/android-chrome-192x192.png?raw=true",
   background: "",
   catalogs: [],
-  resources: ["catalog", "meta", "stream", "subtitles"],
+  resources: [
+    "catalog",
+    {
+      name: "meta",
+      types: ["movie", "series"],
+      idPrefixes: ["anilist_"],
+    },
+    "stream",
+    "subtitles",
+  ],
   types: ["series", "movie"],
   behaviorHints: {
     configurable: true,

@@ -22,6 +22,7 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
   }
 
   const catchall = params.catchall.split("/");
+  console.log(catchall);
 
   if (!catchall[0] || !catchall[1]) {
     json(200, { subtitles: [] });

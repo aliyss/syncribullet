@@ -67,12 +67,14 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       userConfig["simkl"],
     );
 
-    const metas = await convertSimklToCinemeta(catalogInfo[1], list, {
-      skip: skipCount,
-      genre: genre,
-    });
-    json(200, { metas: metas });
-    return;
+    if (list) {
+      const metas = await convertSimklToCinemeta(catalogInfo[1], list, {
+        skip: skipCount,
+        genre: genre,
+      });
+      json(200, { metas: metas });
+      return;
+    }
   } else if (catalogInfo[0] === "anilist") {
     const list = await getAnilistUserList(
       catalogInfo[2] as any,

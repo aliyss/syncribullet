@@ -39,9 +39,27 @@ export interface SimklShowAddToList {
 export interface SimklLibraryObjectShow {
   title: string;
   poster: string;
+  fanart: null | string;
   year: number;
+  year_start_end: number;
+  genres: string[];
+  overview: string;
+  trailers: [{ name: null | string; youtube: string; size: number }];
+  ratings: {
+    simkl: {
+      rating: number;
+      votes: number;
+    };
+    imdb: {
+      rating: number;
+      votes: number;
+    };
+  };
+  runtime: number;
+  anime_type?: SimklLibraryAnimeType;
   ids: {
     simkl: number;
+    kitsu: number;
     imdb: string;
   };
 }
