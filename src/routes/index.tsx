@@ -82,6 +82,29 @@ export default component$(() => {
               }),
             );
           }
+        } else if (receiverName[0] === "trakt") {
+          let simklData = {};
+          const simkl = window.localStorage.getItem("trakt");
+          if (simkl) {
+            simklData = JSON.parse(simkl);
+          }
+          if (receiverName[1] === "accesstoken") {
+            window.localStorage.setItem(
+              "trakt",
+              JSON.stringify({
+                access_token: dataReceiver[1],
+                ...simklData,
+              }),
+            );
+          } else if (receiverName[1] === "clientid") {
+            window.localStorage.setItem(
+              "trakt",
+              JSON.stringify({
+                client_id: dataReceiver[1],
+                ...simklData,
+              }),
+            );
+          }
         }
       }
     }

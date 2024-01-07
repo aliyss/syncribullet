@@ -18,6 +18,7 @@ export async function convertSimklToCinemeta(
             id: x.movie.ids.imdb,
             name: x.movie.title,
             releaseInfo: x.movie.year,
+            poster: "https://simkl.in/posters/" + x.movie.poster + "_0.jpg",
           };
         });
     } else if (type === "shows") {
@@ -29,6 +30,7 @@ export async function convertSimklToCinemeta(
             id: x.show.ids.imdb,
             name: x.show.title,
             releaseInfo: x.show.year,
+            poster: "https://simkl.in/posters/" + x.show.poster + "_0.jpg",
           };
         });
     } else if (type === "anime") {
@@ -46,6 +48,7 @@ export async function convertSimklToCinemeta(
             id: x.show.ids.imdb,
             name: x.show.title,
             releaseInfo: x.show.year,
+            poster: "https://simkl.in/posters/" + x.show.poster + "_0.jpg",
           };
         });
     }
