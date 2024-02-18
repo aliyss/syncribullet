@@ -34,7 +34,7 @@ export default component$(() => {
           `https://api.trakt.tv/oauth/device/${data.code}?client_id=${data.client_id}`,
         );
         window.localStorage.setItem(
-          "simkl",
+          "trakt",
           JSON.stringify({
             ...(await result.json()),
             client_id: data.client_id,
@@ -46,7 +46,7 @@ export default component$(() => {
           throw new Error("Something bad happened!");
         }
         window.localStorage.setItem(
-          "simkl",
+          "trakt",
           JSON.stringify({
             ...result,
             client_id: data.client_id,
