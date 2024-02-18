@@ -5,7 +5,7 @@ export async function findTVDBItem(
   userConfig: Record<string, string> | undefined,
   options: Record<string, string>,
 ) {
-  if (!userConfig || !userConfig.apikey) {
+  if (!userConfig || !userConfig.bearerToken) {
     return {};
   }
   try {
@@ -15,7 +15,7 @@ export async function findTVDBItem(
       }`,
       {
         method: "GET",
-        headers: createTVDBHeaders(userConfig.apikey),
+        headers: createTVDBHeaders(userConfig.bearerToken),
       },
     );
     console.log(data);

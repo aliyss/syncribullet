@@ -1,8 +1,8 @@
 import { Anilist as NewAnilist } from "@tdanks2000/anilist-wrapper";
 import Anilist from "anilist-node";
 import type { CinemetaEpisode } from "../cinemeta/meta";
-import { MediaListStatus } from "@tdanks2000/anilist-wrapper/dist/types";
-import { AnilistLibrary } from "./types";
+import type { MediaListStatus } from "@tdanks2000/anilist-wrapper/dist/types";
+import type { AnilistLibrary } from "./types";
 
 export async function getAnilistItem(
   cinemetaInfo: any,

@@ -3,6 +3,7 @@ import {
   useSignal,
   useStore,
   useVisibleTask$,
+  $,
 } from "@builder.io/qwik";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 // Components
@@ -142,6 +143,18 @@ export default component$(() => {
       );
     });
 
+  const removeAuthentication = $((name?: string | null) => {
+    if (name) {
+      console.log(configuredReceivers);
+      configuredReceivers[name].enabled = false;
+      configuredReceivers[name].data = undefined;
+      window.localStorage.removeItem(name);
+    }
+    if (name === "simkl") {
+      window.localStorage.removeItem(name + "_code");
+    }
+  });
+
   /*
   const fullSyncItems = receiverListSync
     .filter((item) => item.fullSync)
@@ -225,7 +238,18 @@ export default component$(() => {
             <div class="flex flex-col gap-6 pt-5 md:flex-row">
               <div class="flex flex-col gap-4 w-full text-center">
                 <div class="flex flex-col gap-2 items-center pt-1 text-on-background">
-                  {currentReceiver.value === "anilist" ? (
+                  {configuredReceivers[currentReceiver.value].enabled ? (
+                    <>
+                      <Button
+                        backgroundColour="bg-error"
+                        onClick$={() =>
+                          removeAuthentication(currentReceiver.value)
+                        }
+                      >
+                        Remove Credentials
+                      </Button>
+                    </>
+                  ) : currentReceiver.value === "anilist" ? (
                     <>
                       <AnilistLogin />
                     </>

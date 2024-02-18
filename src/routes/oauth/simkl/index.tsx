@@ -6,7 +6,7 @@ export const validateCode = server$(async function (
   client_id?: string,
 ) {
   if (!client_id) {
-    client_id = this.env.get("PRIVATE_SIMKL_CLIENT_ID");
+    client_id = this.env.get("SIMKL_CLIENT_ID");
   }
   if (!client_id) {
     return;

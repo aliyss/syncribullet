@@ -1,9 +1,11 @@
 import type { RequestHandler } from "@builder.io/qwik-city";
 import { createAnilistCatalog } from "~/utils/anilist/helper";
-import { ManifestCatalogItem, manifest } from "~/utils/manifest";
+import type { ManifestCatalogItem } from "~/utils/manifest";
+import { manifest } from "~/utils/manifest";
 import { createSimklCatalog } from "~/utils/simkl/helper";
 
 export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
+  console.log("here");
   cacheControl({
     public: false,
     maxAge: 0,

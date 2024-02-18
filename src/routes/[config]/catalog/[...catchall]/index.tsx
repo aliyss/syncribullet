@@ -2,11 +2,11 @@
 import { getSimklList } from "~/utils/simkl/get";
 // Types
 import type { RequestHandler } from "@builder.io/qwik-city";
-import {
+import type {
   SimklLibraryObjectStatus,
   SimklLibraryType,
 } from "~/utils/simkl/types";
-import { ReceiverTypes } from "~/utils/connections/types";
+import type { ReceiverTypes } from "~/utils/connections/types";
 import { getAnilistUserList } from "~/utils/anilist/get";
 import { convertSimklToCinemeta } from "~/utils/simkl/convert";
 import { convertAnilistToCinemeta } from "~/utils/anilist/convert";
@@ -80,6 +80,7 @@ export const onGet: RequestHandler = async ({
       catalogInfo[2],
       userConfig["simkl"],
     );
+    console.log(catalogInfo[1]);
 
     if (list) {
       const metas = await convertSimklToCinemeta(catalogInfo[1], list, {
