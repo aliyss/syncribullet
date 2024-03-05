@@ -54,6 +54,14 @@ export const receivers: Receiver[] = [
     liveSync: true,
     fullSync: true,
   },
+  {
+    id: "stremio",
+    icon: "https://raw.githubusercontent.com/Stremio/stremio-brand/master/favicons/stremio-service-dicon-white-gb.svg",
+    text: "Stremio",
+    backgroundColour: "bg-[#8152A3]/60",
+    liveSync: true,
+    fullSync: true,
+  },
 ];
 
 export function configureReceivers(): Record<string, ReceiverConfig> {

@@ -15,6 +15,7 @@ import { configureReceivers, receivers } from "~/utils/connections/receivers";
 // Types
 import type { ReceiverConfig } from "~/utils/connections/receivers";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import StremioLogin from "~/components/forms/stremio-login";
 
 export type ApiClientForm = {
   client_id: string;
@@ -83,6 +84,22 @@ export default component$(() => {
               }),
             );
           }
+        } else if (receiverName[0] === "stremio") {
+          let stremioData = {};
+          const stremio = window.localStorage.getItem("stremio");
+          if (stremio) {
+            stremioData = JSON.parse(stremio);
+          }
+          if (receiverName[1] === "authKey") {
+            window.localStorage.setItem(
+              "stremio",
+              JSON.stringify({
+                result: "OK",
+                authKey: dataReceiver[1],
+                ...stremioData,
+              }),
+            );
+          }
         } else if (receiverName[0] === "trakt") {
           let simklData = {};
           const simkl = window.localStorage.getItem("trakt");
@@ -119,6 +136,11 @@ export default component$(() => {
     if (simkl) {
       configuredReceivers["simkl"].enabled = true;
       configuredReceivers["simkl"].data = JSON.parse(simkl);
+    }
+    const stremio = window.localStorage.getItem("stremio");
+    if (stremio) {
+      configuredReceivers["stremio"].enabled = true;
+      configuredReceivers["stremio"].data = JSON.parse(stremio);
     }
   });
 
@@ -192,6 +214,11 @@ export default component$(() => {
               `simkl_clientid-=-${configuredReceivers["simkl"].data.client_id}`,
             );
           }
+          if (configuredReceivers["stremio"].data) {
+            configURL.push(
+              `stremio_authKey-=-${configuredReceivers["stremio"].data.authKey}`,
+            );
+          }
           const info = `stremio://${location.url.host}${
             location.url.host.endsWith("syncribullet")
               ? ".baby-beamup.club"
@@ -255,6 +282,8 @@ export default component$(() => {
                     </>
                   ) : currentReceiver.value === "simkl" ? (
                     <SimklLogin />
+                  ) : currentReceiver.value === "stremio" ? (
+                    <StremioLogin />
                   ) : (
                     <></>
                   )}
@@ -265,8 +294,9 @@ export default component$(() => {
         ) : (
           <></>
         )}
-        {Object.values(configuredReceivers).filter((item) => item.enabled)
-          .length > 0 ? (
+        {Object.values(configuredReceivers).filter(
+          (item) => item.enabled && item.receiver.id !== "stremio",
+        ).length > 0 ? (
           <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 bg-secondary-container text-on-secondary-container">
             <h2 class="w-full text-xl font-bold text-center md:text-3xl">
               Senders
