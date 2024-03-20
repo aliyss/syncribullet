@@ -8,14 +8,14 @@ export async function setAnilistItem(
   if (!anilistResult || !userConfig || !userConfig.accesstoken) {
     return;
   }
-  const state =
+  let state: "COMPLETED" | "CURRENT" =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     anilistResult && anilistResult.status === "COMPLETED"
       ? "COMPLETED"
       : "CURRENT";
 
   const hasProgress = anilistResult && anilistResult.progress;
-  const episodeCount = progress;
+  const episodeCount = progress || 1;
   if (hasProgress && episodeCount <= anilistResult.progress) {
     return;
   }
@@ -24,10 +24,14 @@ export async function setAnilistItem(
     return;
   }
 
+  if (progress === 0 && !anilistResult.mediaId) {
+    state = "COMPLETED";
+  }
+
   try {
     const legacyAnilist = new Anilist(userConfig.accesstoken);
     return await legacyAnilist.lists.addEntry(
-      anilistResult.mediaId,
+      anilistResult.mediaId || anilistResult.id,
       // @ts-ignore
       {
         status: state,

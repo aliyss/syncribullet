@@ -7,8 +7,11 @@ export const getCinemetaMeta = async (type: string, id: string) => {
       },
     },
   );
-
-  return await data.json();
+  try {
+    return await data.json();
+  } catch (e) {
+    return null;
+  }
 };
 
 export interface CinemetaEpisode {

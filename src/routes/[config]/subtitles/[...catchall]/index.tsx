@@ -53,7 +53,7 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
           userConfig["anilist"],
           info.meta.videos.find((x: CinemetaEpisode) => x.id === catchall[1]),
         )
-      : undefined;
+      : await getAnilistItem(info, userConfig["anilist"]);
 
     const seasonCount = parseInt(catchall[1].split(":")[1] || "0");
     const episodeCount = parseInt(catchall[1].split(":")[2] || "0");
