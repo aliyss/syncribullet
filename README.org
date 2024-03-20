@@ -20,6 +20,7 @@
   - [[#pull-requests][Pull Requests]]
   - [[#stars][Stars]]
   - [[#contact][Contact]]
+  - [[#support][Support]]
 
 * Info
 Currently the addon synchronizes with following services:
@@ -132,8 +133,6 @@ npm run start:dev
 #+end_src
 
 * Known Issues
- * +Authentication Tokens are stored in localstorage. This is because of the issue above, so you don't have to reauthenticate everytime you configure the addon. Current Workaround: Manually clear localstorage after the setup if you want to.+
-   - This should work now.
  * Authtokens are not updated if they expire. I'm working on that.
 
 * What else?
@@ -153,3 +152,8 @@ A star would be kind, but honestly I use GitHub stars more as bookmarks. So inst
  * [[https://discord.com/invite/TF428cr][AniList Discord Server]]
 
  * [[https://discord.com/invite/zAypMTH][Aliyss' Discord Server]]
+
+** Support
+If you like what I do consider buying me a coffee ;)
+
+[[https://www.buymeacoffee.com/aliyss][Buy Me A Coffee]]
