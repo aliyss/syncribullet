@@ -80,7 +80,6 @@ export const onGet: RequestHandler = async ({
       catalogInfo[2],
       userConfig["simkl"],
     );
-    console.log(catalogInfo[1]);
 
     if (list) {
       const metas = await convertSimklToCinemeta(catalogInfo[1], list, {

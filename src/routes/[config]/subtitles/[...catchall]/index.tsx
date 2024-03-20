@@ -22,7 +22,6 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
   }
 
   const catchall = params.catchall.split("/");
-  console.log(catchall);
 
   if (!catchall[0] || !catchall[1]) {
     json(200, { subtitles: [] });
@@ -48,20 +47,19 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       info,
       userConfig["simkl"],
     );
-    const anilistResult: any | undefined = await getAnilistItem(
-      info,
-      userConfig["anilist"],
-      info.meta.videos.find((x: CinemetaEpisode) => x.id === catchall[1]),
-    );
-
-    console.log(`Queued ${info?.meta.id} running in ${info?.meta.runtime}`);
+    const anilistResult: any | undefined = info.meta.videos
+      ? await getAnilistItem(
+          info,
+          userConfig["anilist"],
+          info.meta.videos.find((x: CinemetaEpisode) => x.id === catchall[1]),
+        )
+      : undefined;
 
     const seasonCount = parseInt(catchall[1].split(":")[1] || "0");
     const episodeCount = parseInt(catchall[1].split(":")[2] || "0");
 
     setTimeout(
       async function () {
-        console.log("Syncing...");
         const syncedItems = [];
         const anilistUpdateResult = await setAnilistItem(
           anilistResult,
@@ -88,7 +86,6 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
         if (simklUpdateResult) {
           syncedItems.push("simkl");
         }
-        console.log("Synced", syncedItems);
       },
       timeout / 1000 / 60,
     );

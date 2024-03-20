@@ -5,7 +5,6 @@ import { manifest } from "~/utils/manifest";
 import { createSimklCatalog } from "~/utils/simkl/helper";
 
 export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
-  console.log("here");
   cacheControl({
     public: false,
     maxAge: 0,

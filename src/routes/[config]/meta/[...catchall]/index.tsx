@@ -6,6 +6,11 @@ import { getHaglundIds } from "~/utils/haglund/get";
 import { getCinemetaMeta } from "~/utils/cinemeta/meta";
 
 export const onGet: RequestHandler = async ({ json, params, env }) => {
+  if (!params.config) {
+    json(200, { meta: {} });
+    return;
+  }
+
   const userConfigString = decodeURI(params.config).split("|");
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
