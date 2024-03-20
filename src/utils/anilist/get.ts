@@ -74,13 +74,20 @@ export async function getAnilistItem(
         anilistResult.data.Media.streamingEpisodes.find((x) =>
           x.title.includes(episode?.name),
         );
+
       if (anilistResultWithEpisode) {
-        return anilistResult.data.Media.mediaListEntry;
+        return {
+          ...anilistResult.data.Media.mediaListEntry,
+          mediaId: tempAnilistResult.media[i].id,
+        };
       }
     }
 
     if (!firstMatch && anilistResult.data?.Media.mediaListEntry) {
-      firstMatch = anilistResult.data.Media.mediaListEntry;
+      firstMatch = {
+        ...anilistResult.data.Media.mediaListEntry,
+        mediaId: tempAnilistResult.media[i].id,
+      };
     }
 
     if (
@@ -97,6 +104,7 @@ export async function getAnilistItem(
       }
     }
   }
+  console.log(firstMatch);
 
   return firstMatch;
 }
