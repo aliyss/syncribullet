@@ -16,8 +16,11 @@ export async function convertSimklToCinemeta(
           ?.slice(options.skip, options.skip ? options.skip + 100 : undefined)
           .map(async (x) => {
             try {
+              if (!x.movie.ids.imdb) {
+                throw new Error("No imdb id");
+              }
               const data = (await getCinemetaMeta("movie", x.movie.ids.imdb))
-                .meta;
+                ?.meta;
               return {
                 type: "movies",
                 id: x.movie.ids.imdb,

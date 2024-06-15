@@ -1,7 +1,14 @@
 import Anilist from "anilist-node";
 
 export async function setAnilistItem(
-  anilistResult: any,
+  anilistResult:
+    | {
+        id: number;
+        mediaId?: number;
+        progress: number;
+        status: "COMPLETED" | "CURRENT";
+      }
+    | undefined,
   progress: number,
   userConfig: Record<string, string> | undefined,
 ) {
@@ -14,7 +21,7 @@ export async function setAnilistItem(
       ? "COMPLETED"
       : "CURRENT";
 
-  const hasProgress = anilistResult && anilistResult.progress;
+  const hasProgress = anilistResult.progress;
   const episodeCount = progress || 1;
   if (hasProgress && episodeCount <= anilistResult.progress) {
     return;

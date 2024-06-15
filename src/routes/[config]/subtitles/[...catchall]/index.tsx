@@ -1,12 +1,9 @@
 // Helpers
-import { getCinemetaMeta } from "~/utils/cinemeta/meta";
-import { getAnilistItem } from "~/utils/anilist/get";
-import { setAnilistItem } from "~/utils/anilist/set";
-import { setSimklMovieItem, setSimklShowItem } from "~/utils/simkl/set";
-import { getSimklItem } from "~/utils/simkl/get";
 // Types
 import type { RequestHandler } from "@builder.io/qwik-city";
-import type { CinemetaEpisode } from "~/utils/cinemeta/meta";
+import { convertStremioSubtitleInfoToStremioSubtitleId } from "~/utils/stremio/convert";
+import type { StremioSubtitleInfo } from "~/utils/stremio/types";
+import { updateNormal } from "~/utils/updaters/updateNormal";
 
 export const onGet: RequestHandler = async ({ json, params, env }) => {
   const userConfigString = decodeURI(params.config).split("|");
@@ -32,63 +29,12 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     userConfig["simkl"].clientid = env.get("PRIVATE_SIMKL_CLIENT_ID") || "";
   }
 
+  const stremioInfo = convertStremioSubtitleInfoToStremioSubtitleId(
+    catchall as StremioSubtitleInfo,
+  );
+
   try {
-    const info = await getCinemetaMeta(catchall[0], catchall[1].split(":")[0]);
-
-    let timeout = 0;
-    if (!info.meta) {
-      json(200, { subtitles: [] });
-      return;
-    }
-    if (info.meta.runtime) {
-      timeout = parseInt(info.meta.runtime.split(" ")[0]) * 60 * 1000;
-    }
-    const simklResult: any | undefined = await getSimklItem(
-      info,
-      userConfig["simkl"],
-    );
-    const anilistResult: any | undefined = info.meta.videos
-      ? await getAnilistItem(
-          info,
-          userConfig["anilist"],
-          info.meta.videos.find((x: CinemetaEpisode) => x.id === catchall[1]),
-        )
-      : await getAnilistItem(info, userConfig["anilist"]);
-
-    const seasonCount = parseInt(catchall[1].split(":")[1] || "0");
-    const episodeCount = parseInt(catchall[1].split(":")[2] || "0");
-
-    setTimeout(
-      async function () {
-        const syncedItems = [];
-        const anilistUpdateResult = await setAnilistItem(
-          anilistResult,
-          episodeCount,
-          userConfig["anilist"],
-        );
-        let simklUpdateResult;
-        if (catchall[0] === "series") {
-          simklUpdateResult = await setSimklShowItem(
-            simklResult,
-            seasonCount,
-            episodeCount,
-            userConfig["simkl"],
-          );
-        } else {
-          simklUpdateResult = await setSimklMovieItem(
-            simklResult,
-            userConfig["simkl"],
-          );
-        }
-        if (anilistUpdateResult) {
-          syncedItems.push("anilist");
-        }
-        if (simklUpdateResult) {
-          syncedItems.push("simkl");
-        }
-      },
-      timeout / 1000 / 60,
-    );
+    await updateNormal(stremioInfo, userConfig);
   } catch (e) {
     console.log(e);
   }

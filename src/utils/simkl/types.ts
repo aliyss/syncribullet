@@ -1,3 +1,6 @@
+import type { IDs } from "../ids/types";
+import type { RequireAtLeastOne } from "../typing/helpers";
+
 export type SimklLibraryType = "movies" | "anime" | "shows";
 export type SimklLibraryObjectStatus =
   | "watching"
@@ -6,11 +9,11 @@ export type SimklLibraryObjectStatus =
   | "hold"
   | "dropped";
 
+export interface SimklIds extends IDs {}
+
 export interface SimklMovieAddToList {
   title?: string;
-  ids: {
-    imdb: string;
-  };
+  ids: RequireAtLeastOne<SimklIds>;
   to?: string;
   watched_at?: string;
 }
@@ -28,9 +31,7 @@ export interface SimklShowSeasonAddToList {
 
 export interface SimklShowAddToList {
   title?: string;
-  ids: {
-    imdb: string;
-  };
+  ids: RequireAtLeastOne<SimklIds>;
   to?: string;
   watched_at?: string;
   seasons?: SimklShowSeasonAddToList[];
@@ -57,21 +58,14 @@ export interface SimklLibraryObjectShow {
   };
   runtime: number;
   anime_type?: SimklLibraryAnimeType;
-  ids: {
-    simkl: number;
-    kitsu: number;
-    imdb: string;
-  };
+  ids: RequireAtLeastOne<SimklIds>;
 }
 
 export interface SimklLibraryObjectMovie {
   title: string;
   poster: string;
   year: number;
-  ids: {
-    simkl: number;
-    imdb: string;
-  };
+  ids: RequireAtLeastOne<SimklIds>;
 }
 
 export interface SimklLibraryObjectBase {

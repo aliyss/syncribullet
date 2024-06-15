@@ -4,6 +4,7 @@ import { getSimklAnimeById, getSimklById } from "~/utils/simkl/get";
 import type { RequestHandler } from "@builder.io/qwik-city";
 import { getHaglundIds } from "~/utils/haglund/get";
 import { getCinemetaMeta } from "~/utils/cinemeta/meta";
+import type { StremioType } from "~/utils/stremio/types";
 
 export const onGet: RequestHandler = async ({ json, params, env }) => {
   if (!params.config) {
@@ -30,7 +31,7 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     return;
   }
 
-  let typeMain = catchall[0];
+  let typeMain = catchall[0] as StremioType;
 
   const idInfo = catchall[1].split("_");
 
@@ -47,7 +48,7 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       userConfig["simkl"],
     );
 
-    if (data[0]) {
+    if (data[0] && data[0].ids.simkl) {
       const anime = await getSimklAnimeById(
         data[0].ids.simkl.toString(),
         userConfig["simkl"],
@@ -68,19 +69,19 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
 
   if (!dataId) {
     const data = await getHaglundIds(idInfo[0], idInfo[1]);
-    if (data.imdb) {
+    if (data?.imdb) {
       dataId = data.imdb;
     }
   }
 
   if (dataId) {
     const info = await getCinemetaMeta(typeMain, dataId);
-    if (info.meta) {
+    if (info?.meta) {
       json(200, { meta: info.meta });
       return;
     } else if (!animeInfo) {
       const info2 = await getCinemetaMeta(typeBkp, dataId);
-      if (info2.meta) {
+      if (info2?.meta) {
         json(200, { meta: info2.meta });
         return;
       }

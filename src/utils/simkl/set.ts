@@ -1,7 +1,14 @@
+import type { RequireAtLeastOne } from "../typing/helpers";
 import { createSimklHeaders } from "./helper";
+import type { SimklIds } from "./types";
+
+export interface SetSimklItem {
+  name: string;
+  ids: RequireAtLeastOne<SimklIds>;
+}
 
 export async function setSimklShowItem(
-  simklResult: any,
+  simklResult: SetSimklItem,
   season: number,
   episode: number,
   userConfig: Record<string, string> | undefined,
@@ -14,12 +21,10 @@ export async function setSimklShowItem(
     shows: [
       {
         title: simklResult.name,
-        ids: {
-          imdb: simklResult.id,
-        },
+        ids: simklResult.ids,
         seasons: [
           {
-            number: season,
+            number: season || 1,
             episodes: [
               {
                 number: episode,
@@ -44,7 +49,7 @@ export async function setSimklShowItem(
 }
 
 export async function setSimklMovieItem(
-  simklResult: any,
+  simklResult: SetSimklItem,
   userConfig: Record<string, string> | undefined,
 ) {
   if (!userConfig || !userConfig.accesstoken || !userConfig.clientid) {
@@ -55,9 +60,7 @@ export async function setSimklMovieItem(
     movies: [
       {
         title: simklResult.name,
-        ids: {
-          imdb: simklResult.id,
-        },
+        ids: simklResult.ids,
       },
     ],
   };
@@ -87,9 +90,7 @@ export interface SimklShowSeasonAddToList {
 
 export interface SimklShowAddToList {
   title?: string;
-  ids: {
-    imdb: string;
-  };
+  ids: RequireAtLeastOne<SimklIds>;
   to?: string;
   watched_at?: string;
   seasons?: SimklShowSeasonAddToList[];

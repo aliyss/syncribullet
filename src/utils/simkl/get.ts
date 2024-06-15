@@ -1,4 +1,7 @@
+import type { CinemetaMeta } from "../cinemeta/meta";
+import type { IDs } from "../ids/types";
 import { createSimklHeaders } from "./helper";
+import type { SetSimklItem } from "./set";
 import type {
   SimklLibrary,
   SimklLibraryObjectShow,
@@ -7,13 +10,20 @@ import type {
 } from "./types";
 
 export async function getSimklItem(
-  cinemetaInfo: any,
+  cinemetaInfo: CinemetaMeta | null,
+  ids: IDs,
   userConfig: Record<string, string> | undefined,
-) {
+): Promise<SetSimklItem | undefined> {
   if (!userConfig || !userConfig.accesstoken) {
     return;
   }
-  return cinemetaInfo.meta;
+  return {
+    ids: {
+      imdb: cinemetaInfo?.meta?.id || "",
+      ...ids,
+    },
+    name: cinemetaInfo?.meta?.name || "",
+  };
 }
 
 export async function getSimklList(
