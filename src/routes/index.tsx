@@ -1,21 +1,23 @@
 import {
+  $,
   component$,
   useSignal,
   useStore,
   useVisibleTask$,
-  $,
-} from "@builder.io/qwik";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+} from '@builder.io/qwik';
+import { useLocation, useNavigate } from '@builder.io/qwik-city';
+import type { DocumentHead } from '@builder.io/qwik-city';
+
 // Components
-import { Button } from "~/components/buttons/Button";
-import AnilistLogin from "~/components/forms/anilist-login";
-import SimklLogin from "~/components/forms/simkl-login";
+import { Button } from '~/components/buttons/Button';
+import AnilistLogin from '~/components/forms/anilist-login';
+import SimklLogin from '~/components/forms/simkl-login';
+import StremioLogin from '~/components/forms/stremio-login';
+
 // Utils
-import { configureReceivers, receivers } from "~/utils/connections/receivers";
+import { configureReceivers, receivers } from '~/utils/connections/receivers';
 // Types
-import type { ReceiverConfig } from "~/utils/connections/receivers";
-import type { DocumentHead } from "@builder.io/qwik-city";
-import StremioLogin from "~/components/forms/stremio-login";
+import type { ReceiverConfig } from '~/utils/connections/receivers';
 
 export type ApiClientForm = {
   client_id: string;
@@ -30,10 +32,10 @@ export default component$(() => {
   const location = useLocation();
   const senderListSync = [
     {
-      id: "stremio",
-      icon: "https://www.stremio.com/website/stremio-logo-small.png",
-      text: "Stremio",
-      backgroundColour: "bg-[#8152A3]/60",
+      id: 'stremio',
+      icon: 'https://www.stremio.com/website/stremio-logo-small.png',
+      text: 'Stremio',
+      backgroundColour: 'bg-[#8152A3]/60',
     },
   ];
 
@@ -43,80 +45,80 @@ export default component$(() => {
   const currentReceiver = useSignal<string | null>(null);
 
   useVisibleTask$(() => {
-    const configInfo = window.location.search.split("config=")[1];
+    const configInfo = window.location.search.split('config=')[1];
     if (configInfo) {
-      const configInfoData = configInfo.split("|");
+      const configInfoData = configInfo.split('|');
       for (let i = 0; i < configInfoData.length; i++) {
-        const dataReceiver = configInfoData[i].split("-=-");
+        const dataReceiver = configInfoData[i].split('-=-');
         if (!dataReceiver[1]) {
           continue;
         }
-        const receiverName = dataReceiver[0].split("_");
-        if (receiverName[0] === "anilist") {
-          if (receiverName[1] === "accesstoken") {
+        const receiverName = dataReceiver[0].split('_');
+        if (receiverName[0] === 'anilist') {
+          if (receiverName[1] === 'accesstoken') {
             window.localStorage.setItem(
-              "anilist",
+              'anilist',
               JSON.stringify({ access_token: dataReceiver[1] }),
             );
           }
-        } else if (receiverName[0] === "simkl") {
+        } else if (receiverName[0] === 'simkl') {
           let simklData = {};
-          const simkl = window.localStorage.getItem("simkl");
+          const simkl = window.localStorage.getItem('simkl');
           if (simkl) {
             simklData = JSON.parse(simkl);
           }
-          if (receiverName[1] === "accesstoken") {
+          if (receiverName[1] === 'accesstoken') {
             window.localStorage.setItem(
-              "simkl",
+              'simkl',
               JSON.stringify({
-                result: "OK",
+                result: 'OK',
                 access_token: dataReceiver[1],
                 ...simklData,
               }),
             );
-          } else if (receiverName[1] === "clientid") {
+          } else if (receiverName[1] === 'clientid') {
             window.localStorage.setItem(
-              "simkl",
+              'simkl',
               JSON.stringify({
-                result: "OK",
+                result: 'OK',
                 client_id: dataReceiver[1],
                 ...simklData,
               }),
             );
           }
-        } else if (receiverName[0] === "stremio") {
+        } else if (receiverName[0] === 'stremio') {
           let stremioData = {};
-          const stremio = window.localStorage.getItem("stremio");
+          const stremio = window.localStorage.getItem('stremio');
           if (stremio) {
             stremioData = JSON.parse(stremio);
           }
-          if (receiverName[1] === "authKey") {
+          if (receiverName[1] === 'authKey') {
             window.localStorage.setItem(
-              "stremio",
+              'stremio',
               JSON.stringify({
-                result: "OK",
+                result: 'OK',
                 authKey: dataReceiver[1],
                 ...stremioData,
               }),
             );
           }
-        } else if (receiverName[0] === "trakt") {
+        } else if (receiverName[0] === 'trakt') {
           let simklData = {};
-          const simkl = window.localStorage.getItem("trakt");
+          const simkl = window.localStorage.getItem('trakt');
           if (simkl) {
             simklData = JSON.parse(simkl);
           }
-          if (receiverName[1] === "accesstoken") {
+          if (receiverName[1] === 'accesstoken') {
             window.localStorage.setItem(
-              "trakt",
+              'trakt',
               JSON.stringify({
                 access_token: dataReceiver[1],
                 ...simklData,
               }),
             );
-          } else if (receiverName[1] === "clientid") {
+          } else if (receiverName[1] === 'clientid') {
             window.localStorage.setItem(
-              "trakt",
+              'trakt',
               JSON.stringify({
                 client_id: dataReceiver[1],
                 ...simklData,
@@ -127,20 +129,20 @@ export default component$(() => {
       }
     }
 
-    const anilist = window.localStorage.getItem("anilist");
+    const anilist = window.localStorage.getItem('anilist');
     if (anilist) {
-      configuredReceivers["anilist"].enabled = true;
-      configuredReceivers["anilist"].data = JSON.parse(anilist);
+      configuredReceivers['anilist'].enabled = true;
+      configuredReceivers['anilist'].data = JSON.parse(anilist);
     }
-    const simkl = window.localStorage.getItem("simkl");
+    const simkl = window.localStorage.getItem('simkl');
     if (simkl) {
-      configuredReceivers["simkl"].enabled = true;
-      configuredReceivers["simkl"].data = JSON.parse(simkl);
+      configuredReceivers['simkl'].enabled = true;
+      configuredReceivers['simkl'].data = JSON.parse(simkl);
     }
-    const stremio = window.localStorage.getItem("stremio");
+    const stremio = window.localStorage.getItem('stremio');
     if (stremio) {
-      configuredReceivers["stremio"].enabled = true;
-      configuredReceivers["stremio"].data = JSON.parse(stremio);
+      configuredReceivers['stremio'].enabled = true;
+      configuredReceivers['stremio'].data = JSON.parse(stremio);
     }
   });
 
@@ -153,7 +155,7 @@ export default component$(() => {
           backgroundColour={item.backgroundColour}
           icon={
             configuredReceivers[item.id].enabled
-              ? "https://api.iconify.design/tabler:checks.svg?color=%237FFD4F"
+              ? 'https://api.iconify.design/tabler:checks.svg?color=%237FFD4F'
               : item.icon
           }
           onClick$={() => {
@@ -172,8 +174,8 @@ export default component$(() => {
       configuredReceivers[name].data = undefined;
       window.localStorage.removeItem(name);
     }
-    if (name === "simkl") {
-      window.localStorage.removeItem(name + "_code");
+    if (name === 'simkl') {
+      window.localStorage.removeItem(name + '_code');
     }
   });
 
@@ -201,29 +203,29 @@ export default component$(() => {
         icon={item.icon}
         onClick$={() => {
           const configURL: string[] = [];
-          if (configuredReceivers["anilist"].data) {
+          if (configuredReceivers['anilist'].data) {
             configURL.push(
-              `anilist_accesstoken-=-${configuredReceivers["anilist"].data.access_token}`,
+              `anilist_accesstoken-=-${configuredReceivers['anilist'].data.access_token}`,
             );
           }
-          if (configuredReceivers["simkl"].data) {
+          if (configuredReceivers['simkl'].data) {
             configURL.push(
-              `simkl_accesstoken-=-${configuredReceivers["simkl"].data.access_token}`,
+              `simkl_accesstoken-=-${configuredReceivers['simkl'].data.access_token}`,
             );
             configURL.push(
-              `simkl_clientid-=-${configuredReceivers["simkl"].data.client_id}`,
+              `simkl_clientid-=-${configuredReceivers['simkl'].data.client_id}`,
             );
           }
-          if (configuredReceivers["stremio"].data) {
+          if (configuredReceivers['stremio'].data) {
             configURL.push(
-              `stremio_authKey-=-${configuredReceivers["stremio"].data.authKey}`,
+              `stremio_authKey-=-${configuredReceivers['stremio'].data.authKey}`,
             );
           }
           const info = `stremio://${location.url.host}${
-            location.url.host.endsWith("syncribullet")
-              ? ".baby-beamup.club"
-              : ""
-          }/${encodeURI(configURL.join("|"))}/manifest.json`;
+            location.url.host.endsWith('syncribullet')
+              ? '.baby-beamup.club'
+              : ''
+          }/${encodeURI(configURL.join('|'))}/manifest.json`;
           nav(info);
         }}
       >
@@ -276,13 +278,13 @@ export default component$(() => {
                         Remove Credentials
                       </Button>
                     </>
-                  ) : currentReceiver.value === "anilist" ? (
+                  ) : currentReceiver.value === 'anilist' ? (
                     <>
                       <AnilistLogin />
                     </>
-                  ) : currentReceiver.value === "simkl" ? (
+                  ) : currentReceiver.value === 'simkl' ? (
                     <SimklLogin />
-                  ) : currentReceiver.value === "stremio" ? (
+                  ) : currentReceiver.value === 'stremio' ? (
                     <StremioLogin />
                   ) : (
                     <></>
@@ -295,7 +297,7 @@ export default component$(() => {
           <></>
         )}
         {Object.values(configuredReceivers).filter(
-          (item) => item.enabled && item.receiver.id !== "stremio",
+          (item) => item.enabled && item.receiver.id !== 'stremio',
         ).length > 0 ? (
           <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 bg-secondary-container text-on-secondary-container">
             <h2 class="w-full text-xl font-bold text-center md:text-3xl">
@@ -319,11 +321,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "SyncriBullet",
+  title: 'SyncriBullet',
   meta: [
     {
-      name: "description",
-      content: "Mixing up synchronizisation",
+      name: 'description',
+      content: 'Mixing up synchronizisation',
     },
   ],
 };

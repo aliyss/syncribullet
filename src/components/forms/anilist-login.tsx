@@ -1,14 +1,15 @@
-import { component$, $, useSignal } from "@builder.io/qwik";
-import { useForm } from "@modular-forms/qwik";
-import type { SubmitHandler } from "@modular-forms/qwik";
-import type { ApiClientForm } from "~/routes";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { $, component$, useSignal } from '@builder.io/qwik';
+import { useLocation, useNavigate } from '@builder.io/qwik-city';
+
+import { useForm } from '@modular-forms/qwik';
+import type { SubmitHandler } from '@modular-forms/qwik';
+import type { ApiClientForm } from '~/routes';
 
 export default component$(() => {
   const nav = useNavigate();
   const loc = useLocation();
   const [, { Form, Field }] = useForm<ApiClientForm>({
-    loader: useSignal({ client_id: "" }),
+    loader: useSignal({ client_id: '' }),
   });
 
   const handleSubmit = $<SubmitHandler<ApiClientForm>>((values) => {
@@ -23,19 +24,19 @@ export default component$(() => {
         <p>
           <a href="https://anilist.co/settings/developer" class="text-primary">
             Create an app
-          </a>{" "}
-          and set the redirect_uri to{" "}
+          </a>{' '}
+          and set the redirect_uri to{' '}
           <p>
             <span class="rounded-full text-primary bg-surface">
               {loc.url.protocol +
-                "//" +
+                '//' +
                 loc.url.host +
                 `${
-                  loc.url.host.startsWith("localhost")
-                    ? ""
-                    : ".baby-beamup.club"
+                  loc.url.host.startsWith('localhost')
+                    ? ''
+                    : '.baby-beamup.club'
                 }` +
-                "/oauth/anilist/"}
+                '/oauth/anilist/'}
             </span>
           </p>
         </p>

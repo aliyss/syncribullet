@@ -1,6 +1,6 @@
-import type { RequireAtLeastOne } from "../typing/helpers";
-import { createSimklHeaders } from "./helper";
-import type { SimklIds } from "./types";
+import type { RequireAtLeastOne } from '../typing/helpers';
+import { createSimklHeaders } from './helper';
+import type { SimklIds } from './types';
 
 export interface SetSimklItem {
   name: string;
@@ -37,8 +37,8 @@ export async function setSimklShowItem(
   };
 
   try {
-    const data = await fetch("https://api.simkl.com/sync/history", {
-      method: "POST",
+    const data = await fetch('https://api.simkl.com/sync/history', {
+      method: 'POST',
       headers: createSimklHeaders(userConfig.accesstoken, userConfig.clientid),
       body: JSON.stringify(items),
     });
@@ -66,8 +66,8 @@ export async function setSimklMovieItem(
   };
 
   try {
-    const data = await fetch("https://api.simkl.com/sync/history", {
-      method: "POST",
+    const data = await fetch('https://api.simkl.com/sync/history', {
+      method: 'POST',
       headers: createSimklHeaders(userConfig.accesstoken, userConfig.clientid),
       body: JSON.stringify(items),
     });

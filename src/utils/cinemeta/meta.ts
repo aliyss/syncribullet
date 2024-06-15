@@ -1,5 +1,5 @@
-import type { HaglundIds } from "../haglund/get";
-import type { StremioType } from "../stremio/types";
+import type { HaglundIds } from '../haglund/get';
+import type { StremioType } from '../stremio/types';
 
 export const getCinemetaMetaFromHaglundIds = async (
   type: StremioType,
@@ -19,7 +19,7 @@ export const getCinemetaMeta = async (
     `https://v3-cinemeta.strem.io/meta/${type}/${id}.json`,
     {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     },
   );
@@ -34,7 +34,7 @@ export interface CinemetaMeta {
   meta?: {
     id: string;
     name: string;
-    type: "movie" | "series";
+    type: 'movie' | 'series';
     videos?: CinemetaEpisode[];
     genres?: string[];
     runtime: string;

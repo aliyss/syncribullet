@@ -1,5 +1,5 @@
-export type StremioType = "movie" | "series";
-export type StremioSources = "kitsu" | "imdb";
+export type StremioType = 'movie' | 'series';
+export type StremioSources = 'kitsu' | 'imdb';
 
 export type StremioSubtitleInfo = [StremioType, string, string];
 

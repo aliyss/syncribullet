@@ -1,0 +1,27 @@
+{
+  "singleQuote": true,
+  "semi": true,
+  "tabWidth": 2,
+  "printWidth": 80,
+  "trailingComma": "all",
+  "importOrder": [
+    "^@builder.io/(.*)$",
+    "<THIRD_PARTY_MODULES>",
+    "^~/components/(.*)$",
+    "^~/routes/(.*)$",
+    "^~/utils/connections/(.*)$",
+    "^~/utils/ids/(.*)$",
+    "^~/utils/stremio/(.*)$",
+    "^~/utils/typing/(.*)$",
+    "^~/utils/updaters/(.*)$",
+    "^~/utils/(.*)$",
+    "^~/data/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "plugins": [
+    "prettier-plugin-tailwindcss",
+    "@trivago/prettier-plugin-sort-imports"
+  ]
+}

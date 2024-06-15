@@ -1,7 +1,7 @@
-import {
+import type {
   AnimeResult,
   MediaListStatus,
-} from "@tdanks2000/anilist-wrapper/dist/types";
+} from '@tdanks2000/anilist-wrapper/dist/types';
 
 export interface AnilistLibrary {
   data: {

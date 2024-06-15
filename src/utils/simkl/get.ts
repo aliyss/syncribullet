@@ -1,13 +1,13 @@
-import type { CinemetaMeta } from "../cinemeta/meta";
-import type { IDs } from "../ids/types";
-import { createSimklHeaders } from "./helper";
-import type { SetSimklItem } from "./set";
+import type { CinemetaMeta } from '../cinemeta/meta';
+import type { IDs } from '../ids/types';
+import { createSimklHeaders } from './helper';
+import type { SetSimklItem } from './set';
 import type {
   SimklLibrary,
   SimklLibraryObjectShow,
   SimklLibraryObjectStatus,
   SimklLibraryType,
-} from "./types";
+} from './types';
 
 export async function getSimklItem(
   cinemetaInfo: CinemetaMeta | null,
@@ -19,10 +19,10 @@ export async function getSimklItem(
   }
   return {
     ids: {
-      imdb: cinemetaInfo?.meta?.id || "",
+      imdb: cinemetaInfo?.meta?.id || '',
       ...ids,
     },
-    name: cinemetaInfo?.meta?.name || "",
+    name: cinemetaInfo?.meta?.name || '',
   };
 }
 
@@ -38,7 +38,7 @@ export async function getSimklList(
     const data = await fetch(
       `https://api.simkl.com/sync/all-items/${type}/${status}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: createSimklHeaders(
           userConfig.accesstoken,
           userConfig.clientid,
@@ -53,7 +53,7 @@ export async function getSimklList(
 }
 
 export async function getSimklById(
-  source: "anilist",
+  source: 'anilist',
   id: string,
   userConfig: Record<string, string> | undefined,
 ): Promise<SimklLibraryObjectShow[]> {
@@ -64,7 +64,7 @@ export async function getSimklById(
     const data = await fetch(
       `https://api.simkl.com/search/id?${source}=${id}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: createSimklHeaders(
           userConfig.accesstoken,
           userConfig.clientid,
@@ -89,7 +89,7 @@ export async function getSimklAnimeById(
     const data = await fetch(
       `https://api.simkl.com/anime/${id}?extended=full`,
       {
-        method: "GET",
+        method: 'GET',
         headers: createSimklHeaders(
           userConfig.accesstoken,
           userConfig.clientid,

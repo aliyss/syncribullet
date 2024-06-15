@@ -1,15 +1,15 @@
-import { getAnilistItem, searchAnilistItem } from "../anilist/get";
-import { setAnilistItem } from "../anilist/set";
-import { validateAnilistUserConfig } from "../anilist/validate";
-import { getCinemetaMeta } from "../cinemeta/meta";
-import type { CinemetaEpisode, CinemetaMeta } from "../cinemeta/meta";
-import { convertHaglundIdsToIds, getHaglundIds } from "../haglund/get";
-import type { IDs } from "../ids/types";
-import { getSimklItem } from "../simkl/get";
-import type { SetSimklItem } from "../simkl/set";
-import { setSimklMovieItem, setSimklShowItem } from "../simkl/set";
-import { validateSimklUserConfig } from "../simkl/validate";
-import type { StremioSubtitleId } from "../stremio/types";
+import { getAnilistItem, searchAnilistItem } from '../anilist/get';
+import { setAnilistItem } from '../anilist/set';
+import { validateAnilistUserConfig } from '../anilist/validate';
+import { getCinemetaMeta } from '../cinemeta/meta';
+import type { CinemetaEpisode, CinemetaMeta } from '../cinemeta/meta';
+import { convertHaglundIdsToIds, getHaglundIds } from '../haglund/get';
+import type { IDs } from '../ids/types';
+import { getSimklItem } from '../simkl/get';
+import type { SetSimklItem } from '../simkl/set';
+import { setSimklMovieItem, setSimklShowItem } from '../simkl/set';
+import { validateSimklUserConfig } from '../simkl/validate';
+import type { StremioSubtitleId } from '../stremio/types';
 
 export const updateStandard = async (
   stremioInfo: StremioSubtitleId,
@@ -21,7 +21,7 @@ export const updateStandard = async (
   if (
     ids.imdb &&
     !ids.anilist &&
-    validateSimklUserConfig(userConfig["simkl"])
+    validateSimklUserConfig(userConfig['simkl'])
   ) {
     cinemetaInfo = await getCinemetaMeta(stremioInfo.type, ids.imdb);
   }
@@ -29,23 +29,23 @@ export const updateStandard = async (
   const simklResult: SetSimklItem | undefined = await getSimklItem(
     cinemetaInfo,
     ids,
-    userConfig["simkl"],
+    userConfig['simkl'],
   );
 
   let timeout = 0;
   if (cinemetaInfo?.meta?.runtime) {
-    timeout = parseInt(cinemetaInfo.meta.runtime.split(" ")[0]) * 60 * 1000;
+    timeout = parseInt(cinemetaInfo.meta.runtime.split(' ')[0]) * 60 * 1000;
   }
 
   let anilistResult: any | undefined = ids.anilist
-    ? await getAnilistItem(ids.anilist, userConfig["anilist"])
+    ? await getAnilistItem(ids.anilist, userConfig['anilist'])
     : undefined;
 
   if (
     !cinemetaInfo &&
     ids.imdb !== undefined &&
     !anilistResult &&
-    validateAnilistUserConfig(userConfig["anilist"])
+    validateAnilistUserConfig(userConfig['anilist'])
   ) {
     cinemetaInfo = await getCinemetaMeta(stremioInfo.type, ids.imdb);
   }
@@ -59,7 +59,7 @@ export const updateStandard = async (
     );
     anilistResult = await searchAnilistItem(
       cinemetaInfo,
-      userConfig["anilist"],
+      userConfig['anilist'],
       video,
     );
   }
@@ -73,27 +73,27 @@ export const updateStandard = async (
       const anilistUpdateResult = await setAnilistItem(
         anilistResult,
         episodeCount,
-        userConfig["anilist"],
+        userConfig['anilist'],
       );
       let simklUpdateResult;
-      if (stremioInfo.type === "series" && simklResult) {
+      if (stremioInfo.type === 'series' && simklResult) {
         simklUpdateResult = await setSimklShowItem(
           simklResult,
           seasonCount,
           episodeCount,
-          userConfig["simkl"],
+          userConfig['simkl'],
         );
-      } else if (stremioInfo.type === "movie" && simklResult) {
+      } else if (stremioInfo.type === 'movie' && simklResult) {
         simklUpdateResult = await setSimklMovieItem(
           simklResult,
-          userConfig["simkl"],
+          userConfig['simkl'],
         );
       }
       if (anilistUpdateResult) {
-        syncedItems.push("anilist");
+        syncedItems.push('anilist');
       }
       if (simklUpdateResult) {
-        syncedItems.push("simkl");
+        syncedItems.push('simkl');
       }
     },
     timeout / 1000 / 60,
@@ -106,7 +106,7 @@ export const updateNormal = async (
 ) => {
   let ids: IDs | undefined;
   switch (stremioInfo.source) {
-    case "kitsu":
+    case 'kitsu':
       const haglundIds = await getHaglundIds(
         stremioInfo.source,
         stremioInfo.id,

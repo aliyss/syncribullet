@@ -1,8 +1,9 @@
-import type { RequestHandler } from "@builder.io/qwik-city";
-import { createAnilistCatalog } from "~/utils/anilist/helper";
-import type { ManifestCatalogItem } from "~/utils/manifest";
-import { manifest } from "~/utils/manifest";
-import { createSimklCatalog } from "~/utils/simkl/helper";
+import type { RequestHandler } from '@builder.io/qwik-city';
+
+import { createAnilistCatalog } from '~/utils/anilist/helper';
+import type { ManifestCatalogItem } from '~/utils/manifest';
+import { manifest } from '~/utils/manifest';
+import { createSimklCatalog } from '~/utils/simkl/helper';
 
 export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
   cacheControl({
@@ -11,7 +12,7 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
     sMaxAge: 0,
     staleWhileRevalidate: 0,
   });
-  const userConfigString = params.config.split("|");
+  const userConfigString = params.config.split('|');
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
 
@@ -21,15 +22,15 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
   };
 
   for (let i = 0; i < userConfigString.length; i++) {
-    const lineConfig = userConfigString[i].split("-=-");
-    const keyConfig = lineConfig[0].split("_");
+    const lineConfig = userConfigString[i].split('-=-');
+    const keyConfig = lineConfig[0].split('_');
     userConfig[keyConfig[0]] = {
       ...(userConfig[keyConfig[0]] ? userConfig[keyConfig[0]] : {}),
       [keyConfig[1]]: lineConfig[1],
     };
-    if (keyConfig[0] === "simkl" && lineConfig[1]) {
+    if (keyConfig[0] === 'simkl' && lineConfig[1]) {
       catalogConfig.simkl = true;
-    } else if (keyConfig[0] === "anilist" && lineConfig[1]) {
+    } else if (keyConfig[0] === 'anilist' && lineConfig[1]) {
       catalogConfig.anilist = true;
     }
   }

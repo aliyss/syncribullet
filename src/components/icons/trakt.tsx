@@ -1,6 +1,6 @@
-import type { QwikIntrinsicElements } from "@builder.io/qwik";
+import type { QwikIntrinsicElements } from '@builder.io/qwik';
 
-export function SimpleIconsTrakt(props: QwikIntrinsicElements["svg"]) {
+export function SimpleIconsTrakt(props: QwikIntrinsicElements['svg']) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -8,7 +8,7 @@ export function SimpleIconsTrakt(props: QwikIntrinsicElements["svg"]) {
       height="1em"
       viewBox="0 0 24 24"
       {...props}
-      key={"trakt"}
+      key={'trakt'}
     >
       <path
         fill="#888888"

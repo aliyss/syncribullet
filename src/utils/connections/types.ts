@@ -1,1 +1,1 @@
-export type ReceiverTypes = "simkl" | "anilist";
+export type ReceiverTypes = 'simkl' | 'anilist';

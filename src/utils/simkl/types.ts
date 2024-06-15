@@ -1,13 +1,13 @@
-import type { IDs } from "../ids/types";
-import type { RequireAtLeastOne } from "../typing/helpers";
+import type { IDs } from '../ids/types';
+import type { RequireAtLeastOne } from '../typing/helpers';
 
-export type SimklLibraryType = "movies" | "anime" | "shows";
+export type SimklLibraryType = 'movies' | 'anime' | 'shows';
 export type SimklLibraryObjectStatus =
-  | "watching"
-  | "plantowatch"
-  | "completed"
-  | "hold"
-  | "dropped";
+  | 'watching'
+  | 'plantowatch'
+  | 'completed'
+  | 'hold'
+  | 'dropped';
 
 export interface SimklIds extends IDs {}
 
@@ -79,12 +79,12 @@ export interface SimklLibraryShowObject extends SimklLibraryObjectBase {
 }
 
 export type SimklLibraryAnimeType =
-  | "tv"
-  | "special"
-  | "ova"
-  | "movie"
-  | "music video"
-  | "ona";
+  | 'tv'
+  | 'special'
+  | 'ova'
+  | 'movie'
+  | 'music video'
+  | 'ona';
 
 export interface SimklLibraryAnimeObject extends SimklLibraryShowObject {
   anime_type: SimklLibraryAnimeType;

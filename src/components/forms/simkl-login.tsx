@@ -1,18 +1,19 @@
-import { component$, $, useSignal, useTask$ } from "@builder.io/qwik";
-import { useForm } from "@modular-forms/qwik";
-import type { SubmitHandler } from "@modular-forms/qwik";
-import type { ApiClientCodeForm, ApiClientForm } from "~/routes";
-import { server$, useLocation, useNavigate } from "@builder.io/qwik-city";
+import { $, component$, useSignal, useTask$ } from '@builder.io/qwik';
+import { server$, useLocation, useNavigate } from '@builder.io/qwik-city';
+
+import { useForm } from '@modular-forms/qwik';
+import type { SubmitHandler } from '@modular-forms/qwik';
+import type { ApiClientCodeForm, ApiClientForm } from '~/routes';
 
 export const getCode = server$(async function (
   redirect_url: string,
   client_id?: string,
 ) {
   if (!client_id) {
-    client_id = this.env.get("PRIVATE_SIMKL_CLIENT_ID");
+    client_id = this.env.get('PRIVATE_SIMKL_CLIENT_ID');
   }
   if (!client_id) {
-    return { user_code: "", verification_url: "" };
+    return { user_code: '', verification_url: '' };
   }
   try {
     const data = await fetch(
@@ -20,7 +21,7 @@ export const getCode = server$(async function (
     );
     return await data.json();
   } catch (e) {
-    return { user_code: "", verification_url: "" };
+    return { user_code: '', verification_url: '' };
   }
 });
 
@@ -29,13 +30,13 @@ export default component$(() => {
   const nav = useNavigate();
   const [, { Form, Field }] = useForm<ApiClientForm>({
     loader: useSignal({
-      client_id: "",
+      client_id: '',
     }),
   });
 
   const client_id = useSignal<string | boolean>(false);
 
-  const code = useSignal({ user_code: "", verification_url: "" });
+  const code = useSignal({ user_code: '', verification_url: '' });
 
   const [, { Form: FormCode, Field: FieldCode }] = useForm<ApiClientCodeForm>({
     loader: code,
@@ -43,9 +44,9 @@ export default component$(() => {
 
   const setToken = $(() => {
     localStorage.setItem(
-      "simkl_code",
+      'simkl_code',
       JSON.stringify({
-        client_id: typeof client_id.value === "string" ? client_id.value : "",
+        client_id: typeof client_id.value === 'string' ? client_id.value : '',
         code: code.value.user_code,
       }),
     );
@@ -56,14 +57,14 @@ export default component$(() => {
       try {
         const data = await getCode(
           location.url.protocol +
-            "//" +
+            '//' +
             location.url.host +
             `${
-              location.url.host.startsWith("localhost")
-                ? ""
-                : ".baby-beamup.club"
+              location.url.host.startsWith('localhost')
+                ? ''
+                : '.baby-beamup.club'
             }` +
-            "/oauth/simkl/",
+            '/oauth/simkl/',
         );
         code.value = data;
         if (code.value.user_code) {
@@ -79,7 +80,7 @@ export default component$(() => {
   const handleSubmit = $<SubmitHandler<ApiClientForm>>(async (values) => {
     try {
       const redirect_url =
-        location.url.protocol + "//" + location.url.host + "/oauth/simkl/";
+        location.url.protocol + '//' + location.url.host + '/oauth/simkl/';
       const client_id_p = values.client_id;
       const data = await fetch(
         `https://api.simkl.com/oauth/pin?client_id=${client_id_p}&redirect=${redirect_url}`,
@@ -104,14 +105,14 @@ export default component$(() => {
                 class="text-primary"
               >
                 Create an app
-              </a>{" "}
-              and set the redirect_uri to{" "}
+              </a>{' '}
+              and set the redirect_uri to{' '}
               <p>
                 <span class="rounded-full text-primary bg-surface">
                   {location.url.protocol +
-                    "//" +
+                    '//' +
                     location.url.host +
-                    "/oauth/simkl/"}
+                    '/oauth/simkl/'}
                 </span>
               </p>
             </p>

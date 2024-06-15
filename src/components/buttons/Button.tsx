@@ -1,5 +1,5 @@
-import { Slot, component$ } from "@builder.io/qwik";
-import type { PropFunction, QwikMouseEvent } from "@builder.io/qwik";
+import { Slot, component$ } from '@builder.io/qwik';
+import type { PropFunction, QwikMouseEvent } from '@builder.io/qwik';
 
 export interface ButtonProps {
   backgroundColour: string;

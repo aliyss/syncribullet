@@ -1,8 +1,8 @@
-import { description, version } from "../../package.json";
+import { description, version } from '../../package.json';
 
 export interface ManifestCatalogItem {
   id: string;
-  type: "movie" | "series" | "channels";
+  type: 'movie' | 'series' | 'channels';
   name: string;
   genres?: string[];
   extra?: { name: string; isRequired: boolean }[];
@@ -17,12 +17,12 @@ export interface Manifest {
   background: string;
   catalogs: ManifestCatalogItem[];
   resources: [
-    "catalog",
-    "meta" | { name: "meta"; types: ["movie", "series"]; idPrefixes: string[] },
-    "stream",
-    "subtitles",
+    'catalog',
+    'meta' | { name: 'meta'; types: ['movie', 'series']; idPrefixes: string[] },
+    'stream',
+    'subtitles',
   ];
-  types: ["series", "movie"];
+  types: ['series', 'movie'];
   behaviorHints: {
     configurable: boolean;
     configurationRequired: boolean;
@@ -31,23 +31,23 @@ export interface Manifest {
 
 export const manifest: Manifest = {
   id: `com.aliyss.syncribullet`,
-  name: "syncribullet",
+  name: 'syncribullet',
   version: version,
   description,
-  logo: "https://github.com/aliyss/syncribullet/blob/master/public/android-chrome-192x192.png?raw=true",
-  background: "",
+  logo: 'https://github.com/aliyss/syncribullet/blob/master/public/android-chrome-192x192.png?raw=true',
+  background: '',
   catalogs: [],
   resources: [
-    "catalog",
+    'catalog',
     {
-      name: "meta",
-      types: ["movie", "series"],
-      idPrefixes: ["anilist_"],
+      name: 'meta',
+      types: ['movie', 'series'],
+      idPrefixes: ['anilist_'],
     },
-    "stream",
-    "subtitles",
+    'stream',
+    'subtitles',
   ],
-  types: ["series", "movie"],
+  types: ['series', 'movie'],
   behaviorHints: {
     configurable: true,
     configurationRequired: true,

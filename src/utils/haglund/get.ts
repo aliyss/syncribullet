@@ -1,4 +1,4 @@
-import type { IDs } from "../ids/types";
+import type { IDs } from '../ids/types';
 
 export const getHaglundIds = async (
   type: string,
@@ -8,7 +8,7 @@ export const getHaglundIds = async (
     `https://arm.haglund.dev/api/v2/ids?source=${type}&id=${id}`,
     {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     },
   );

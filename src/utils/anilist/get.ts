@@ -1,5 +1,6 @@
 import { Anilist as NewAnilist } from "@tdanks2000/anilist-wrapper";
-import Anilist, { MediaSearchEntry } from "anilist-node";
+import type { MediaSearchEntry } from "anilist-node";
+import Anilist from "anilist-node";
 import type { CinemetaEpisode, CinemetaMeta } from "../cinemeta/meta";
 import type { MediaListStatus } from "@tdanks2000/anilist-wrapper/dist/types";
 import type { AnilistLibrary } from "./types";

@@ -1,4 +1,4 @@
-import Anilist from "anilist-node";
+import Anilist from 'anilist-node';
 
 export async function setAnilistItem(
   anilistResult:
@@ -6,7 +6,7 @@ export async function setAnilistItem(
         id: number;
         mediaId?: number;
         progress: number;
-        status: "COMPLETED" | "CURRENT";
+        status: 'COMPLETED' | 'CURRENT';
       }
     | undefined,
   progress: number,
@@ -15,11 +15,11 @@ export async function setAnilistItem(
   if (!anilistResult || !userConfig || !userConfig.accesstoken) {
     return;
   }
-  let state: "COMPLETED" | "CURRENT" =
+  let state: 'COMPLETED' | 'CURRENT' =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    anilistResult && anilistResult.status === "COMPLETED"
-      ? "COMPLETED"
-      : "CURRENT";
+    anilistResult && anilistResult.status === 'COMPLETED'
+      ? 'COMPLETED'
+      : 'CURRENT';
 
   const hasProgress = anilistResult.progress;
   const episodeCount = progress || 1;
@@ -27,12 +27,12 @@ export async function setAnilistItem(
     return;
   }
 
-  if (state === "COMPLETED") {
+  if (state === 'COMPLETED') {
     return;
   }
 
   if (progress === 0 && !anilistResult.mediaId) {
-    state = "COMPLETED";
+    state = 'COMPLETED';
   }
 
   try {

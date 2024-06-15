@@ -1,4 +1,4 @@
-import { createTVDBHeaders } from "./helper";
+import { createTVDBHeaders } from './helper';
 
 export async function findTVDBItem(
   title: string,
@@ -11,10 +11,10 @@ export async function findTVDBItem(
   try {
     const data = await fetch(
       `https://api4.thetvdb.com/v4/search?query=${title}&limit=1${
-        options.year ? "&year=" + options.year : ""
+        options.year ? '&year=' + options.year : ''
       }`,
       {
-        method: "GET",
+        method: 'GET',
         headers: createTVDBHeaders(userConfig.bearerToken),
       },
     );
