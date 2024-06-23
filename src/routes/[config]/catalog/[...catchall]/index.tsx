@@ -24,7 +24,7 @@ export const onGet: RequestHandler = async ({
     cacheControl({
       public: true,
       maxAge: 60 * 20,
-      staleWhileRevalidate: 60 * 60 * 24 * 365,
+      staleWhileRevalidate: 60 * 15,
     });
   }
 
