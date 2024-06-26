@@ -68,8 +68,20 @@ export const updateStandard = async (
     simklResult.name = anilistResult.seasonTitle;
   }
 
+  if (anilistResult && simklResult) {
+    simklResult.ids.anilist = anilistResult.mediaId || anilistResult.id;
+    if (simklResult.ids.anilist) {
+      simklResult.ids.imdb = undefined;
+    }
+  }
+
   const seasonCount = stremioInfo.season || 0;
   const episodeCount = stremioInfo.episode || 0;
+
+  console.log(anilistResult, 'anilistResult');
+  console.log(simklResult, 'simklResult');
+  console.log(seasonCount, 'seasonCount');
+  console.log(episodeCount, 'episodeCount');
 
   setTimeout(
     async function () {

@@ -38,7 +38,9 @@ export async function setAnilistItem(
   try {
     const legacyAnilist = new Anilist(userConfig.accesstoken);
     return await legacyAnilist.lists.addEntry(
-      anilistResult.mediaId || anilistResult.id,
+      parseInt(
+        anilistResult.mediaId?.toString() || anilistResult.id.toString(),
+      ),
       // @ts-ignore
       {
         status: state,

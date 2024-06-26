@@ -99,16 +99,7 @@ export async function searchAnilistItem(
   try {
     const anilist = new NewAnilist(userConfig.accesstoken);
     for (let i = 0; i < tempAnilistResult.media.length; i++) {
-      if (
-        episode &&
-        episode.season &&
-        episode.season > 1 &&
-        !tempAnilistResult.media[i].title.english.includes(
-          episode.season.toString(),
-        )
-      ) {
-        continue;
-      }
+      console.log(tempAnilistResult.media[i].title);
       const anilistResult = (await anilist.media.anime(
         tempAnilistResult.media[i].id,
       )) as {
