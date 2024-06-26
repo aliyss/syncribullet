@@ -64,7 +64,7 @@ export const updateStandard = async (
     );
   }
 
-  if (anilistResult.seasonTitle && simklResult) {
+  if (anilistResult && anilistResult.seasonTitle && simklResult) {
     simklResult.name = anilistResult.seasonTitle;
   }
 
