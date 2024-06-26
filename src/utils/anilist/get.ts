@@ -1,9 +1,10 @@
-import { Anilist as NewAnilist } from "@tdanks2000/anilist-wrapper";
-import type { MediaSearchEntry } from "anilist-node";
-import Anilist from "anilist-node";
-import type { CinemetaEpisode, CinemetaMeta } from "../cinemeta/meta";
-import type { MediaListStatus } from "@tdanks2000/anilist-wrapper/dist/types";
-import type { AnilistLibrary } from "./types";
+import { Anilist as NewAnilist } from '@tdanks2000/anilist-wrapper';
+import type { MediaListStatus } from '@tdanks2000/anilist-wrapper/dist/types';
+import type { MediaSearchEntry } from 'anilist-node';
+import Anilist from 'anilist-node';
+
+import type { CinemetaEpisode, CinemetaMeta } from '../cinemeta/meta';
+import type { AnilistLibrary } from './types';
 
 export async function getAnilistItem(
   id: number,
@@ -15,10 +16,13 @@ export async function getAnilistItem(
 
   try {
     const anilist = new NewAnilist(userConfig.accesstoken);
-    const anilistResult = <
-      { data?: { Media: { mediaListEntry: any; streamingEpisodes?: any[] } } }
-    >await anilist.media.anime(id);
-    return anilistResult.data?.Media.mediaListEntry;
+    const anilistResult = (await anilist.media.anime(id)) as {
+      data?: { Media: { mediaListEntry: any; streamingEpisodes?: any[] } };
+    };
+    return {
+      seasonTitle: (anilistResult.data?.Media as any)?.title?.english,
+      ...anilistResult.data?.Media.mediaListEntry,
+    };
   } catch (e) {
     console.log(e);
   }
@@ -40,14 +44,14 @@ export async function searchAnilistItem(
 
   if (
     !(
-      cinemetaInfo.meta.genres && cinemetaInfo.meta.genres.includes("Animation")
+      cinemetaInfo.meta.genres && cinemetaInfo.meta.genres.includes('Animation')
     )
   ) {
     return;
   }
 
   const releaseDate = episode
-    ? episode.released.split("T")[0].split("-")
+    ? episode.released.split('T')[0].split('-')
     : undefined;
 
   let tempAnilistResult: MediaSearchEntry | undefined;
@@ -59,16 +63,16 @@ export async function searchAnilistItem(
         cinemetaInfo.meta.name,
         {
           // @ts-ignore
-          startDate_lesser: parseInt(releaseDate.join("")),
+          startDate_lesser: parseInt(releaseDate.join('')),
           // @ts-ignore
-          endDate_greater: parseInt(releaseDate.join("")),
+          endDate_greater: parseInt(releaseDate.join('')),
         },
       );
     }
 
     if (
       !Array.isArray(tempAnilistResult?.media) ||
-      typeof tempAnilistResult?.media[0] === "undefined"
+      typeof tempAnilistResult?.media[0] === 'undefined'
     ) {
       tempAnilistResult = await node_anilist.searchEntry.anime(
         cinemetaInfo.meta.name,
@@ -85,7 +89,7 @@ export async function searchAnilistItem(
 
   if (
     !Array.isArray(tempAnilistResult.media) ||
-    typeof tempAnilistResult.media[0] === "undefined"
+    typeof tempAnilistResult.media[0] === 'undefined'
   ) {
     return;
   }
@@ -105,9 +109,11 @@ export async function searchAnilistItem(
       ) {
         continue;
       }
-      const anilistResult = <
-        { data?: { Media: { mediaListEntry: any; streamingEpisodes?: any[] } } }
-      >await anilist.media.anime(tempAnilistResult.media[i].id);
+      const anilistResult = (await anilist.media.anime(
+        tempAnilistResult.media[i].id,
+      )) as {
+        data?: { Media: { mediaListEntry: any; streamingEpisodes?: any[] } };
+      };
       if (
         anilistResult.data &&
         anilistResult.data.Media.streamingEpisodes &&
@@ -120,6 +126,7 @@ export async function searchAnilistItem(
 
         if (anilistResultWithEpisode) {
           return {
+            seasonTitle: (anilistResult.data.Media as any)?.title?.english,
             ...anilistResult.data.Media.mediaListEntry,
             mediaId: tempAnilistResult.media[i].id,
           };
@@ -128,6 +135,7 @@ export async function searchAnilistItem(
 
       if (!firstMatch && anilistResult.data?.Media.mediaListEntry) {
         firstMatch = {
+          seasonTitle: (anilistResult.data.Media as any)?.title?.english,
           ...anilistResult.data.Media.mediaListEntry,
           mediaId: tempAnilistResult.media[i].id,
         };
@@ -142,7 +150,10 @@ export async function searchAnilistItem(
 
         for (let j = 0; j < titles.length; j++) {
           if (titles[j] === cinemetaInfo.meta.name) {
-            return anilistResult.data.Media;
+            return {
+              seasonTitle: (anilistResult.data.Media as any)?.title?.english,
+              ...anilistResult.data.Media,
+            };
           }
         }
       } else if (
@@ -155,7 +166,10 @@ export async function searchAnilistItem(
 
         for (let j = 0; j < titles.length; j++) {
           if (titles[j] === cinemetaInfo.meta.name) {
-            secondMatch = anilistResult.data.Media;
+            secondMatch = {
+              seasonTitle: (anilistResult.data.Media as any)?.title?.english,
+              ...anilistResult.data.Media,
+            };
           }
         }
       }

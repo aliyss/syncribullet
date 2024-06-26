@@ -20,7 +20,7 @@ export async function setSimklShowItem(
   const items = {
     shows: [
       {
-        title: simklResult.name,
+        title: undefined,
         ids: simklResult.ids,
         seasons: [
           {

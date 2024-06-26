@@ -64,6 +64,10 @@ export const updateStandard = async (
     );
   }
 
+  if (anilistResult.seasonTitle && simklResult) {
+    simklResult.name = anilistResult.seasonTitle;
+  }
+
   const seasonCount = stremioInfo.season || 0;
   const episodeCount = stremioInfo.episode || 0;
 
@@ -115,11 +119,13 @@ export const updateNormal = async (
         return;
       }
       ids = convertHaglundIdsToIds(haglundIds);
+      console.log(ids, 'kitsu');
       break;
     default:
       ids = {
         imdb: stremioInfo.id,
       };
+      console.log(ids, 'imdb');
       break;
   }
   updateStandard(stremioInfo, ids, userConfig);

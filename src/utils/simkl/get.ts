@@ -1,8 +1,10 @@
 import type { CinemetaMeta } from '../cinemeta/meta';
 import type { IDs } from '../ids/types';
+import type { RequireAtLeastOne } from '../typing/helpers';
 import { createSimklHeaders } from './helper';
 import type { SetSimklItem } from './set';
 import type {
+  SimklIds,
   SimklLibrary,
   SimklLibraryObjectShow,
   SimklLibraryObjectStatus,
@@ -17,11 +19,25 @@ export async function getSimklItem(
   if (!userConfig || !userConfig.accesstoken) {
     return;
   }
+  const imdbId = ids.imdb ? ids.imdb : cinemetaInfo?.meta?.id || undefined;
+  let idsResult = ids;
+  if (!ids.anilist && !ids.kitsu) {
+    idsResult = {
+      ...ids,
+      imdb: imdbId,
+    };
+  } else {
+    delete idsResult.imdb;
+    delete idsResult.tvdb;
+    delete idsResult.tmdb;
+    idsResult = {
+      ...ids,
+    };
+  }
   return {
     ids: {
-      imdb: cinemetaInfo?.meta?.id || '',
-      ...ids,
-    },
+      ...idsResult,
+    } as RequireAtLeastOne<SimklIds>,
     name: cinemetaInfo?.meta?.name || '',
   };
 }
