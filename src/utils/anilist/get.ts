@@ -21,7 +21,8 @@ export async function getAnilistItem(
     };
     return {
       seasonTitle: (anilistResult.data?.Media as any)?.title?.english,
-      ...anilistResult.data?.Media.mediaListEntry,
+      ...(anilistResult.data?.Media.mediaListEntry ||
+        anilistResult.data?.Media),
     };
   } catch (e) {
     console.log(e);
@@ -99,7 +100,6 @@ export async function searchAnilistItem(
   try {
     const anilist = new NewAnilist(userConfig.accesstoken);
     for (let i = 0; i < tempAnilistResult.media.length; i++) {
-      console.log(tempAnilistResult.media[i].title);
       const anilistResult = (await anilist.media.anime(
         tempAnilistResult.media[i].id,
       )) as {

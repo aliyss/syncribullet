@@ -3,8 +3,8 @@ import { setAnilistItem } from '../anilist/set';
 import { validateAnilistUserConfig } from '../anilist/validate';
 import { getCinemetaMeta } from '../cinemeta/meta';
 import type { CinemetaEpisode, CinemetaMeta } from '../cinemeta/meta';
-import { convertHaglundIdsToIds, getHaglundIds } from '../haglund/get';
 import type { IDs } from '../ids/types';
+import { convertKitsuMappingIdsToIds, getKitsuMappingIds } from '../kitsu/get';
 import { getSimklItem } from '../simkl/get';
 import type { SetSimklItem } from '../simkl/set';
 import { setSimklMovieItem, setSimklShowItem } from '../simkl/set';
@@ -123,21 +123,16 @@ export const updateNormal = async (
   let ids: IDs | undefined;
   switch (stremioInfo.source) {
     case 'kitsu':
-      const haglundIds = await getHaglundIds(
-        stremioInfo.source,
-        stremioInfo.id,
-      );
-      if (!haglundIds) {
+      const kitsuMappings = await getKitsuMappingIds(stremioInfo.id);
+      if (!kitsuMappings || kitsuMappings.length === 0) {
         return;
       }
-      ids = convertHaglundIdsToIds(haglundIds);
-      console.log(ids, 'kitsu');
+      ids = convertKitsuMappingIdsToIds(kitsuMappings);
       break;
     default:
       ids = {
         imdb: stremioInfo.id,
       };
-      console.log(ids, 'imdb');
       break;
   }
   updateStandard(stremioInfo, ids, userConfig);

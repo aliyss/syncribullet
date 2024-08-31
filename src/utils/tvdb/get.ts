@@ -18,7 +18,6 @@ export async function findTVDBItem(
         headers: createTVDBHeaders(userConfig.bearerToken),
       },
     );
-    console.log(data);
     return await data.json();
   } catch (e) {
     console.log(e);
