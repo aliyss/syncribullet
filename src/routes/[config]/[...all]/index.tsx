@@ -3,6 +3,10 @@ import type { RequestHandler } from '@builder.io/qwik-city';
 import { createAnilistCatalog } from '~/utils/anilist/helper';
 import type { ManifestCatalogItem } from '~/utils/manifest';
 import { manifest } from '~/utils/manifest';
+import {
+  ReceiverSettings,
+  unstringifySettings,
+} from '~/utils/settings/stringify';
 import { createSimklCatalog } from '~/utils/simkl/helper';
 
 export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
@@ -21,6 +25,15 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
     anilist: false,
   };
 
+  const senderSettings: Record<string, ReceiverSettings> = {
+    simkl: {
+      catalogs: [],
+    },
+    anilist: {
+      catalogs: [],
+    },
+  };
+
   for (let i = 0; i < userConfigString.length; i++) {
     const lineConfig = userConfigString[i].split('-=-');
     const keyConfig = lineConfig[0].split('_');
@@ -28,7 +41,13 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
       ...(userConfig[keyConfig[0]] ? userConfig[keyConfig[0]] : {}),
       [keyConfig[1]]: lineConfig[1],
     };
-    if (keyConfig[0] === 'simkl' && lineConfig[1]) {
+    if (keyConfig[1] === 'settings') {
+      const settings = unstringifySettings(
+        lineConfig[1],
+        keyConfig[0] as 'anilist' | 'simkl',
+      );
+      senderSettings[keyConfig[0]] = settings;
+    } else if (keyConfig[0] === 'simkl' && lineConfig[1]) {
       catalogConfig.simkl = true;
     } else if (keyConfig[0] === 'anilist' && lineConfig[1]) {
       catalogConfig.anilist = true;
@@ -37,11 +56,17 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
 
   let catalogs: ManifestCatalogItem[] = [];
   if (catalogConfig.simkl) {
-    catalogs = [...catalogs, ...createSimklCatalog()];
+    catalogs = [
+      ...catalogs,
+      ...createSimklCatalog(senderSettings['simkl'].catalogs),
+    ];
   }
 
   if (catalogConfig.anilist) {
-    catalogs = [...catalogs, ...createAnilistCatalog()];
+    catalogs = [
+      ...catalogs,
+      ...createAnilistCatalog(senderSettings['anilist'].catalogs),
+    ];
   }
 
   manifest.catalogs = catalogs;

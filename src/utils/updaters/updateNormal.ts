@@ -78,11 +78,6 @@ export const updateStandard = async (
   const seasonCount = stremioInfo.season || 0;
   const episodeCount = stremioInfo.episode || 0;
 
-  console.log(anilistResult, 'anilistResult');
-  console.log(simklResult, 'simklResult');
-  console.log(seasonCount, 'seasonCount');
-  console.log(episodeCount, 'episodeCount');
-
   setTimeout(
     async function () {
       const syncedItems = [];

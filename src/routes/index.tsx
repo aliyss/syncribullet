@@ -11,6 +11,7 @@ import type { DocumentHead } from '@builder.io/qwik-city';
 // Components
 import { Button } from '~/components/buttons/Button';
 import AnilistLogin from '~/components/forms/anilist-login';
+import ManifestSettings from '~/components/forms/manifest-settings';
 import SimklLogin from '~/components/forms/simkl-login';
 import StremioLogin from '~/components/forms/stremio-login';
 
@@ -19,13 +20,38 @@ import { configureReceivers, receivers } from '~/utils/connections/receivers';
 // Types
 import type { ReceiverConfig } from '~/utils/connections/receivers';
 
+import { getAnilistCatalogs } from '~/utils/anilist/helper';
+import type { ReceiverSettings } from '~/utils/settings/stringify';
+import { stringifySettings } from '~/utils/settings/stringify';
+import { getSimklCatalogs } from '~/utils/simkl/helper';
+
 export type ApiClientForm = {
   client_id: string;
+};
+
+export type ManifestSettingsForm = {
+  catalogs: IManifestSettings['catalogs'];
 };
 
 export type ApiClientCodeForm = {
   user_code: string;
 };
+
+export interface IManifestSettings extends ReceiverSettings {
+  catalogs: { id: string; name: string; value: boolean }[];
+}
+
+export interface ManifestSettingsInfo {
+  catalogs: { id: string; name: string }[];
+}
+
+export interface CurrentReceiver {
+  id: string;
+  settings?: {
+    info: ManifestSettingsInfo;
+    data: IManifestSettings;
+  };
+}
 
 export default component$(() => {
   const nav = useNavigate();
@@ -42,7 +68,7 @@ export default component$(() => {
   const configuredReceivers = useStore<Record<string, ReceiverConfig>>(
     configureReceivers(),
   );
-  const currentReceiver = useSignal<string | null>(null);
+  const currentReceiver = useSignal<CurrentReceiver | null>(null);
 
   useVisibleTask$(() => {
     const configInfo = window.location.search.split('config=')[1];
@@ -146,6 +172,48 @@ export default component$(() => {
     }
   });
 
+  const getLocalSettings = $(async (id: string) => {
+    const localSettings = window.localStorage.getItem(`${id}-settings`);
+    const catalogs = [];
+    if (id === 'anilist') {
+      catalogs.push(...getAnilistCatalogs());
+    } else if (id === 'simkl') {
+      catalogs.push(...getSimklCatalogs());
+    }
+    if (localSettings) {
+      return {
+        data: JSON.parse(localSettings) as IManifestSettings,
+        info: {
+          catalogs: catalogs.map((item) => {
+            return {
+              id: item.id,
+              name: item.name,
+            };
+          }),
+        },
+      };
+    }
+    return {
+      data: {
+        catalogs: catalogs.map((item) => {
+          return {
+            id: item.id,
+            name: item.name,
+            value: true,
+          };
+        }),
+      } as IManifestSettings,
+      info: {
+        catalogs: catalogs.map((item) => {
+          return {
+            id: item.id,
+            name: item.name,
+          };
+        }),
+      },
+    };
+  });
+
   const liveSyncItems = receivers
     .filter((item) => item.liveSync)
     .map((item) => {
@@ -158,8 +226,15 @@ export default component$(() => {
               ? 'https://api.iconify.design/tabler:checks.svg?color=%237FFD4F'
               : item.icon
           }
-          onClick$={() => {
-            currentReceiver.value = item.id;
+          onClick$={async () => {
+            const catalogs = await getLocalSettings(item.id);
+            currentReceiver.value = {
+              id: item.id,
+              settings: {
+                data: catalogs.data,
+                info: catalogs.info,
+              },
+            };
           }}
         >
           {item.text}
@@ -169,7 +244,6 @@ export default component$(() => {
 
   const removeAuthentication = $((name?: string | null) => {
     if (name) {
-      console.log(configuredReceivers);
       configuredReceivers[name].enabled = false;
       configuredReceivers[name].data = undefined;
       window.localStorage.removeItem(name);
@@ -207,6 +281,22 @@ export default component$(() => {
             configURL.push(
               `anilist_accesstoken-=-${configuredReceivers['anilist'].data.access_token}`,
             );
+            const anilistSettings =
+              window.localStorage.getItem('anilist-settings');
+            if (anilistSettings) {
+              try {
+                const anilistSettingsData: IManifestSettings =
+                  JSON.parse(anilistSettings);
+                configURL.push(
+                  `anilist_settings-=-${stringifySettings(
+                    anilistSettingsData,
+                    'anilist',
+                  )}`,
+                );
+              } catch (e) {
+                console.error(e);
+              }
+            }
           }
           if (configuredReceivers['simkl'].data) {
             configURL.push(
@@ -215,6 +305,22 @@ export default component$(() => {
             configURL.push(
               `simkl_clientid-=-${configuredReceivers['simkl'].data.client_id}`,
             );
+
+            const simklSettings = window.localStorage.getItem('simkl-settings');
+            if (simklSettings) {
+              try {
+                const simklSettingsData: IManifestSettings =
+                  JSON.parse(simklSettings);
+                configURL.push(
+                  `simkl_settings-=-${stringifySettings(
+                    simklSettingsData,
+                    'simkl',
+                  )}`,
+                );
+              } catch (e) {
+                console.error(e);
+              }
+            }
           }
           if (configuredReceivers['stremio'].data) {
             configURL.push(
@@ -262,29 +368,63 @@ export default component$(() => {
         {currentReceiver.value !== null ? (
           <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 bg-secondary/20">
             <h2 class="w-full text-xl font-bold text-center md:text-3xl">
-              {configuredReceivers[currentReceiver.value].receiver.text}
+              {configuredReceivers[currentReceiver.value.id].receiver.text}
             </h2>
             <div class="flex flex-col gap-6 pt-5 md:flex-row">
               <div class="flex flex-col gap-4 w-full text-center">
                 <div class="flex flex-col gap-2 items-center pt-1 text-on-background">
-                  {configuredReceivers[currentReceiver.value].enabled ? (
+                  {configuredReceivers[currentReceiver.value.id].enabled ? (
                     <>
-                      <Button
-                        backgroundColour="bg-error"
-                        onClick$={() =>
-                          removeAuthentication(currentReceiver.value)
-                        }
-                      >
-                        Remove Credentials
-                      </Button>
+                      {currentReceiver.value.settings &&
+                      currentReceiver.value.id === 'anilist' ? (
+                        <ManifestSettings
+                          data={currentReceiver.value.settings.data}
+                          info={currentReceiver.value.settings.info}
+                          id={currentReceiver.value.id}
+                        >
+                          <Button
+                            backgroundColour="bg-error"
+                            onClick$={() =>
+                              removeAuthentication(currentReceiver.value?.id)
+                            }
+                          >
+                            Remove Credentials
+                          </Button>
+                        </ManifestSettings>
+                      ) : currentReceiver.value.settings &&
+                        currentReceiver.value.id === 'simkl' ? (
+                        <ManifestSettings
+                          data={currentReceiver.value.settings.data}
+                          info={currentReceiver.value.settings.info}
+                          id={currentReceiver.value.id}
+                        >
+                          <Button
+                            backgroundColour="bg-error"
+                            onClick$={() =>
+                              removeAuthentication(currentReceiver.value?.id)
+                            }
+                          >
+                            Remove Credentials
+                          </Button>
+                        </ManifestSettings>
+                      ) : (
+                        <Button
+                          backgroundColour="bg-error"
+                          onClick$={() =>
+                            removeAuthentication(currentReceiver.value?.id)
+                          }
+                        >
+                          Remove Credentials
+                        </Button>
+                      )}
                     </>
-                  ) : currentReceiver.value === 'anilist' ? (
+                  ) : currentReceiver.value.id === 'anilist' ? (
                     <>
                       <AnilistLogin />
                     </>
-                  ) : currentReceiver.value === 'simkl' ? (
+                  ) : currentReceiver.value.id === 'simkl' ? (
                     <SimklLogin />
-                  ) : currentReceiver.value === 'stremio' ? (
+                  ) : currentReceiver.value.id === 'stremio' ? (
                     <StremioLogin />
                   ) : (
                     <></>
