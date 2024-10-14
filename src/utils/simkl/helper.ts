@@ -83,7 +83,10 @@ export function getSimklCatalogs(): {
 }
 
 export function createSimklCatalog(
-  catalogs: { id: ManifestCatalogItem['id']; value: boolean }[] = [],
+  catalogs: {
+    id: ManifestCatalogItem['id'];
+    value: boolean;
+  }[] = getSimklCatalogs().map((item) => ({ id: item.id, value: true })),
 ): ManifestCatalogItem[] {
   const allCatalogs: ManifestCatalogItem[] = [
     {

@@ -43,7 +43,7 @@ export function createAnilistCatalog(
   catalogs: {
     id: ManifestCatalogItem['id'];
     value: boolean;
-  }[] = [],
+  }[] = getAnilistCatalogs().map((item) => ({ id: item.id, value: true })),
 ): ManifestCatalogItem[] {
   const allCatalogs: ManifestCatalogItem[] = [
     {
@@ -113,6 +113,7 @@ export function createAnilistCatalog(
       ],
     },
   ];
+
   return allCatalogs.filter((catalog) => {
     const found = catalogs.find((item) => item.id === catalog.id);
     return found ? found.value : true;
