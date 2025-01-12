@@ -1,7 +1,9 @@
+/* eslint-env node */
+
 /** @type {import('tailwindcss').Config} */
 import { withMaterialColors } from 'tailwind-material-colors';
 
-module.exports = withMaterialColors(
+export default withMaterialColors(
   {
     content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
     plugins: [],
