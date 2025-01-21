@@ -96,6 +96,7 @@ export const onGet: RequestHandler = async ({
       catalogInfo[2] as any,
       userConfig['anilist'],
     );
+    console.log(list);
 
     if (list.data.MediaListCollection.lists[0]) {
       const metas = await convertAnilistToCinemeta(
