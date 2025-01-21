@@ -12,6 +12,8 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     return;
   }
 
+  console.log('meta', params);
+
   const userConfigString = decodeURI(params.config).split('|');
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
@@ -77,12 +79,22 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
   if (dataId) {
     const info = await getCinemetaMeta(typeMain, dataId);
     if (info?.meta) {
-      json(200, { meta: info.meta });
+      json(200, {
+        meta: {
+          ...info.meta,
+          id: catchall[1],
+        },
+      });
       return;
     } else if (!animeInfo) {
       const info2 = await getCinemetaMeta(typeBkp, dataId);
       if (info2?.meta) {
-        json(200, { meta: info2.meta });
+        json(200, {
+          meta: {
+            ...info2.meta,
+            id: catchall[1],
+          },
+        });
         return;
       }
     }
