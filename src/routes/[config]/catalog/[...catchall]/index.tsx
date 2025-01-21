@@ -16,10 +16,11 @@ import type {
 export const onGet: RequestHandler = async ({
   json,
   params,
+  query,
   env,
   cacheControl,
 }) => {
-  if (!params.catchall.includes('skip')) {
+  if (!query.get('skip') || query.get('skip') === 'false') {
     // 20 min
     cacheControl({
       public: true,
@@ -96,7 +97,6 @@ export const onGet: RequestHandler = async ({
       catalogInfo[2] as any,
       userConfig['anilist'],
     );
-    console.log(list);
 
     if (list.data.MediaListCollection.lists[0]) {
       const metas = await convertAnilistToCinemeta(
