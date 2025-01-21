@@ -12,8 +12,6 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     return;
   }
 
-  console.log('meta', params);
-
   const userConfigString = decodeURI(params.config).split('|');
 
   const userConfig: Record<string, Record<string, string> | undefined> = {};
