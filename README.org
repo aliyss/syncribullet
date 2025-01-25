@@ -156,4 +156,5 @@ A star would be kind, but honestly I use GitHub stars more as bookmarks. So inst
 ** Support
 If you like what I do consider buying me a coffee ;)
 
+[[https://www.paypal.me/aliyssnow][Paypal (preferred)]]
 [[https://www.buymeacoffee.com/aliyss][Buy Me A Coffee]]
