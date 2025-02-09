@@ -1,4 +1,4 @@
-import type { ManifestCatalogItem } from '../manifest';
+import { type ManifestCatalogItem, ManifestReceiverTypes } from '../manifest';
 
 export function createSimklHeaders(accessToken: string, id: string) {
   return {
@@ -91,8 +91,8 @@ export function createSimklCatalog(
   const allCatalogs: ManifestCatalogItem[] = [
     {
       id: 'syncribullet-simkl-movies-plantowatch',
-      type: 'movie',
-      name: 'Simkl Plan to Watch',
+      type: ManifestReceiverTypes.MOVIE,
+      name: 'Simkl - Plan to Watch',
       extra: [
         { name: 'genre', isRequired: false },
         { name: 'skip', isRequired: false },
@@ -100,8 +100,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-movies-completed',
-      type: 'movie',
-      name: 'Simkl Completed',
+      type: ManifestReceiverTypes.MOVIE,
+      name: 'Simkl - Completed',
       extra: [
         { name: 'genre', isRequired: false },
         { name: 'skip', isRequired: false },
@@ -109,8 +109,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-movies-dropped',
-      type: 'movie',
-      name: 'Simkl Dropped',
+      type: ManifestReceiverTypes.MOVIE,
+      name: 'Simkl - Dropped',
       extra: [
         { name: 'genre', isRequired: false },
         { name: 'skip', isRequired: false },
@@ -118,8 +118,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-shows-watching',
-      type: 'series',
-      name: 'Simkl TV Watching',
+      type: ManifestReceiverTypes.SERIES,
+      name: 'Simkl - Watching',
       extra: [
         { name: 'genre', isRequired: false },
         { name: 'skip', isRequired: false },
@@ -127,8 +127,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-shows-plantowatch',
-      type: 'series',
-      name: 'Simkl TV Plan to Watch',
+      type: ManifestReceiverTypes.SERIES,
+      name: 'Simkl - Plan to Watch',
       extra: [
         { name: 'genre', isRequired: false },
         { name: 'skip', isRequired: false },
@@ -136,8 +136,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-shows-completed',
-      type: 'series',
-      name: 'Simkl TV Completed',
+      type: ManifestReceiverTypes.SERIES,
+      name: 'Simkl - Completed',
       extra: [
         { name: 'genre', isRequired: false },
         { name: 'skip', isRequired: false },
@@ -145,8 +145,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-shows-hold',
-      type: 'series',
-      name: 'Simkl TV On Hold',
+      type: ManifestReceiverTypes.SERIES,
+      name: 'Simkl - On Hold',
       extra: [
         { name: 'genre', isRequired: false },
         { name: 'skip', isRequired: false },
@@ -154,8 +154,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-shows-dropped',
-      type: 'series',
-      name: 'Simkl TV Dropped',
+      type: ManifestReceiverTypes.SERIES,
+      name: 'Simkl - Dropped',
       extra: [
         { name: 'genre', isRequired: false },
         { name: 'skip', isRequired: false },
@@ -163,8 +163,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-anime-watching',
-      type: 'series',
-      name: 'Simkl Anime Watching',
+      type: ManifestReceiverTypes.ANIME,
+      name: 'Simkl - Watching',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
         { name: 'genre', isRequired: false },
@@ -173,8 +173,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-anime-plantowatch',
-      type: 'series',
-      name: 'Simkl Anime Plan to Watch',
+      type: ManifestReceiverTypes.ANIME,
+      name: 'Simkl - Plan to Watch',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
         { name: 'genre', isRequired: false },
@@ -183,8 +183,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-anime-completed',
-      type: 'series',
-      name: 'Simkl Anime Completed',
+      type: ManifestReceiverTypes.ANIME,
+      name: 'Simkl - Completed',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
         { name: 'genre', isRequired: false },
@@ -193,8 +193,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-anime-hold',
-      type: 'series',
-      name: 'Simkl Anime On Hold',
+      type: ManifestReceiverTypes.ANIME,
+      name: 'Simkl - On Hold',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
         { name: 'genre', isRequired: false },
@@ -203,8 +203,8 @@ export function createSimklCatalog(
     },
     {
       id: 'syncribullet-simkl-anime-dropped',
-      type: 'series',
-      name: 'Simkl Anime Dropped',
+      type: ManifestReceiverTypes.ANIME,
+      name: 'Simkl - Dropped',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
         { name: 'genre', isRequired: false },
@@ -213,8 +213,19 @@ export function createSimklCatalog(
     },
   ];
 
+  const defaultCatalogs = [
+    'syncribullet-simkl-movies-plantowatch',
+    'syncribullet-simkl-movies-completed',
+    'syncribullet-simkl-anime-watching',
+    'syncribullet-simkl-anime-plantowatch',
+    'syncribullet-simkl-anime-completed',
+    'syncribullet-simkl-shows-watching',
+    'syncribullet-simkl-shows-plantowatch',
+    'syncribullet-simkl-shows-completed',
+  ];
+
   return allCatalogs.filter((catalog) => {
     const found = catalogs.find((item) => item.id === catalog.id);
-    return found ? found.value : true;
+    return found ? found.value : defaultCatalogs.includes(catalog.id);
   });
 }

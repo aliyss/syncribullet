@@ -16,11 +16,10 @@ import type {
 export const onGet: RequestHandler = async ({
   json,
   params,
-  query,
   env,
   cacheControl,
 }) => {
-  if (!query.get('skip') || query.get('skip') === 'false') {
+  if (!params.catchall.includes('skip')) {
     // 20 min
     cacheControl({
       public: true,

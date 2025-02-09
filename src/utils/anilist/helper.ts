@@ -1,4 +1,4 @@
-import type { ManifestCatalogItem } from '../manifest';
+import { type ManifestCatalogItem, ManifestReceiverTypes } from '../manifest';
 
 export function getAnilistCatalogs(): {
   id: ManifestCatalogItem['id'];
@@ -48,7 +48,7 @@ export function createAnilistCatalog(
   const allCatalogs: ManifestCatalogItem[] = [
     {
       id: 'syncribullet-anilist-anime-CURRENT',
-      type: 'series',
+      type: ManifestReceiverTypes.ANIME,
       name: 'Anilist - Watching',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
@@ -59,7 +59,7 @@ export function createAnilistCatalog(
     },
     {
       id: 'syncribullet-anilist-anime-PLANNING',
-      type: 'series',
+      type: ManifestReceiverTypes.ANIME,
       name: 'Anilist - Planning',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
@@ -70,7 +70,7 @@ export function createAnilistCatalog(
     },
     {
       id: 'syncribullet-anilist-anime-COMPLETED',
-      type: 'series',
+      type: ManifestReceiverTypes.ANIME,
       name: 'Anilist - Completed',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
@@ -81,7 +81,7 @@ export function createAnilistCatalog(
     },
     {
       id: 'syncribullet-anilist-anime-PAUSED',
-      type: 'series',
+      type: ManifestReceiverTypes.ANIME,
       name: 'Anilist - On Hold',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
@@ -92,7 +92,7 @@ export function createAnilistCatalog(
     },
     {
       id: 'syncribullet-anilist-anime-DROPPED',
-      type: 'series',
+      type: ManifestReceiverTypes.ANIME,
       name: 'Anilist - Dropped',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
@@ -103,7 +103,7 @@ export function createAnilistCatalog(
     },
     {
       id: 'syncribullet-anilist-anime-REPEATING',
-      type: 'series',
+      type: ManifestReceiverTypes.ANIME,
       name: 'Anilist - Repeating',
       genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
       extra: [
@@ -114,8 +114,14 @@ export function createAnilistCatalog(
     },
   ];
 
+  const defaultCatalogs = [
+    'syncribullet-anilist-anime-CURRENT',
+    'syncribullet-anilist-anime-PLANNING',
+    'syncribullet-anilist-anime-COMPLETED',
+  ];
+
   return allCatalogs.filter((catalog) => {
     const found = catalogs.find((item) => item.id === catalog.id);
-    return found ? found.value : true;
+    return found ? found.value : defaultCatalogs.includes(catalog.id);
   });
 }

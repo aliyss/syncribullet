@@ -3,11 +3,15 @@ import type { RequestHandler } from '@builder.io/qwik-city';
 import { createAnilistCatalog } from '~/utils/anilist/helper';
 import type { ManifestCatalogItem } from '~/utils/manifest';
 import { manifest } from '~/utils/manifest';
-import {
-  ReceiverSettings,
-  unstringifySettings,
-} from '~/utils/settings/stringify';
+import { unstringifySettings } from '~/utils/settings/stringify';
+import type { ReceiverSettings } from '~/utils/settings/stringify';
 import { createSimklCatalog } from '~/utils/simkl/helper';
+import {
+  CompressionType,
+  compress,
+  decompress,
+} from '~/utils/string/compression';
+import { EncryptionType, decrypt, encrypt } from '~/utils/string/encryption';
 
 export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
   cacheControl({
@@ -53,6 +57,30 @@ export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
       catalogConfig.anilist = true;
     }
   }
+
+  const s = {
+    userConfig,
+    senderSettings,
+    catalogConfig,
+  };
+  console.log('uncompressed', encodeURI(JSON.stringify(s)).length);
+
+  const xe = compress(
+    compress(JSON.stringify(s), CompressionType.MAPPING),
+    CompressionType.LZ,
+  );
+  const ye = encrypt(xe, 'hello', EncryptionType.FPE);
+  console.log('compressed', ye.length);
+  const result = decompress(decompress(decrypt(ye, 'hello')));
+  console.log(
+    'Decrypted same?',
+    result ===
+      JSON.stringify({
+        userConfig,
+        senderSettings,
+        catalogConfig,
+      }),
+  );
 
   let catalogs: ManifestCatalogItem[] = [];
   if (catalogConfig.simkl) {

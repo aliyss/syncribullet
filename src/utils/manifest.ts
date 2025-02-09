@@ -1,11 +1,25 @@
 import { description, version } from '../../package.json';
 
+export enum ManifestReceiverTypes {
+  MOVIE = 'movie',
+  SERIES = 'series',
+  ANIME = 'anime',
+  CHANNELS = 'channel',
+  TV = 'tv',
+}
+
+export enum ManifestCatalogExtraParameters {
+  GENRE = 'genre',
+  SEARCH = 'search',
+  SKIP = 'skip',
+}
+
 export interface ManifestCatalogItem {
   id: string;
-  type: 'movie' | 'series' | 'channels';
+  type: ManifestReceiverTypes;
   name: string;
   genres?: string[];
-  extra?: { name: string; isRequired: boolean }[];
+  extra?: { name: ManifestCatalogExtraParameters; isRequired: boolean }[];
 }
 
 export interface Manifest {
@@ -18,11 +32,14 @@ export interface Manifest {
   catalogs: ManifestCatalogItem[];
   resources: [
     'catalog',
-    'meta' | { name: 'meta'; types: ['movie', 'series']; idPrefixes: string[] },
+    (
+      | 'meta'
+      | { name: 'meta'; types: ManifestReceiverTypes[]; idPrefixes: string[] }
+    ),
     'stream',
     'subtitles',
   ];
-  types: ['series', 'movie'];
+  types: ManifestReceiverTypes[];
   behaviorHints: {
     configurable: boolean;
     configurationRequired: boolean;
@@ -41,13 +58,21 @@ export const manifest: Manifest = {
     'catalog',
     {
       name: 'meta',
-      types: ['movie', 'series'],
+      types: [
+        ManifestReceiverTypes.MOVIE,
+        ManifestReceiverTypes.SERIES,
+        ManifestReceiverTypes.ANIME,
+      ],
       idPrefixes: ['anilist_'],
     },
     'stream',
     'subtitles',
   ],
-  types: ['series', 'movie'],
+  types: [
+    ManifestReceiverTypes.MOVIE,
+    ManifestReceiverTypes.SERIES,
+    ManifestReceiverTypes.ANIME,
+  ],
   behaviorHints: {
     configurable: true,
     configurationRequired: true,

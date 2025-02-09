@@ -1,7 +1,12 @@
 import type { IDs } from '../ids/types';
 import type { RequireAtLeastOne } from '../typing/helpers';
 
-export type SimklLibraryType = 'movies' | 'anime' | 'shows';
+export enum SimklLibraryType {
+  MOVIES = 'movies',
+  SHOWS = 'shows',
+  ANIME = 'anime',
+}
+
 export type SimklLibraryObjectStatus =
   | 'watching'
   | 'plantowatch'
@@ -103,4 +108,14 @@ export interface SimklLibrary {
   movies?: SimklLibraryMovieObject[];
   shows?: SimklLibraryShowObject[];
   anime?: SimklLibraryAnimeObject[];
+}
+
+export type SimklLibraryListEntry =
+  | SimklLibraryMovieObject
+  | SimklLibraryShowObject
+  | SimklLibraryAnimeObject;
+
+export interface SimklUserConfig {
+  accesstoken: string;
+  clientid: string;
 }
