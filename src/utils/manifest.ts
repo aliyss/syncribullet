@@ -14,13 +14,15 @@ export enum ManifestCatalogExtraParameters {
   SKIP = 'skip',
 }
 
-export interface ManifestCatalogItem {
+export type ManifestCatalogItem = {
   id: string;
   type: ManifestReceiverTypes;
   name: string;
-  genres?: string[];
-  extra?: { name: ManifestCatalogExtraParameters; isRequired: boolean }[];
-}
+  genres?: readonly string[];
+  extra?: Readonly<
+    { name: ManifestCatalogExtraParameters; isRequired: boolean }[]
+  >;
+};
 
 export interface Manifest {
   id: string;

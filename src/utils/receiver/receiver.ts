@@ -8,9 +8,10 @@ import type {
 } from './types/manifest-types';
 import type { MetaObject } from './types/meta-object';
 import type { MetaPreviewObject } from './types/meta-preview-object';
+import type { Receivers } from './types/receivers';
 
 export interface ReceiverInfo {
-  id: string;
+  id: Receivers;
   icon: string;
   text: string;
   backgroundColour: string;
@@ -20,16 +21,20 @@ export interface ReceiverInfo {
 
 export abstract class Receiver {
   public abstract receiverInfo: ReceiverInfo;
-  public abstract manifestCatalogItems: ManifestCatalogItem[];
-  public abstract defaultCatalogs: ManifestCatalogItem['id'][];
+  public abstract manifestCatalogItems: Readonly<ManifestCatalogItem[]>;
+  public abstract defaultCatalogs: Readonly<
+    (typeof this.manifestCatalogItems)[number]['id'][]
+  >;
   public get minifiedManifestCatalogItems(): MinifiedManifestCatalogItem[] {
     return minifyManifestCatalogItems(this.manifestCatalogItems);
   }
 
   public getUserManifestCatalogItems(
-    ids: ManifestCatalogItem['id'][] = this.defaultCatalogs,
+    ids?: (typeof this.manifestCatalogItems)[number]['id'][],
   ): ManifestCatalogItem[] {
-    return this.manifestCatalogItems.filter((item) => ids.includes(item.id));
+    return this.manifestCatalogItems.filter((item) =>
+      (ids ?? this.defaultCatalogs).includes(item.id),
+    );
   }
 
   public getUserManifestCatalogItemsBySmallId(
@@ -45,6 +50,62 @@ export abstract class Receiver {
       .map((item) => {
         return this.manifestCatalogItems.find((x) => x.id === item.id)!;
       });
+  }
+}
+
+export abstract class ReceiverClient<UserSettings> extends Receiver {
+  public userSettings: UserSettings | null = null;
+
+  public setUserConfig(userSettings: UserSettings): void {
+    this.userSettings = userSettings;
+    localStorage.setItem(
+      'user-settings-' + this.receiverInfo.id,
+      JSON.stringify(userSettings),
+    );
+  }
+
+  public mergeUserConfig(userSettings: Partial<UserSettings>): void {
+    const existingSettings = this.getUserConfig();
+
+    if (!existingSettings) {
+      this.setUserConfig(userSettings as UserSettings);
+      return;
+    }
+
+    this.setUserConfig({
+      ...existingSettings,
+      ...userSettings,
+    });
+  }
+
+  public removeUserConfig(): void {
+    this.userSettings = null;
+    localStorage.removeItem('user-settings-' + this.receiverInfo.id);
+  }
+
+  private _loadUserConfig(): ReceiverClient<UserSettings>['userSettings'] {
+    if (!this.userSettings) {
+      const data = localStorage.getItem(
+        'user-settings-' + this.receiverInfo.id,
+      );
+      if (data) {
+        try {
+          this.userSettings = JSON.parse(data);
+        } catch (e) {
+          this.userSettings = null;
+        }
+      } else {
+        this.userSettings = null;
+      }
+    }
+    return this.userSettings;
+  }
+
+  public getUserConfig(): ReceiverClient<UserSettings>['userSettings'] {
+    if (!this.userSettings) {
+      this._loadUserConfig();
+    }
+    return this.userSettings;
   }
 }
 

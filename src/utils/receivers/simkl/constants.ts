@@ -1,12 +1,13 @@
 import {
   ManifestCatalogExtraParameters,
-  type ManifestCatalogItem,
   ManifestReceiverTypes,
-} from '../manifest';
-import { ReceiverId, type ReceiverInfo } from '../receiver/receiver';
+} from '~/utils/manifest';
+import type { ManifestCatalogItem } from '~/utils/manifest';
+import type { ReceiverInfo } from '~/utils/receiver/receiver';
+import { Receivers } from '~/utils/receiver/types/receivers';
 
 export const receiverInfo: ReceiverInfo = {
-  id: ReceiverId.SIMKL,
+  id: Receivers.SIMKL,
   icon: 'https://api.iconify.design/simple-icons:simkl.svg?color=%23FFFFFF',
   text: 'Simkl',
   backgroundColour: 'bg-[#0C0F11]/60',
@@ -14,7 +15,7 @@ export const receiverInfo: ReceiverInfo = {
   fullSync: true,
 };
 
-export const manifestCatalogItems: ManifestCatalogItem[] = [
+export const manifestCatalogItems = [
   {
     id: 'syncribullet-simkl-movies-plantowatch',
     type: ManifestReceiverTypes.MOVIE,
@@ -137,9 +138,11 @@ export const manifestCatalogItems: ManifestCatalogItem[] = [
       { name: ManifestCatalogExtraParameters.SKIP, isRequired: false },
     ],
   },
-];
+] as const satisfies Readonly<ManifestCatalogItem[]>;
 
-export const defaultCatalogs: ManifestCatalogItem['id'][] = [
+export const defaultCatalogs: Readonly<
+  (typeof manifestCatalogItems)[number]['id'][]
+> = [
   'syncribullet-simkl-movies-plantowatch',
   'syncribullet-simkl-movies-completed',
   'syncribullet-simkl-anime-watching',
@@ -148,4 +151,4 @@ export const defaultCatalogs: ManifestCatalogItem['id'][] = [
   'syncribullet-simkl-shows-watching',
   'syncribullet-simkl-shows-plantowatch',
   'syncribullet-simkl-shows-completed',
-];
+] as const;

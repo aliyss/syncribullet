@@ -1,5 +1,15 @@
+import type { RequireOnlyOne } from '~/utils/helpers/types';
+
 import type { MetaLink } from './meta-link-object';
 import type { SubtitleObject } from './subtitle-object';
+
+export interface StreamObjectTypes {
+  url: string;
+  ytId: string;
+  infoHash: string;
+  fileIdx: number;
+  externalUrl: string | MetaLink;
+}
 
 export type StreamObjectBehaviorHintsBase = {
   countryWhitelist?: string[];
@@ -32,20 +42,4 @@ export type StreamObject = {
   subtitles?: SubtitleObject[];
   sources?: string[];
   behaviorHints?: StreamObjectBehaviorHints;
-} & (
-  | {
-      url: string;
-    }
-  | {
-      ytId: string;
-    }
-  | {
-      infoHash: string;
-    }
-  | {
-      externalUrl: string | MetaLink;
-    }
-  | {
-      fileIdx: number;
-    }
-);
+} & RequireOnlyOne<StreamObjectTypes>;

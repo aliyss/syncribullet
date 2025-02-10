@@ -1,10 +1,10 @@
 import type { ManifestCatalogItem } from '../manifest';
 
-export interface MinifiedManifestCatalogItem {
+export type MinifiedManifestCatalogItem = {
   id: ManifestCatalogItem['id'];
   name: ManifestCatalogItem['name'];
   smallId: string;
-}
+};
 
 export interface MinifiedTypeMapping {
   [key: string]: {
@@ -26,7 +26,7 @@ const generateMinifiedId = (type: string, typeCount: number): string => {
 };
 
 export const minifyManifestCatalogItems = (
-  manifestCatalogItems: ManifestCatalogItem[],
+  manifestCatalogItems: Readonly<ManifestCatalogItem[]>,
 ): MinifiedManifestCatalogItem[] => {
   const result: MinifiedManifestCatalogItem[] = [];
   const types: MinifiedTypeMapping = {};

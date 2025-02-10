@@ -1,5 +1,5 @@
 import { $, component$, useSignal, useTask$ } from '@builder.io/qwik';
-import { server$, useLocation, useNavigate } from '@builder.io/qwik-city';
+import { Link, server$, useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
@@ -100,12 +100,13 @@ export default component$(() => {
         <Form onSubmit$={handleSubmit}>
           <div class="flex flex-col gap-4 items-center">
             <p>
-              <a
+              <Link
                 href="https://simkl.com/settings/developer/new/"
                 class="text-primary"
+                target="_blank"
               >
                 Create an app
-              </a>{' '}
+              </Link>{' '}
               and set the redirect_uri to{' '}
               <p>
                 <span class="rounded-full text-primary bg-surface">

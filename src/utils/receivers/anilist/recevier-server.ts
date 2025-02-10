@@ -1,23 +1,19 @@
-import { ManifestReceiverTypes } from '../manifest';
-import {
-  ReceiverServer,
-  type ReceiverServerConfig,
-} from '../receiver/receiver';
-import { IDSources } from '../receiver/types/id';
-import type { IDMapping } from '../receiver/types/id';
-import type { ManifestCatalogExtraParametersOptions } from '../receiver/types/manifest-types';
-import type { MetaObject } from '../receiver/types/meta-object';
-import type { MetaPreviewObject } from '../receiver/types/meta-preview-object';
+import { ManifestReceiverTypes } from '~/utils/manifest';
+import { ReceiverServer } from '~/utils/receiver/receiver';
+import type { ReceiverServerConfig } from '~/utils/receiver/receiver';
+import { IDSources } from '~/utils/receiver/types/id';
+import type { IDMapping } from '~/utils/receiver/types/id';
+import type { ManifestCatalogExtraParametersOptions } from '~/utils/receiver/types/manifest-types';
+import type { MetaObject } from '~/utils/receiver/types/meta-object';
+import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-object';
+
 import {
   defaultCatalogs,
   manifestCatalogItems,
   receiverInfo,
 } from './constants';
-import {
-  type SimklLibraryListEntry,
-  SimklLibraryType,
-  type SimklUserConfig,
-} from './types';
+import type { SimklLibraryListEntry, SimklUserConfig } from './types';
+import { SimklLibraryType } from './types';
 
 export class SimklServerReceiver extends ReceiverServer<
   SimklUserConfig,
