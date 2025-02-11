@@ -2,16 +2,16 @@ import {
   component$,
   noSerialize,
   useSignal,
-  useStore,
   useVisibleTask$,
 } from '@builder.io/qwik';
 import type { NoSerialize } from '@builder.io/qwik';
-import { useLocation, useNavigate } from '@builder.io/qwik-city';
+// import { useLocation, useNavigate } from '@builder.io/qwik-city';
 import type { DocumentHead } from '@builder.io/qwik-city';
 
 // Components
 import ReceiversSection from '~/components/sections/receivers/receivers-section';
 import ReceiversSettings from '~/components/sections/receivers/receivers-settings';
+import SendersSection from '~/components/sections/senders/senders-section';
 import SyncribulletTitle from '~/components/titles/syncribullet-title';
 
 // Utils
@@ -20,8 +20,7 @@ import { configurableReceivers } from '~/utils/connections/receivers';
 // Types
 import { exists } from '~/utils/helpers/array';
 import { Receivers } from '~/utils/receiver/types/receivers';
-import type { AnilistClientReceiver } from '~/utils/receivers/anilist/recevier-client';
-import type { SimklClientReceiver } from '~/utils/receivers/simkl/recevier-client';
+import type { ReceiverClients } from '~/utils/receiver/types/receivers';
 import type { ReceiverSettings } from '~/utils/settings/stringify';
 
 export type ApiClientForm = {
@@ -53,35 +52,30 @@ export interface CurrentReceiver {
 }
 
 export default component$(() => {
-  const nav = useNavigate();
-  const location = useLocation();
-  const senderListSync = [
-    {
-      id: 'stremio',
-      icon: 'https://www.stremio.com/website/stremio-logo-small.png',
-      text: 'Stremio',
-      backgroundColour: 'bg-[#8152A3]/60',
-    },
-  ];
+  // const nav = useNavigate();
+  // const location = useLocation();
 
-  const receivers = useStore<{
-    [key in Receivers]: NoSerialize<
-      SimklClientReceiver | AnilistClientReceiver
-    >;
+  const receivers = useSignal<{
+    [key in Receivers]: NoSerialize<ReceiverClients>;
   }>({
     [Receivers.SIMKL]: undefined,
     [Receivers.ANILIST]: undefined,
     [Receivers.KITSU]: undefined,
   });
 
-  const currentReceiver = useSignal<Receivers | null>(null);
+  const currentReceiver = useSignal<Receivers | null>(Receivers.SIMKL);
 
   useVisibleTask$(() => {
     const configuredReceivers = configurableReceivers();
-    receivers.simkl = noSerialize(configuredReceivers[Receivers.SIMKL]);
-    receivers.simkl?.getUserConfig();
-    receivers.anilist = noSerialize(configuredReceivers[Receivers.ANILIST]);
-    receivers.anilist?.getUserConfig();
+    receivers.value = {
+      [Receivers.SIMKL]: noSerialize(configuredReceivers[Receivers.SIMKL]),
+      [Receivers.ANILIST]: noSerialize(configuredReceivers[Receivers.ANILIST]),
+      [Receivers.KITSU]: undefined,
+    };
+
+    Object.values(receivers.value).forEach((receiver) => {
+      receiver?.getUserConfig();
+    });
   });
 
   /*
@@ -176,33 +170,28 @@ export default component$(() => {
       <div class="flex flex-col gap-10 justify-center items-center p-6 w-full min-h-screen">
         <SyncribulletTitle />
         <ReceiversSection
-          receivers={Object.values(receivers).filter(exists)}
+          receivers={receivers.value}
           onClick$={(id) => {
             currentReceiver.value = id;
           }}
         />
-        {currentReceiver.value !== null && receivers[currentReceiver.value] && (
-          <ReceiversSettings
-            currentReceiver={receivers[currentReceiver.value]!}
-          />
-        )}
+        {currentReceiver.value !== null &&
+          receivers.value[currentReceiver.value] && (
+            <ReceiversSettings
+              currentReceiver={receivers.value[currentReceiver.value]!}
+              updateReceiver$={() => {
+                receivers.value = {
+                  ...receivers.value,
+                };
+              }}
+            />
+          )}
         {Object.values(receivers).filter((item) => item && item.userSettings)
-          .length > 0 ? (
-          <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 bg-secondary-container text-on-secondary-container">
-            <h2 class="w-full text-xl font-bold text-center md:text-3xl">
-              Senders
-            </h2>
-            <div class="flex flex-col gap-6 pt-5 md:flex-row">
-              <div class="w-full text-center">
-                <h3 class="font-bold md:text-xl">Applications</h3>
-                <div class="flex flex-wrap gap-2 justify-center pt-1 text-on-background">
-                  {/* {syncApplications} */}
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <></>
+          .length > 0 && (
+          <SendersSection
+            receivers={Object.values(receivers).filter(exists)}
+            onClick$={() => {}}
+          />
         )}
       </div>
     </>

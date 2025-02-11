@@ -11,6 +11,7 @@ export const receiverInfo: ReceiverInfo = {
   icon: 'https://api.iconify.design/simple-icons:anilist.svg?color=%23FFFFFF',
   text: 'Anilist',
   backgroundColour: 'bg-[#00cdff]/60',
+  borderColour: 'border-[#00cdff]',
   liveSync: true,
   fullSync: true,
 };
@@ -91,3 +92,12 @@ export const defaultCatalogs: Readonly<
   'syncribullet-anilist-anime-PLANNING',
   'syncribullet-anilist-anime-COMPLETED',
 ] as const;
+
+export const liveSyncTypes = [
+  ManifestReceiverTypes.ANIME,
+  ManifestReceiverTypes.MOVIE,
+  ManifestReceiverTypes.SERIES,
+] as const satisfies Readonly<ManifestReceiverTypes[]>;
+
+export const defaultLiveSyncTypes: Readonly<(typeof liveSyncTypes)[number][]> =
+  liveSyncTypes;

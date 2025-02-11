@@ -1,9 +1,13 @@
 import { $, component$, useSignal } from '@builder.io/qwik';
-import { useLocation, useNavigate } from '@builder.io/qwik-city';
+import { Link, useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
 import type { ApiClientForm } from '~/routes';
+
+import { preauthString } from '~/utils/auth/preauth';
+import { Receivers } from '~/utils/receiver/types/receivers';
+import type { AnilistPreAuth } from '~/utils/receivers/anilist/types/auth';
 
 export default component$(() => {
   const nav = useNavigate();
@@ -12,8 +16,17 @@ export default component$(() => {
     loader: useSignal({ client_id: '' }),
   });
 
-  const handleSubmit = $<SubmitHandler<ApiClientForm>>((values) => {
-    nav(
+  const handleSubmit = $<SubmitHandler<ApiClientForm>>(async (values) => {
+    if (!values.client_id) {
+      return;
+    }
+    localStorage.setItem(
+      preauthString(Receivers.ANILIST),
+      JSON.stringify({
+        client_id: values.client_id,
+      } as AnilistPreAuth),
+    );
+    await nav(
       `https://anilist.co/api/v2/oauth/authorize?client_id=${values.client_id}&response_type=token`,
     );
   });
@@ -22,9 +35,13 @@ export default component$(() => {
     <Form onSubmit$={handleSubmit}>
       <div class="flex flex-col gap-4 items-center">
         <p>
-          <a href="https://anilist.co/settings/developer" class="text-primary">
+          <Link
+            href="https://anilist.co/settings/developer"
+            class="text-primary"
+            target="_blank"
+          >
             Create an app
-          </a>{' '}
+          </Link>{' '}
           and set the redirect_uri to{' '}
           <p>
             <span class="rounded-full text-primary bg-surface">

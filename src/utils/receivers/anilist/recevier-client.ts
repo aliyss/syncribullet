@@ -1,21 +1,19 @@
-import type { MinifiedManifestCatalogItem } from '~/utils/receiver/manifest';
 import { ReceiverClient } from '~/utils/receiver/receiver';
 
 import {
   defaultCatalogs,
+  defaultLiveSyncTypes,
+  liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
 } from './constants';
+import type { AnilistUserSettings } from './types/user-settings';
 
-export class AnilistClientReceiver extends ReceiverClient<{
-  catalogs: MinifiedManifestCatalogItem[];
-  auth: {
-    accessToken: string;
-    refreshToken: string;
-  };
-}> {
+export class AnilistClientReceiver extends ReceiverClient<AnilistUserSettings> {
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
 
   defaultCatalogs = defaultCatalogs;
+  liveSyncTypes = liveSyncTypes;
+  defaultLiveSyncTypes = defaultLiveSyncTypes;
 }

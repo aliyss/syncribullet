@@ -1,15 +1,15 @@
 import { component$ } from '@builder.io/qwik';
-import type { PropFunction } from '@builder.io/qwik';
+import type { NoSerialize, PropFunction } from '@builder.io/qwik';
 
-import type { KnownNoSerialize } from '~/utils/helpers/qwik-types';
-import type { Receivers } from '~/utils/receiver/types/receivers';
-import type { AnilistClientReceiver } from '~/utils/receivers/anilist/recevier-client';
-import type { SimklClientReceiver } from '~/utils/receivers/simkl/recevier-client';
+import type {
+  ReceiverClients,
+  Receivers,
+} from '~/utils/receiver/types/receivers';
 
 import ReceiversLiveSync from './receivers-live-sync';
 
 export interface ReceiversSectionProps {
-  receivers: KnownNoSerialize<AnilistClientReceiver | SimklClientReceiver>[];
+  receivers: { [key in Receivers]: NoSerialize<ReceiverClients> };
   onClick$: PropFunction<(id: Receivers) => void>;
 }
 

@@ -1,7 +1,6 @@
 import type { IDs } from '~/utils/ids/types';
 
 import type { RequireAtLeastOne } from '~/utils/helpers/types';
-import { MinifiedManifestCatalogItem } from '~/utils/receiver/manifest';
 
 export enum SimklLibraryType {
   MOVIES = 'movies',
@@ -116,16 +115,3 @@ export type SimklLibraryListEntry =
   | SimklLibraryMovieObject
   | SimklLibraryShowObject
   | SimklLibraryAnimeObject;
-
-export interface SimklUserConfig {
-  accesstoken: string;
-  clientid: string;
-}
-
-export interface SimklUserConfig {
-  auth: {
-    access_token: string;
-    clientid: string | null;
-  };
-  catalogs: MinifiedManifestCatalogItem[] | undefined;
-}

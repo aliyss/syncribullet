@@ -11,6 +11,7 @@ export const receiverInfo: ReceiverInfo = {
   icon: 'https://api.iconify.design/simple-icons:simkl.svg?color=%23FFFFFF',
   text: 'Simkl',
   backgroundColour: 'bg-[#0C0F11]/60',
+  borderColour: 'border-[#0C0F11]',
   liveSync: true,
   fullSync: true,
 };
@@ -152,3 +153,12 @@ export const defaultCatalogs: Readonly<
   'syncribullet-simkl-shows-plantowatch',
   'syncribullet-simkl-shows-completed',
 ] as const;
+
+export const liveSyncTypes = [
+  ManifestReceiverTypes.ANIME,
+  ManifestReceiverTypes.MOVIE,
+  ManifestReceiverTypes.SERIES,
+] as const satisfies Readonly<ManifestReceiverTypes[]>;
+
+export const defaultLiveSyncTypes: Readonly<(typeof liveSyncTypes)[number][]> =
+  liveSyncTypes;

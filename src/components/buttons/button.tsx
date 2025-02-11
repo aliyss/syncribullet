@@ -3,15 +3,16 @@ import type { QwikIntrinsicElements } from '@builder.io/qwik';
 
 export type ButtonProps = QwikIntrinsicElements['button'] & {
   backgroundColour: string;
+  borderColour: string;
   icon?: string;
 };
 
 export const Button = component$<ButtonProps>(
-  ({ icon, backgroundColour, ...props }) => {
+  ({ icon, backgroundColour, borderColour, ...props }) => {
     return (
       <button
         type="button"
-        class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline ${backgroundColour}`}
+        class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border ${borderColour} ${backgroundColour}`}
         {...props}
       >
         {icon ? (

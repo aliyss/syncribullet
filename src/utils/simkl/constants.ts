@@ -3,13 +3,15 @@ import {
   type ManifestCatalogItem,
   ManifestReceiverTypes,
 } from '../manifest';
-import { ReceiverId, type ReceiverInfo } from '../receiver/receiver';
+import { type ReceiverInfo } from '../receiver/receiver';
+import { Receivers } from '../receiver/types/receivers';
 
 export const receiverInfo: ReceiverInfo = {
-  id: ReceiverId.SIMKL,
+  id: Receivers.SIMKL,
   icon: 'https://api.iconify.design/simple-icons:simkl.svg?color=%23FFFFFF',
   text: 'Simkl',
   backgroundColour: 'bg-[#0C0F11]/60',
+  borderColour: 'border-[#0C0F11]',
   liveSync: true,
   fullSync: true,
 };
