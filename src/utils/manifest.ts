@@ -1,4 +1,8 @@
 import { description, version } from '../../package.json';
+import type {
+  AllReceivers,
+  ReceiverMCITypes,
+} from './receiver/types/receivers';
 
 export enum ManifestReceiverTypes {
   MOVIE = 'movie',
@@ -14,8 +18,26 @@ export enum ManifestCatalogExtraParameters {
   SKIP = 'skip',
 }
 
-export type ManifestCatalogItem = {
-  id: string;
+export type ManifestCatalogItemType<
+  R extends AllReceivers,
+  RCS extends string,
+  RCT extends string,
+> = {
+  receiverType: R;
+  receiverCatalogStatus: RCS;
+  receiverCatalogType: RCT;
+};
+
+export type SYNCRIBULLETID = 'syncribullet';
+
+export type SyncribulletManifestCatalogItemId<MCIT extends ReceiverMCITypes> =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  MCIT extends infer _ extends ReceiverMCITypes
+    ? `${SYNCRIBULLETID}-${MCIT['receiverType']}-${MCIT['receiverCatalogType']}-${MCIT['receiverCatalogStatus']}`
+    : never;
+
+export type ManifestCatalogItem<MCIT extends ReceiverMCITypes> = {
+  id: SyncribulletManifestCatalogItemId<MCIT>;
   type: ManifestReceiverTypes;
   name: string;
   genres?: readonly string[];
@@ -24,14 +46,14 @@ export type ManifestCatalogItem = {
   >;
 };
 
-export interface Manifest {
+export interface Manifest<MCIT extends ReceiverMCITypes> {
   id: string;
   name: string;
   version: string;
   description: string;
   logo: string;
   background: string;
-  catalogs: ManifestCatalogItem[];
+  catalogs: ManifestCatalogItem<MCIT>[];
   resources: [
     'catalog',
     (
@@ -48,7 +70,7 @@ export interface Manifest {
   };
 }
 
-export const manifest: Manifest = {
+export const manifest: Manifest<ReceiverMCITypes> = {
   id: `com.aliyss.syncribullet`,
   name: 'syncribullet',
   version: version,

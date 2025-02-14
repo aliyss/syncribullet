@@ -1,20 +1,16 @@
 import { component$ } from '@builder.io/qwik';
 import type { PropFunction } from '@builder.io/qwik';
 
-import type { KnownNoSerialize } from '~/utils/helpers/qwik-types';
-import type { AnilistClientReceiver } from '~/utils/receivers/anilist/recevier-client';
-import type { SimklClientReceiver } from '~/utils/receivers/simkl/recevier-client';
 import type { Senders } from '~/utils/sender/types/senders';
 import { senderInfo } from '~/utils/senders/stremio/constants';
 
 import SendersApplications from './senders-applications';
 
-export interface ReceiversSectionProps {
-  receivers: KnownNoSerialize<AnilistClientReceiver | SimklClientReceiver>[];
+export interface SendersSectionProps {
   onClick$: PropFunction<(id: Senders) => void>;
 }
 
-export default component$<ReceiversSectionProps>(({ onClick$ }) => {
+export default component$<SendersSectionProps>(({ onClick$ }) => {
   const senders = [senderInfo];
 
   return (

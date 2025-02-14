@@ -1,0 +1,73 @@
+import type { Receivers } from '../receiver/types/receivers';
+import type {
+  ReceiverClients,
+  ReceiverServers,
+} from '../receiver/types/receivers';
+import { decompress } from '../string/compression';
+import { decrypt } from '../string/encryption';
+import type { UserConfigBuildMinifiedString } from './types';
+
+export const buildUserConfigBuildFromUserConfigBuildMinifiedString = <
+  T extends ReceiverServers,
+>(
+  receiverClient: T,
+  userConfigBuildMinifiedString: UserConfigBuildMinifiedString<T>,
+): NonNullable<T['userSettings']> => {
+  return {
+    auth: userConfigBuildMinifiedString.a,
+    catalogs: userConfigBuildMinifiedString.c
+      ? receiverClient.getManifestCatalogItems(
+          receiverClient
+            .getMinifiedManifestCatalogItemsFromSmallIds(
+              userConfigBuildMinifiedString.c.split(','),
+            )
+            .map((item) => item.id),
+        )
+      : receiverClient.getManifestCatalogItems(),
+    liveSync: userConfigBuildMinifiedString.l
+      ? receiverClient.getLiveSyncTypesFromSmallIds(
+          userConfigBuildMinifiedString.l.split(','),
+        )
+      : receiverClient.getLiveSyncTypes(),
+  } as NonNullable<T['userSettings']>;
+};
+
+export const buildUserConfigBuildFromUserConfigBuildMinifiedStringClients = <
+  T extends ReceiverClients,
+>(
+  receiverClient: T,
+  userConfigBuildMinifiedString: UserConfigBuildMinifiedString<T>,
+): NonNullable<T['userSettings']> => {
+  return {
+    auth: userConfigBuildMinifiedString.a,
+    catalogs: userConfigBuildMinifiedString.c
+      ? receiverClient.getManifestCatalogItems(
+          receiverClient
+            .getMinifiedManifestCatalogItemsFromSmallIds(
+              userConfigBuildMinifiedString.c.split(','),
+            )
+            .map((item) => item.id),
+        )
+      : receiverClient.getManifestCatalogItems(),
+    liveSync: userConfigBuildMinifiedString.l
+      ? receiverClient.getLiveSyncTypesFromSmallIds(
+          userConfigBuildMinifiedString.l.split(','),
+        )
+      : receiverClient.getLiveSyncTypes(),
+  } as NonNullable<T['userSettings']>;
+};
+
+export const decryptCompressToUserConfigBuildMinifiedStrings = (
+  urlString: string,
+  encryptionKey: string,
+): {
+  [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverServers>;
+} => {
+  const decrypted = decrypt(urlString, encryptionKey);
+  try {
+    return JSON.parse(decompress(decompress(decrypted)));
+  } catch (e) {
+    console.error(e);
+    throw new Error('Failed to decrypt and decompress');
+  }
+};

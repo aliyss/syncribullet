@@ -1,52 +1,51 @@
 import { ManifestReceiverTypes } from '~/utils/manifest';
-import { ReceiverServer } from '~/utils/receiver/receiver';
-import type { ReceiverServerConfig } from '~/utils/receiver/receiver';
-import { IDSources } from '~/utils/receiver/types/id';
-import type { IDMapping } from '~/utils/receiver/types/id';
+import { ReceiverServer } from '~/utils/receiver/receiver-server';
+import type { IDs } from '~/utils/receiver/types/id';
 import type { ManifestCatalogExtraParametersOptions } from '~/utils/receiver/types/manifest-types';
 import type { MetaObject } from '~/utils/receiver/types/meta-object';
-import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-object';
 
 import {
   defaultCatalogs,
+  defaultLiveSyncTypes,
+  internalIds,
+  liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
 } from './constants';
-import type { SimklLibraryListEntry, SimklUserConfig } from './types';
-import { SimklLibraryType } from './types';
+import type { SimklLibraryListEntry } from './types';
+import { AnilistCatalogType } from './types/catalog/catalog-type';
+import type { AnilistMCIT } from './types/manifest';
 
-export class SimklServerReceiver extends ReceiverServer<
-  SimklUserConfig,
-  ReceiverServerConfig<SimklLibraryType, SimklLibraryListEntry, MetaObject>
-> {
-  internalIds = [IDSources.SIMKL];
+export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
+  internalIds = internalIds;
   receiverTypeMapping = {
-    [SimklLibraryType.MOVIES]: ManifestReceiverTypes.MOVIE,
-    [SimklLibraryType.SHOWS]: ManifestReceiverTypes.SERIES,
-    [SimklLibraryType.ANIME]: ManifestReceiverTypes.ANIME,
+    [AnilistCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
+    [AnilistCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
+    [AnilistCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
   };
 
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
   defaultCatalogs = defaultCatalogs;
+  liveSyncTypes = liveSyncTypes;
+  defaultLiveSyncTypes = defaultLiveSyncTypes;
 
-  getMappingIds(
-    id: string,
-    source: string,
-    userConfig: SimklUserConfig,
-  ): Promise<IDMapping[]> {
-    console.log(id, source, userConfig);
+  getMappingIds(id: string, source: string): Promise<IDs> {
+    console.log(id, source);
     throw new Error('Method not implemented.');
   }
 
   _convertPreviewObjectToMetaPreviewObject(
     previewObject: SimklLibraryListEntry,
+    type: AnilistMCIT['receiverCatalogType'],
+
     options?: ManifestCatalogExtraParametersOptions,
+    index?: number,
   ): Promise<MetaObject> {
     console.log(
       'SimklServerReceiver -> _convertObjectToMetaObject -> object',
       previewObject,
-      options,
+      index,
     );
     throw new Error('Method not implemented.');
   }
@@ -59,31 +58,18 @@ export class SimklServerReceiver extends ReceiverServer<
     throw new Error('Method not implemented.');
   }
 
-  _getMetaPreviews(
-    types: SimklLibraryType[],
-    userConfig: SimklUserConfig,
-  ): Promise<SimklLibraryListEntry[]> {
-    console.log(
-      'SimklServerReceiver -> _getMetaObject -> id',
-      types,
-      userConfig,
-    );
+  _getMetaPreviews() // type: AnilistCatalogType,
+  // potentialTypes: AnilistCatalogType[],
+  // status: AnilistCatalogStatus,
+  // options?: ManifestCatalogExtraParametersOptions,
+  : Promise<SimklLibraryListEntry[]> {
     throw new Error('Method not implemented.');
   }
 
-  _getMetaObject(
-    types: SimklLibraryType[],
-    id: MetaPreviewObject['id'],
-    userConfig: SimklUserConfig,
-  ): Promise<MetaObject> {
-    console.log(
-      'SimklServerReceiver -> _getMetaObject -> id',
-      id,
-      types,
-      userConfig,
-    );
+  _getMetaObject() // ids: IDs,
+  // type: AnilistMCIT['receiverCatalogType'],
+  // potentialTypes: AnilistMCIT['receiverCatalogType'][],
+  : Promise<MetaObject> {
     throw new Error('Method not implemented.');
   }
 }
-
-export const simklServerReceiver = new SimklServerReceiver();

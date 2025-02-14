@@ -1,4 +1,4 @@
-import { ReceiverClient } from '~/utils/receiver/receiver';
+import { ReceiverClient } from '~/utils/receiver/receiver-client';
 
 import {
   defaultCatalogs,
@@ -7,9 +7,9 @@ import {
   manifestCatalogItems,
   receiverInfo,
 } from './constants';
-import type { AnilistUserSettings } from './types/user-settings';
+import type { AnilistMCIT } from './types/manifest';
 
-export class AnilistClientReceiver extends ReceiverClient<AnilistUserSettings> {
+export class AnilistClientReceiver extends ReceiverClient<AnilistMCIT> {
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
 

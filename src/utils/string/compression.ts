@@ -31,27 +31,14 @@ const compressionTypeRemove = (data: string) => {
 };
 
 const compressionMapping: Record<string, string> = {
-  '"name":"': '~n~',
-  '"accesstoken":"': '~at~',
-  '"clientid":"': '~ci~',
-  '"catalogs":\\[]': '~cce~',
-  '"catalogs":\\[': '~cc~',
-  '"catalogConfig":{': '~cC~',
-  ':true': '~t~',
-  ':false': '~f~',
-  '"anilist":{': '~a~',
-  '"anilist"': '~A~',
-  '"simkl":{': '~s~',
-  '"simkl"': '~S~',
-  '"value"': '~v~',
-  '"id":': '~i~',
-  '"settings":': '~SE~',
-  ['syncribullet']: '~syb~',
-  ['-anilist-']: '~an~',
-  ['-simkl-']: '~si~',
-  ['anime-']: '~AN~',
-  ['shows-']: '~SH~',
-  ['movies-']: '~MO~',
+  '"simkl":{': '~rs~',
+  '"anilist":{': '~ra~',
+  '"kitsu":{': '~rk~',
+  '"a":{': '~sa~',
+  '"client_id":"': '~sac~',
+  '"access_token":"': '~saa~',
+  '"c":"': '~sc~',
+  '"l":"': '~sl~',
 };
 
 export const compress = (data: string, encryptionType: CompressionType) => {

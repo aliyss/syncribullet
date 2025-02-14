@@ -2,16 +2,12 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
-import type { ReceiverTypes } from '~/utils/connections/types';
-
-import { convertAnilistToCinemeta } from '~/utils/anilist/convert';
-import { getAnilistUserList } from '~/utils/anilist/get';
-import { convertSimklToCinemeta } from '~/utils/simkl/convert';
-import { getSimklList } from '~/utils/simkl/get';
-import type {
-  SimklLibraryObjectStatus,
-  SimklLibraryType,
-} from '~/utils/simkl/types';
+import { buildCatchAllParams } from '~/utils/catchall/params';
+import type { CatalogCatchAll } from '~/utils/catchall/types/catalog';
+import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
+import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildServerReceivers';
+import { exists } from '~/utils/helpers/array';
+import type { ReceiverServers } from '~/utils/receiver/types/receivers';
 
 export const onGet: RequestHandler = async ({
   json,
@@ -20,96 +16,80 @@ export const onGet: RequestHandler = async ({
   cacheControl,
 }) => {
   if (!params.catchall.includes('skip')) {
-    // 20 min
+    // 5 min
     cacheControl({
       public: true,
-      maxAge: 60 * 20,
-      staleWhileRevalidate: 60 * 15,
+      maxAge: 60 * 5,
+      staleWhileRevalidate: 60 * 3,
     });
   }
 
-  const userConfigString = decodeURI(params.config).split('|');
+  const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
+    params.config,
+    env.get('PRIVATE_ENCRYPTION_KEY') ||
+      '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+  );
 
-  const userConfig: Record<string, Record<string, string> | undefined> = {};
-  for (let i = 0; i < userConfigString.length; i++) {
-    const lineConfig = userConfigString[i].split('-=-');
-    const keyConfig = lineConfig[0].split('_');
-    userConfig[keyConfig[0]] = {
-      ...(userConfig[keyConfig[0]] ? userConfig[keyConfig[0]] : {}),
-      [keyConfig[1]]: lineConfig[1],
-    };
-  }
+  const receivers =
+    buildReceiversFromUserConfigBuildMinifiedStrings(userConfig);
 
-  const catchall = params.catchall.slice(0, -'.json'.length).split('/');
+  const [potentialReceiverType, catalogId, searchParams] = params.catchall
+    .slice(0, -'.json'.length)
+    .split('/') as CatalogCatchAll;
 
-  if (!catchall[0] || !catchall[1]) {
+  if (!potentialReceiverType || !catalogId) {
     json(200, { metas: [] });
     return;
   }
 
-  catchall[1] = catchall[1].slice('syncribullet-'.length);
-  const catchallParams = (catchall[2] || 'skip=0').split('&');
+  const receiversAsList = Object.values(receivers)
+    .map((receiver) => {
+      if (!receiver) {
+        return;
+      }
+      const catalogItem = [...receiver.manifestCatalogItems].find(
+        (x) => x.id === catalogId,
+      ) as (typeof receiver.manifestCatalogItems)[number] | undefined;
+      if (!catalogItem) {
+        return;
+      }
+      // TODO: Fix this typing so it works without the assignment
+      return { receiver, catalogItem } as {
+        receiver: NonNullable<ReceiverServers>;
+        catalogItem: NonNullable<
+          (typeof receiver.manifestCatalogItems)[number]
+        >;
+      };
+    })
+    .filter(exists);
 
-  let skipCount = 0;
-  let genre: string | undefined;
-
-  for (let i = 0; i < catchallParams.length; i++) {
-    const item = catchallParams[i].split('=');
-    if (item[0] === 'skip') {
-      skipCount = parseInt(item[1]);
-    } else if (item[0] === 'genre') {
-      genre = item[1];
-    }
+  if (receiversAsList.length <= 0) {
+    json(200, { metas: [] });
+    return;
   }
 
-  const catalogInfo: [
-    ReceiverTypes,
-    SimklLibraryType,
-    SimklLibraryObjectStatus,
-  ] = catchall[1].split('-') as [
-    ReceiverTypes,
-    SimklLibraryType,
-    SimklLibraryObjectStatus,
-  ];
+  const usableReceiver = receiversAsList[0].receiver;
+  const usableCatalogItem = receiversAsList[0].catalogItem;
 
-  if (catalogInfo[0] === 'simkl') {
-    if (userConfig['simkl'] && !userConfig['simkl'].clientid) {
-      userConfig['simkl'].clientid = env.get('PRIVATE_SIMKL_CLIENT_ID') || '';
-    }
-
-    const list = await getSimklList(
-      catalogInfo[1],
-      catalogInfo[2],
-      userConfig['simkl'],
-    );
-
-    if (list) {
-      const metas = await convertSimklToCinemeta(catalogInfo[1], list, {
-        skip: skipCount,
-        genre: genre,
-      });
-      json(200, { metas: metas });
-      return;
-    }
-  } else if (catalogInfo[0] === 'anilist') {
-    const list = await getAnilistUserList(
-      catalogInfo[2] as any,
-      userConfig['anilist'],
-    );
-
-    if (list.data.MediaListCollection.lists[0]) {
-      const metas = await convertAnilistToCinemeta(
-        'shows',
-        list.data.MediaListCollection.lists[0].entries,
-        {
-          skip: skipCount,
-          genre: genre,
-        },
-      );
-      json(200, { metas: metas });
-      return;
-    }
+  const safeUserConfig = userConfig[usableReceiver.receiverInfo.id];
+  if (!safeUserConfig) {
+    json(200, { metas: [] });
+    return;
   }
 
-  json(200, { metas: [] });
+  const catalogInfo = usableReceiver.getManifestCatalogIdParsed(
+    usableCatalogItem.id,
+  );
+
+  const options = buildCatchAllParams(searchParams);
+
+  const catalogItems = await usableReceiver.getMetaPreviews(
+    catalogInfo[1],
+    catalogInfo[2],
+    potentialReceiverType,
+    options,
+  );
+
+  json(200, { metas: catalogItems });
+  return;
 };

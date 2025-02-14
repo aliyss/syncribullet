@@ -5,8 +5,12 @@ import {
   useVisibleTask$,
 } from '@builder.io/qwik';
 import type { NoSerialize } from '@builder.io/qwik';
-// import { useLocation, useNavigate } from '@builder.io/qwik-city';
-import type { DocumentHead } from '@builder.io/qwik-city';
+import {
+  type DocumentHead,
+  server$,
+  useLocation,
+  useNavigate,
+} from '@builder.io/qwik-city';
 
 // Components
 import ReceiversSection from '~/components/sections/receivers/receivers-section';
@@ -17,8 +21,15 @@ import SyncribulletTitle from '~/components/titles/syncribullet-title';
 // Utils
 import { configurableReceivers } from '~/utils/connections/receivers';
 
-// Types
+import { buildClientReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildClientReceivers';
+import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
+import {
+  buildUserConfigBuildMinifiedStringsFromReceivers,
+  encryptCompressFromUserConfigBuildMinifiedStrings,
+} from '~/utils/config/buildUrlFromReceivers';
+import type { UserConfigBuildMinifiedString } from '~/utils/config/types';
 import { exists } from '~/utils/helpers/array';
+// Types
 import { Receivers } from '~/utils/receiver/types/receivers';
 import type { ReceiverClients } from '~/utils/receiver/types/receivers';
 import type { ReceiverSettings } from '~/utils/settings/stringify';
@@ -51,9 +62,27 @@ export interface CurrentReceiver {
   };
 }
 
+export const retrieveConfig = server$(function (url: string) {
+  return decryptCompressToUserConfigBuildMinifiedStrings(
+    url,
+    this.env.get('PRIVATE_ENCRYPTION_KEY') ||
+      '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+  );
+});
+
+export const buildURL = server$(function (data: {
+  [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverClients>;
+}) {
+  return encryptCompressFromUserConfigBuildMinifiedStrings(
+    data,
+    this.env.get('PRIVATE_ENCRYPTION_KEY') ||
+      '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+  );
+});
+
 export default component$(() => {
-  // const nav = useNavigate();
-  // const location = useLocation();
+  const nav = useNavigate();
+  const location = useLocation();
 
   const receivers = useSignal<{
     [key in Receivers]: NoSerialize<ReceiverClients>;
@@ -63,9 +92,21 @@ export default component$(() => {
     [Receivers.KITSU]: undefined,
   });
 
-  const currentReceiver = useSignal<Receivers | null>(Receivers.SIMKL);
+  const currentReceiver = useSignal<Receivers | null>(null);
 
-  useVisibleTask$(() => {
+  useVisibleTask$(async () => {
+    const config = location.url.searchParams.get('config');
+    if (config) {
+      const configData = await retrieveConfig(config);
+      const configReceivers =
+        buildClientReceiversFromUserConfigBuildMinifiedStrings(configData);
+      receivers.value = {
+        [Receivers.SIMKL]: noSerialize(configReceivers[Receivers.SIMKL]),
+        [Receivers.ANILIST]: noSerialize(configReceivers[Receivers.ANILIST]),
+        [Receivers.KITSU]: undefined,
+      };
+      return;
+    }
     const configuredReceivers = configurableReceivers();
     receivers.value = {
       [Receivers.SIMKL]: noSerialize(configuredReceivers[Receivers.SIMKL]),
@@ -77,93 +118,6 @@ export default component$(() => {
       receiver?.getUserConfig();
     });
   });
-
-  /*
-  const fullSyncItems = receiverListSync
-    .filter((item) => item.fullSync)
-    .map((item) => {
-      return (
-        <Button
-          key={item.id}
-          backgroundColour={item.backgroundColour}
-          icon={item.icon}
-        >
-          {item.text}
-        </Button>
-      );
-    });
-  */
-
-  // const syncApplications = senderListSync.map((item) => {
-  //   return (
-  //     <Button
-  //       key={item.id}
-  //       backgroundColour={item.backgroundColour}
-  //       icon={item.icon}
-  //       onClick$={() => {
-  //         const configURL: string[] = [];
-  //         if (configuredReceivers['anilist'].data) {
-  //           configURL.push(
-  //             `anilist_accesstoken-=-${configuredReceivers['anilist'].data.access_token}`,
-  //           );
-  //           const anilistSettings =
-  //             window.localStorage.getItem('anilist-settings');
-  //           if (anilistSettings) {
-  //             try {
-  //               const anilistSettingsData: IManifestSettings =
-  //                 JSON.parse(anilistSettings);
-  //               configURL.push(
-  //                 `anilist_settings-=-${stringifySettings(
-  //                   anilistSettingsData,
-  //                   'anilist',
-  //                 )}`,
-  //               );
-  //             } catch (e) {
-  //               console.error(e);
-  //             }
-  //           }
-  //         }
-  //         if (configuredReceivers['simkl'].data) {
-  //           configURL.push(
-  //             `simkl_accesstoken-=-${configuredReceivers['simkl'].data.access_token}`,
-  //           );
-  //           configURL.push(
-  //             `simkl_clientid-=-${configuredReceivers['simkl'].data.client_id}`,
-  //           );
-  //
-  //           const simklSettings = window.localStorage.getItem('simkl-settings');
-  //           if (simklSettings) {
-  //             try {
-  //               const simklSettingsData: IManifestSettings =
-  //                 JSON.parse(simklSettings);
-  //               configURL.push(
-  //                 `simkl_settings-=-${stringifySettings(
-  //                   simklSettingsData,
-  //                   'simkl',
-  //                 )}`,
-  //               );
-  //             } catch (e) {
-  //               console.error(e);
-  //             }
-  //           }
-  //         }
-  //         if (configuredReceivers['stremio'].data) {
-  //           configURL.push(
-  //             `stremio_authKey-=-${configuredReceivers['stremio'].data.authKey}`,
-  //           );
-  //         }
-  //         const info = `stremio://${location.url.host}${
-  //           location.url.host.endsWith('syncribullet')
-  //             ? '.baby-beamup.club'
-  //             : ''
-  //         }/${encodeURI(configURL.join('|'))}/manifest.json`;
-  //         nav(info);
-  //       }}
-  //     >
-  //       {item.text}
-  //     </Button>
-  //   );
-  // });
 
   return (
     <>
@@ -186,11 +140,27 @@ export default component$(() => {
               }}
             />
           )}
-        {Object.values(receivers).filter((item) => item && item.userSettings)
-          .length > 0 && (
+        {Object.values(receivers.value).filter(
+          (item) => item && item.userSettings,
+        ).length > 0 && (
           <SendersSection
-            receivers={Object.values(receivers).filter(exists)}
-            onClick$={() => {}}
+            onClick$={async () => {
+              const receiverList = Object.values(receivers.value).filter(
+                exists,
+              );
+              const urlData =
+                buildUserConfigBuildMinifiedStringsFromReceivers(receiverList);
+
+              const url = await buildURL(urlData);
+              console.log(url);
+
+              const link = `stremio://${location.url.host}${
+                location.url.host.endsWith('syncribullet')
+                  ? '.baby-beamup.club'
+                  : ''
+              }/${encodeURI(url)}/manifest.json`;
+              await nav(link);
+            }}
           />
         )}
       </div>

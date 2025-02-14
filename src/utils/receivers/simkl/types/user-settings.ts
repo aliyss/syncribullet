@@ -1,6 +1,8 @@
 import type { UserSettings } from '~/utils/receiver/types/user-settings/settings';
 
-export type SimklUserSettings = UserSettings & {
+import type { SimklMCIT } from './manifest';
+
+export type SimklUserSettings = UserSettings<SimklMCIT> & {
   auth?: {
     access_token: string;
     client_id: string;

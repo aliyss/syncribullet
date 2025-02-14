@@ -40,8 +40,7 @@ export default component$(() => {
     anilistReceiver.mergeUserConfig({
       auth: {
         access_token: anilistData.access_token,
-        token_type: anilistData.token_type,
-        expires_in: anilistData.expires_in,
+        e: anilistData.expires_in,
         client_id: parsedPreAuth.client_id,
       },
     });

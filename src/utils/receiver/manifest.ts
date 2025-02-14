@@ -1,8 +1,10 @@
 import type { ManifestCatalogItem } from '../manifest';
+import { ManifestReceiverTypes } from '../manifest';
+import type { ReceiverMCITypes } from './types/receivers';
 
-export type MinifiedManifestCatalogItem = {
-  id: ManifestCatalogItem['id'];
-  name: ManifestCatalogItem['name'];
+export type MinifiedManifestCatalogItem<MCIT extends ReceiverMCITypes> = {
+  id: ManifestCatalogItem<MCIT>['id'];
+  name: ManifestCatalogItem<MCIT>['name'];
   smallId: string;
 };
 
@@ -25,10 +27,10 @@ const generateMinifiedId = (type: string, typeCount: number): string => {
   return smallTypeId;
 };
 
-export const minifyManifestCatalogItems = (
-  manifestCatalogItems: Readonly<ManifestCatalogItem[]>,
-): MinifiedManifestCatalogItem[] => {
-  const result: MinifiedManifestCatalogItem[] = [];
+export const minifyManifestCatalogItems = <MCIT extends ReceiverMCITypes>(
+  manifestCatalogItems: Readonly<ManifestCatalogItem<MCIT>[]>,
+): MinifiedManifestCatalogItem<MCIT>[] => {
+  const result: MinifiedManifestCatalogItem<MCIT>[] = [];
   const types: MinifiedTypeMapping = {};
 
   for (const manifestCatalogItem of manifestCatalogItems) {
@@ -87,6 +89,36 @@ export const minifyManifestCatalogItems = (
       name: manifestCatalogItem.name,
       smallId,
     });
+  }
+
+  return result;
+};
+
+export type MinifiedManifestReceiverTypes = string;
+
+export const minifyManifestReceiverTypes = (
+  manifestReceiverTypes: Readonly<ManifestReceiverTypes[]>,
+): MinifiedManifestReceiverTypes[] => {
+  const result: MinifiedManifestReceiverTypes[] = [];
+
+  for (const manifestReceiverType of manifestReceiverTypes) {
+    switch (manifestReceiverType) {
+      case ManifestReceiverTypes.ANIME:
+        result.push('A');
+        break;
+      case ManifestReceiverTypes.MOVIE:
+        result.push('M');
+        break;
+      case ManifestReceiverTypes.SERIES:
+        result.push('S');
+        break;
+      case ManifestReceiverTypes.CHANNELS:
+        result.push('C');
+        break;
+      case ManifestReceiverTypes.TV:
+        result.push('T');
+        break;
+    }
   }
 
   return result;

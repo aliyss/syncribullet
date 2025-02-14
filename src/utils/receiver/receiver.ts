@@ -1,29 +1,42 @@
-import type { ManifestCatalogItem, ManifestReceiverTypes } from '../manifest';
-import { minifyManifestCatalogItems } from './manifest';
-import type { MinifiedManifestCatalogItem } from './manifest';
-import type { IDMapping, IDSources } from './types/id';
 import type {
-  ManifestCatalogExtraParametersOptions,
-  ManifestReceiverTypesMapping,
-} from './types/manifest-types';
-import type { MetaObject } from './types/meta-object';
-import type { MetaPreviewObject } from './types/meta-preview-object';
-import type { Receivers } from './types/receivers';
+  ManifestCatalogItem,
+  ManifestReceiverTypes,
+  SYNCRIBULLETID,
+} from '../manifest';
+import {
+  minifyManifestCatalogItems,
+  minifyManifestReceiverTypes,
+} from './manifest';
+import type { MinifiedManifestReceiverTypes } from './manifest';
+import type {
+  AllReceivers,
+  ReceiverMCITypes,
+  Receivers,
+} from './types/receivers';
 import type { UserSettings } from './types/user-settings/settings';
 
-export interface ReceiverInfo {
-  id: Receivers;
-  icon: string;
+export interface ReceiverInfoBase<R extends AllReceivers> {
+  id: R;
   text: string;
+}
+
+export interface ReceiverInfo<R extends Receivers> extends ReceiverInfoBase<R> {
+  text: string;
+  icon: string;
   backgroundColour: string;
   borderColour: string;
   liveSync: boolean;
   fullSync: boolean;
 }
 
-export abstract class Receiver {
-  public abstract receiverInfo: ReceiverInfo;
-  public abstract manifestCatalogItems: Readonly<ManifestCatalogItem[]>;
+export abstract class ReceiverBase<R extends AllReceivers> {
+  public abstract receiverInfo: ReceiverInfoBase<R>;
+}
+
+export abstract class Receiver<
+  MCIT extends ReceiverMCITypes,
+> extends ReceiverBase<MCIT['receiverType']> {
+  public abstract manifestCatalogItems: Readonly<ManifestCatalogItem<MCIT>[]>;
   public abstract defaultCatalogs: Readonly<
     (typeof this.manifestCatalogItems)[number]['id'][]
   >;
@@ -32,8 +45,14 @@ export abstract class Receiver {
     (typeof this.liveSyncTypes)[number][]
   >;
 
-  public get minifiedManifestCatalogItems(): MinifiedManifestCatalogItem[] {
-    return minifyManifestCatalogItems(this.manifestCatalogItems);
+  public userSettings: UserSettings<MCIT> | null = null;
+
+  public get minifiedManifestCatalogItems() {
+    return minifyManifestCatalogItems<MCIT>(this.manifestCatalogItems);
+  }
+
+  public get minifiedLiveSyncTypes(): MinifiedManifestReceiverTypes[] {
+    return minifyManifestReceiverTypes(this.liveSyncTypes);
   }
 
   public getLiveSyncTypes(ids?: (typeof this.liveSyncTypes)[number][]) {
@@ -44,170 +63,81 @@ export abstract class Receiver {
 
   public getManifestCatalogItems(
     ids?: (typeof this.manifestCatalogItems)[number]['id'][],
-  ) {
+  ): (typeof this.manifestCatalogItems)[number][] {
     return this.manifestCatalogItems.filter((item) =>
       (ids ?? this.defaultCatalogs).includes(item.id),
     );
   }
 
-  public getManifestCatalogItemsBySmallId(
-    smallIds?: Record<MinifiedManifestCatalogItem['smallId'], boolean>,
-  ): ManifestCatalogItem[] {
-    if (!smallIds) {
-      return this.manifestCatalogItems.filter((x) =>
-        this.defaultCatalogs.includes(x.id),
+  public getManifestCatalogIdParsed(
+    catalog: (typeof this.manifestCatalogItems)[number]['id'],
+  ): [
+    MCIT['receiverType'],
+    MCIT['receiverCatalogType'],
+    MCIT['receiverCatalogStatus'],
+  ] {
+    const [, ...id] = catalog.split('-') as [
+      SYNCRIBULLETID,
+      MCIT['receiverType'],
+      MCIT['receiverCatalogType'],
+      MCIT['receiverCatalogStatus'],
+    ];
+    return id;
+  }
+
+  public getMinifiedManifestCatalogItemsFromSmallIds(
+    ids?: (typeof this.minifiedManifestCatalogItems)[number]['smallId'][],
+  ): (typeof this.minifiedManifestCatalogItems)[number][] {
+    if (!ids) {
+      return this.minifiedManifestCatalogItems.filter((item) =>
+        this.defaultCatalogs.includes(item.id),
       );
     }
-    return this.minifiedManifestCatalogItems
-      .filter((item) => smallIds[item.smallId])
-      .map((item) => {
-        return this.manifestCatalogItems.find((x) => x.id === item.id)!;
-      });
+    return this.minifiedManifestCatalogItems.filter((item) =>
+      ids.includes(item.smallId),
+    );
   }
-}
 
-export abstract class ReceiverClient<US extends UserSettings> extends Receiver {
-  public userSettings: US | null = null;
+  public getMinifiedManifestCatalogItems(
+    ids?: (typeof this.manifestCatalogItems)[number]['id'][],
+  ): (typeof this.minifiedManifestCatalogItems)[number][] {
+    return this.minifiedManifestCatalogItems.filter((x) =>
+      (ids ?? this.defaultCatalogs).includes(x.id),
+    );
+  }
 
-  public setUserConfig(userSettings: US): void {
+  public getLiveSyncTypesFromSmallIds(
+    ids?: MinifiedManifestReceiverTypes[],
+  ): ManifestReceiverTypes[] {
+    if (!ids) {
+      return this.liveSyncTypes
+        .map((item, i) => ({
+          id: this.minifiedLiveSyncTypes[i],
+          value: item,
+        }))
+        .filter((item) => this.defaultLiveSyncTypes.includes(item.value))
+        .map((x) => x.value);
+    }
+    return this.liveSyncTypes
+      .map((item, i) => ({
+        id: this.minifiedLiveSyncTypes[i],
+        value: item,
+      }))
+      .filter((item) => ids.includes(item.id))
+      .map((x) => x.value);
+  }
+
+  public getMinifiedLiveSyncTypes(
+    ids?: (typeof this.liveSyncTypes)[number][],
+  ): MinifiedManifestReceiverTypes[] {
+    return this.minifiedLiveSyncTypes.filter((x) =>
+      minifyManifestReceiverTypes(ids ?? this.defaultLiveSyncTypes).includes(x),
+    );
+  }
+
+  public _setUserConfig(userSettings: Receiver<MCIT>['userSettings']): void {
     this.userSettings = userSettings;
-    localStorage.setItem(
-      'user-settings-' + this.receiverInfo.id,
-      JSON.stringify(userSettings),
-    );
   }
 
-  public mergeUserConfig(userSettings: Partial<US>): void {
-    const existingSettings = this.getUserConfig();
-
-    if (!existingSettings) {
-      this.setUserConfig(userSettings as US);
-      return;
-    }
-
-    this.setUserConfig({
-      ...existingSettings,
-      ...userSettings,
-    });
-  }
-
-  public removeUserConfig(): void {
-    this.userSettings = null;
-    localStorage.removeItem('user-settings-' + this.receiverInfo.id);
-  }
-
-  private _loadUserConfig(): ReceiverClient<US>['userSettings'] {
-    const data = localStorage.getItem('user-settings-' + this.receiverInfo.id);
-    if (data) {
-      try {
-        this.userSettings = JSON.parse(data);
-      } catch (e) {
-        this.userSettings = null;
-      }
-    } else {
-      this.userSettings = null;
-    }
-    return this.userSettings;
-  }
-
-  public getUserConfig(): ReceiverClient<US>['userSettings'] {
-    if (!this.userSettings) {
-      return this._loadUserConfig();
-    }
-    return this.userSettings;
-  }
-}
-
-export type ReceiverServerConfig<RLT extends string, RMPO, RPO> = {
-  libraryType: RLT;
-  metaPreviewObject: RMPO;
-  metaObject: RPO;
-};
-
-export abstract class ReceiverServer<
-  UserConfig,
-  RC extends ReceiverServerConfig<
-    string,
-    Record<string, any>,
-    Record<string, any>
-  >,
-> extends Receiver {
-  abstract internalIds: IDSources[];
-  abstract receiverTypeMapping: ManifestReceiverTypesMapping<RC['libraryType']>;
-
-  abstract getMappingIds(
-    id: string,
-    source: IDSources,
-    userConfig: UserConfig,
-  ): Promise<IDMapping[]>;
-  abstract _getMetaPreviews(
-    types: RC['libraryType'][],
-    userConfig: UserConfig,
-  ): Promise<RC['metaPreviewObject'][]>;
-  abstract _getMetaObject(
-    types: RC['libraryType'][],
-    id: string,
-    userConfig: UserConfig,
-  ): Promise<RC['metaObject']>;
-
-  abstract _convertPreviewObjectToMetaPreviewObject(
-    previewObject: RC['metaPreviewObject'],
-    options?: ManifestCatalogExtraParametersOptions,
-    index?: number,
-  ): Promise<MetaPreviewObject>;
-
-  abstract _convertObjectToMetaObject(
-    object: RC['metaObject'],
-  ): Promise<MetaObject>;
-
-  private convertManifestTypeToLibraryType(
-    type: ManifestReceiverTypes,
-  ): RC['libraryType'][] {
-    return Object.entries(this.receiverTypeMapping)
-      .map(([key, value]) => {
-        if (value === type) {
-          return key;
-        }
-      })
-      .filter((x) => x) as RC['libraryType'][];
-  }
-
-  public async getMetaPreviews(
-    type: ManifestReceiverTypes,
-    userConfig: UserConfig,
-    options?: ManifestCatalogExtraParametersOptions,
-  ): Promise<MetaPreviewObject[]> {
-    const result = await this._getMetaPreviews(
-      this.convertManifestTypeToLibraryType(type),
-      userConfig,
-    );
-    const promises = result.map((x, i) =>
-      this._convertPreviewObjectToMetaPreviewObject(x, options, i),
-    );
-    return await Promise.all(promises);
-  }
-
-  public async getMetaObject(
-    type: ManifestReceiverTypes,
-    id: MetaPreviewObject['id'],
-    userConfig: UserConfig,
-  ): Promise<MetaObject> {
-    const result = await this._getMetaObject(
-      this.convertManifestTypeToLibraryType(type),
-      id,
-      userConfig,
-    );
-    return await this._convertObjectToMetaObject(result);
-  }
-
-  public getInternalIds(ids: IDMapping[]): IDMapping[] {
-    return (
-      this.internalIds
-        .map((x) => {
-          return ids.find((i) => i.source === x);
-        })
-        // Required as the map function will return undefined even if it is filtered out
-        .filter((x) => x) as IDMapping[]
-    );
-  }
+  abstract setUserConfig(userSettings: Receiver<MCIT>['userSettings']): void;
 }

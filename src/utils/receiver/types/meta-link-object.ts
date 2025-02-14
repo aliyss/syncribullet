@@ -6,11 +6,13 @@ import type {
 } from '~/utils/manifest';
 
 import type { MetaPreviewObject } from './meta-preview-object';
+import type { ReceiverMCITypes } from './receivers';
 
 export enum MetaLinkObjectCategory {
   ACTOR = 'actor',
   DIRECTOR = 'director',
   WRITER = 'writer',
+  SOURCE = 'source',
 }
 
 export type ManifestCatalogExtraParametersAsUrl =
@@ -24,7 +26,7 @@ export type MetaLinkStremioSearchQueryParamsInitial =
 
 export type MetaLinkStremioSearch = `stremio:///search?search=${string}`;
 export type MetaLinkStremioDiscover =
-  `stremio:///discover/${string}/${ManifestReceiverTypes}/${ManifestCatalogItem['id']}${MetaLinkStremioSearchQueryParamsInitial}`;
+  `stremio:///discover/${string}/${ManifestReceiverTypes}/${ManifestCatalogItem<ReceiverMCITypes>['id']}${MetaLinkStremioSearchQueryParamsInitial}`;
 export type MetaStremioDetail =
   `stremio:///details/${ManifestReceiverTypes}/${MetaPreviewObject['id']}`;
 export type MetaStremioDetailVideo = `${MetaStremioDetail}/${string}`;

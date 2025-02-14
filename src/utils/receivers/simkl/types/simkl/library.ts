@@ -1,21 +1,9 @@
-import type { IDs } from '~/utils/ids/types';
-
 import type { RequireAtLeastOne } from '~/utils/helpers/types';
+import type { IDs } from '~/utils/receiver/types/id';
 
-export enum SimklLibraryType {
-  MOVIES = 'movies',
-  SHOWS = 'shows',
-  ANIME = 'anime',
-}
+import type { SimklCatalogStatus } from '../catalog/catalog-status';
 
-export type SimklLibraryObjectStatus =
-  | 'watching'
-  | 'plantowatch'
-  | 'completed'
-  | 'hold'
-  | 'dropped';
-
-export interface SimklIds extends IDs {}
+export type SimklIds = IDs;
 
 export interface SimklMovieAddToList {
   title?: string;
@@ -75,12 +63,19 @@ export interface SimklLibraryObjectMovie {
 }
 
 export interface SimklLibraryObjectBase {
+  added_to_watchlist_at: string;
   last_watched_at: string | null;
+  user_rated_at: string | null;
   user_rating: number | null;
-  status: SimklLibraryObjectStatus;
+  status: SimklCatalogStatus;
 }
 
 export interface SimklLibraryShowObject extends SimklLibraryObjectBase {
+  last_watched: string | null;
+  next_to_watch: string | null;
+  watched_episodes_count?: number;
+  total_episodes_count?: number;
+  not_aired_episodes_count?: number;
   show: SimklLibraryObjectShow;
 }
 

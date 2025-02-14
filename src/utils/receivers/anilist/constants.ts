@@ -4,9 +4,12 @@ import {
 } from '~/utils/manifest';
 import type { ManifestCatalogItem } from '~/utils/manifest';
 import type { ReceiverInfo } from '~/utils/receiver/receiver';
+import { IDSources } from '~/utils/receiver/types/id';
 import { Receivers } from '~/utils/receiver/types/receivers';
 
-export const receiverInfo: ReceiverInfo = {
+import type { AnilistMCIT } from './types/manifest';
+
+export const receiverInfo: ReceiverInfo<Receivers.ANILIST> = {
   id: Receivers.ANILIST,
   icon: 'https://api.iconify.design/simple-icons:anilist.svg?color=%23FFFFFF',
   text: 'Anilist',
@@ -15,6 +18,10 @@ export const receiverInfo: ReceiverInfo = {
   liveSync: true,
   fullSync: true,
 };
+
+export const internalIds = [[IDSources.ANILIST]] as const satisfies Readonly<
+  Readonly<IDSources[]>[]
+>;
 
 export const manifestCatalogItems = [
   {
@@ -83,7 +90,7 @@ export const manifestCatalogItems = [
       { name: ManifestCatalogExtraParameters.SKIP, isRequired: false },
     ],
   },
-] as const satisfies Readonly<ManifestCatalogItem[]>;
+] as const satisfies Readonly<ManifestCatalogItem<AnilistMCIT>[]>;
 
 export const defaultCatalogs: Readonly<
   (typeof manifestCatalogItems)[number]['id'][]
@@ -91,7 +98,7 @@ export const defaultCatalogs: Readonly<
   'syncribullet-anilist-anime-CURRENT',
   'syncribullet-anilist-anime-PLANNING',
   'syncribullet-anilist-anime-COMPLETED',
-] as const;
+] as const satisfies Readonly<(typeof manifestCatalogItems)[number]['id'][]>;
 
 export const liveSyncTypes = [
   ManifestReceiverTypes.ANIME,

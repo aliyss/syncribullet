@@ -73,3 +73,20 @@ export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 export type DeepWriteable<T> = {
   -readonly [P in keyof T]: DeepWriteable<T[P]>;
 };
+
+export type PickByArray<
+  T extends Record<string | number | symbol, unknown>,
+  K extends readonly (keyof T)[],
+> = K extends [infer Head extends keyof T, ...infer Rest extends (keyof T)[]]
+  ? Pick<T, Head> & PickByArray<T, Rest>
+  : {};
+
+export type PickByArrays<
+  T extends Record<string | number | symbol, unknown>,
+  KS extends readonly (readonly (keyof T)[])[],
+> = KS extends [
+  infer Head extends (keyof T)[],
+  ...infer Rest extends (readonly (keyof T)[])[],
+]
+  ? PickByArray<T, Head> | PickByArrays<T, Rest>
+  : never;

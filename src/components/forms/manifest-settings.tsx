@@ -5,9 +5,11 @@ import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
 
 import type { KnownNoSerialize } from '~/utils/helpers/qwik-types';
-import type { ReceiverClients } from '~/utils/receiver/types/receivers';
+import type {
+  ReceiverClients,
+  ReceiverMCITypes,
+} from '~/utils/receiver/types/receivers';
 import type { UserSettingsForm } from '~/utils/receiver/types/user-settings/form';
-import type { UserSettings } from '~/utils/receiver/types/user-settings/settings';
 
 import { Button } from '../buttons/button';
 import Tab from '../tabs/tab';
@@ -22,12 +24,7 @@ type ManifestSettingsTab = 'Catalogs' | 'Live Sync' | 'Credentials';
 
 export default component$<ManifestSettingsProps>(
   ({ currentReceiver, updateReceiver$ }) => {
-    type FormSettings = UserSettingsForm<
-      UserSettings<
-        (typeof currentReceiver)['manifestCatalogItems'][number],
-        (typeof currentReceiver)['liveSyncTypes'][number]
-      >
-    >;
+    type FormSettings = UserSettingsForm<ReceiverMCITypes>;
 
     const userConfig = useSignal(currentReceiver.getUserConfig());
 

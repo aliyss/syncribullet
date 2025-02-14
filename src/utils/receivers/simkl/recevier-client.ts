@@ -1,4 +1,4 @@
-import { ReceiverClient } from '~/utils/receiver/receiver';
+import { ReceiverClient } from '~/utils/receiver/receiver-client';
 
 import {
   defaultCatalogs,
@@ -7,9 +7,9 @@ import {
   manifestCatalogItems,
   receiverInfo,
 } from './constants';
-import type { SimklUserSettings } from './types/user-settings';
+import type { SimklMCIT } from './types/manifest';
 
-export class SimklClientReceiver extends ReceiverClient<SimklUserSettings> {
+export class SimklClientReceiver extends ReceiverClient<SimklMCIT> {
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
 

@@ -4,9 +4,12 @@ import {
 } from '~/utils/manifest';
 import type { ManifestCatalogItem } from '~/utils/manifest';
 import type { ReceiverInfo } from '~/utils/receiver/receiver';
+import { IDSources } from '~/utils/receiver/types/id';
 import { Receivers } from '~/utils/receiver/types/receivers';
 
-export const receiverInfo: ReceiverInfo = {
+import type { SimklMCIT } from './types/manifest';
+
+export const receiverInfo: ReceiverInfo<Receivers.SIMKL> = {
   id: Receivers.SIMKL,
   icon: 'https://api.iconify.design/simple-icons:simkl.svg?color=%23FFFFFF',
   text: 'Simkl',
@@ -15,6 +18,10 @@ export const receiverInfo: ReceiverInfo = {
   liveSync: true,
   fullSync: true,
 };
+
+export const internalIds = [[IDSources.SIMKL]] as const satisfies Readonly<
+  Readonly<IDSources[]>[]
+>;
 
 export const manifestCatalogItems = [
   {
@@ -139,7 +146,7 @@ export const manifestCatalogItems = [
       { name: ManifestCatalogExtraParameters.SKIP, isRequired: false },
     ],
   },
-] as const satisfies Readonly<ManifestCatalogItem[]>;
+] as const satisfies Readonly<ManifestCatalogItem<SimklMCIT>[]>;
 
 export const defaultCatalogs: Readonly<
   (typeof manifestCatalogItems)[number]['id'][]
@@ -152,7 +159,7 @@ export const defaultCatalogs: Readonly<
   'syncribullet-simkl-shows-watching',
   'syncribullet-simkl-shows-plantowatch',
   'syncribullet-simkl-shows-completed',
-] as const;
+] as const satisfies Readonly<(typeof manifestCatalogItems)[number]['id'][]>;
 
 export const liveSyncTypes = [
   ManifestReceiverTypes.ANIME,
