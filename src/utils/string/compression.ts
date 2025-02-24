@@ -10,23 +10,23 @@ export enum CompressionType {
 }
 
 const compressionTypeAppend = (compressionType: CompressionType) =>
-  compressionType.toString() + compressionType.length;
+  compressionType.toString();
 
-const compressionTypeRemove = (data: string) => {
-  const compressionTypeStringInt = data.substring(data.length, data.length - 1);
-  const compressionTypeInt = parseInt(compressionTypeStringInt);
-  if (isNaN(compressionTypeInt)) {
-    return {
-      data: data.substring(0, data.length - 1),
-      compressionType: CompressionType.NONE,
-    };
+const compressionTypeRemove = (
+  data: string,
+  index: number = 1,
+): {
+  data: string;
+  compressionType: CompressionType;
+} => {
+  const compressionType = data.substring(data.length, data.length - index);
+  if (compressionType.startsWith('z')) {
+    index++;
+    return compressionTypeRemove(data, index);
   }
   return {
-    data: data.substring(0, data.length - (1 + compressionTypeInt)),
-    compressionType: data.substring(
-      data.length - 1,
-      data.length - (1 + compressionTypeInt),
-    ),
+    data: data.substring(0, data.length - index),
+    compressionType: compressionType as CompressionType,
   };
 };
 

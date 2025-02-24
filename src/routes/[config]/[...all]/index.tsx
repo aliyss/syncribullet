@@ -4,27 +4,16 @@ import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/
 import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildServerReceivers';
 import { manifest } from '~/utils/manifest';
 
-export const onGet: RequestHandler = async ({
-  json,
-  params,
-  cacheControl,
-  env,
-}) => {
-  cacheControl({
-    public: false,
-    maxAge: 0,
-    sMaxAge: 0,
-    staleWhileRevalidate: 0,
-  });
-
+export const onGet: RequestHandler = async ({ json, params, env }) => {
   const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||
       '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
   );
 
-  const receivers =
-    buildReceiversFromUserConfigBuildMinifiedStrings(userConfig);
+  const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
+    userConfig,
+  );
 
   manifest.catalogs = [
     ...(receivers.simkl?.userSettings.catalogs ?? []),

@@ -1,26 +1,3 @@
-// console.log('User Config', JSON.stringify(userConfig).length);
-// console.log('compress-json', JSON.stringify(compressJson(userConfig)).length);
-// console.log(
-//   'lz-string',
-//   compressToEncodedURIComponent(JSON.stringify(userConfig)).length,
-// );
-// const cipher = fpe({
-//   secret: 'my-secret',
-//   domain: JSON.stringify(userConfig)
-//     .split('')
-//     .reduce((acc, char) => {
-//       if (!acc.includes(char)) {
-//         acc.push(char);
-//       }
-//       return acc;
-//     }, [] as string[]),
-// });
-// console.log('fpe', cipher.encrypt(JSON.stringify(userConfig)).length);
-// const x = compressToEncodedURIComponent(
-//   cipher.encrypt(JSON.stringify(userConfig)),
-// );
-// console.log('lz-string', x.length);
-// console.log(cipher.decrypt(decompressFromEncodedURIComponent(x)));
 import fpe from 'node-fpe';
 
 export enum EncryptionType {
@@ -29,23 +6,23 @@ export enum EncryptionType {
 }
 
 const encryptionTypeAppend = (encryptionType: EncryptionType) =>
-  encryptionType.toString() + encryptionType.length;
+  encryptionType.toString();
 
-const encryptionTypeRemove = (data: string) => {
-  const encryptionTypeStringInt = data.substring(data.length, data.length - 1);
-  const encryptionTypeInt = parseInt(encryptionTypeStringInt);
-  if (isNaN(encryptionTypeInt)) {
-    return {
-      data: data.substring(0, data.length - 1),
-      compressionType: EncryptionType.NONE,
-    };
+const encryptionTypeRemove = (
+  data: string,
+  index: number = 1,
+): {
+  data: string;
+  encryptionType: EncryptionType;
+} => {
+  const encryptionType = data.substring(data.length, data.length - index);
+  if (encryptionType.startsWith('z')) {
+    index++;
+    return encryptionTypeRemove(data, index);
   }
   return {
-    data: data.substring(0, data.length - (1 + encryptionTypeInt)),
-    encryptionType: data.substring(
-      data.length - 1,
-      data.length - (1 + encryptionTypeInt),
-    ),
+    data: data.substring(0, data.length - index),
+    encryptionType: encryptionType as EncryptionType,
   };
 };
 

@@ -41,11 +41,11 @@ export abstract class ReceiverServer<
     this.userSettings = null as any;
   }
 
-  public withUserConfig(
+  public async withUserConfig(
     userConfig: UserConfigBuildMinifiedString<any>,
-  ): typeof this {
+  ): Promise<typeof this> {
     this.userSettings =
-      buildUserConfigBuildFromUserConfigBuildMinifiedString<any>(
+      await buildUserConfigBuildFromUserConfigBuildMinifiedString<any>(
         this,
         userConfig,
       );
@@ -107,12 +107,10 @@ export abstract class ReceiverServer<
     );
     const promises = result
       .filter((_, i) => {
-        if ((options?.skip || 0) < i) {
-          return false;
-        } else if ((options?.skip || 0) + 100 > i) {
-          return false;
+        if ((options?.skip || 0) <= i && i < (options?.skip || 0) + 100) {
+          return true;
         }
-        return true;
+        return false;
       })
       .map((x, i) =>
         this._convertPreviewObjectToMetaPreviewObject(x, type, options, i),

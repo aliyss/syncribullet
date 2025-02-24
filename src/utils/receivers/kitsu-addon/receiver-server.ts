@@ -6,20 +6,19 @@ import type { IDs } from '~/utils/receiver/types/id';
 import type { MetaObject } from '~/utils/receiver/types/meta-object';
 import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-object';
 
-import { CINEMETA_BASE_URL } from './api/url';
+import { KITSU_ADDON_BASE_URL } from './api/url';
 import { internalIds, receiverInfo } from './constants';
-import { CinemetaCatalogType } from './types/catalog/catalog-type';
+import { KitsuAddonCatalogType } from './types/catalog/catalog-type';
 import type {
-  CinemetaCatalogObject,
-  CinemetaCatalogPreviewObject,
-} from './types/cinemeta/library';
-import type { CinemetaMCIT } from './types/manifest';
+  KitsuAddonCatalogObject,
+  KitsuAddonCatalogPreviewObject,
+} from './types/kitsu-addon/library';
+import type { KitsuAddonMCIT } from './types/manifest';
 
-export class CinemetaServerReceiver extends ReceiverServerExtended<CinemetaMCIT> {
+export class KitsuAddonServerReceiver extends ReceiverServerExtended<KitsuAddonMCIT> {
   internalIds = internalIds;
   receiverTypeMapping = {
-    [CinemetaCatalogType.MOVIE]: ManifestReceiverTypes.MOVIE,
-    [CinemetaCatalogType.SERIES]: ManifestReceiverTypes.SERIES,
+    [KitsuAddonCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
   };
 
   receiverInfo = receiverInfo;
@@ -30,13 +29,13 @@ export class CinemetaServerReceiver extends ReceiverServerExtended<CinemetaMCIT>
   }
 
   async _convertPreviewObjectToMetaPreviewObject(
-    previewObject: CinemetaCatalogPreviewObject,
+    previewObject: KitsuAddonCatalogPreviewObject,
   ): Promise<MetaPreviewObject> {
     return previewObject;
   }
 
   async _convertObjectToMetaObject(
-    object: CinemetaCatalogObject,
+    object: KitsuAddonCatalogObject,
   ): Promise<MetaObject> {
     return object;
   }
@@ -45,21 +44,21 @@ export class CinemetaServerReceiver extends ReceiverServerExtended<CinemetaMCIT>
   // potentialTypes: MCIT['receiverCatalogType'][],
   // status: MCIT['receiverCatalogStatus'],
   // options?: ManifestCatalogExtraParametersOptions,
-  : Promise<CinemetaMCIT['receiverServerConfig']['metaPreviewObject'][]> {
+  : Promise<KitsuAddonMCIT['receiverServerConfig']['metaPreviewObject'][]> {
     return [];
   }
 
   async _getMetaObject(
-    ids: PickByArrays<IDs, CinemetaMCIT['internalIds']>,
-    type: CinemetaMCIT['receiverCatalogType'],
-    // potentialTypes: CinemetaMCIT['receiverCatalogType'][],
-  ): Promise<CinemetaMCIT['receiverServerConfig']['metaObject']> {
-    const url = `${CINEMETA_BASE_URL}/meta/${type}/${ids.imdb}.json`;
+    ids: PickByArrays<IDs, KitsuAddonMCIT['internalIds']>,
+    type: KitsuAddonMCIT['receiverCatalogType'],
+    // potentialTypes: KitsuAddonMCIT['receiverCatalogType'][],
+  ): Promise<KitsuAddonMCIT['receiverServerConfig']['metaObject']> {
+    const url = `${KITSU_ADDON_BASE_URL}/meta/${type}/kitsu:${ids.kitsu}.json`;
     return await this.getMetaObjectFromAddonUrl(url);
   }
 
   static async getManifest(): Promise<ManifestBase<ManifestCatalogItemBase>> {
-    const url = `${CINEMETA_BASE_URL}/manifest.json`;
+    const url = `${KITSU_ADDON_BASE_URL}/manifest.json`;
     return await ReceiverServerExtended.getManifestFromAddonUrl(url);
   }
 }

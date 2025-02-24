@@ -9,29 +9,16 @@ import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config
 import { exists } from '~/utils/helpers/array';
 import type { ReceiverServers } from '~/utils/receiver/types/receivers';
 
-export const onGet: RequestHandler = async ({
-  json,
-  params,
-  env,
-  cacheControl,
-}) => {
-  if (!params.catchall.includes('skip')) {
-    // 5 min
-    cacheControl({
-      public: true,
-      maxAge: 60 * 5,
-      staleWhileRevalidate: 60 * 3,
-    });
-  }
-
+export const onGet: RequestHandler = async ({ json, params, env }) => {
   const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||
       '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
   );
 
-  const receivers =
-    buildReceiversFromUserConfigBuildMinifiedStrings(userConfig);
+  const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
+    userConfig,
+  );
 
   const [potentialReceiverType, catalogId, searchParams] = params.catchall
     .slice(0, -'.json'.length)
@@ -90,6 +77,24 @@ export const onGet: RequestHandler = async ({
     options,
   );
 
-  json(200, { metas: catalogItems });
+  json(200, {
+    metas: catalogItems.filter((item) => {
+      if (
+        potentialReceiverType !== 'anime' &&
+        options.genre &&
+        !(
+          item.genres?.includes(options.genre) ||
+          (item.links || []).filter(
+            (x) => x.category === 'Genres' && x.name === options.genre,
+          ).length > 0
+        )
+      ) {
+        return false;
+      }
+      // console.log('Genre not found', item.type, item.name);
+      return true;
+    }),
+    cacheMaxAge: 10 * 60,
+  });
   return;
 };

@@ -36,8 +36,8 @@ export type SyncribulletManifestCatalogItemId<MCIT extends ReceiverMCITypes> =
     ? `${SYNCRIBULLETID}-${MCIT['receiverType']}-${MCIT['receiverCatalogType']}-${MCIT['receiverCatalogStatus']}`
     : never;
 
-export type ManifestCatalogItem<MCIT extends ReceiverMCITypes> = {
-  id: SyncribulletManifestCatalogItemId<MCIT>;
+export type ManifestCatalogItemBase = {
+  id: string;
   type: ManifestReceiverTypes;
   name: string;
   genres?: readonly string[];
@@ -46,14 +46,19 @@ export type ManifestCatalogItem<MCIT extends ReceiverMCITypes> = {
   >;
 };
 
-export interface Manifest<MCIT extends ReceiverMCITypes> {
+export type ManifestCatalogItem<MCIT extends ReceiverMCITypes> =
+  ManifestCatalogItemBase & {
+    id: SyncribulletManifestCatalogItemId<MCIT>;
+  };
+
+export interface ManifestBase<MCIB extends ManifestCatalogItemBase> {
   id: string;
   name: string;
   version: string;
   description: string;
   logo: string;
   background: string;
-  catalogs: ManifestCatalogItem<MCIT>[];
+  catalogs: MCIB[];
   resources: [
     'catalog',
     (
@@ -69,6 +74,9 @@ export interface Manifest<MCIT extends ReceiverMCITypes> {
     configurationRequired: boolean;
   };
 }
+
+export interface Manifest<MCIT extends ReceiverMCITypes>
+  extends ManifestBase<ManifestCatalogItem<MCIT>> {}
 
 export const manifest: Manifest<ReceiverMCITypes> = {
   id: `com.aliyss.syncribullet`,

@@ -98,6 +98,7 @@ export default component$(() => {
     const config = location.url.searchParams.get('config');
     if (config) {
       const configData = await retrieveConfig(config);
+      console.log(config);
       const configReceivers =
         buildClientReceiversFromUserConfigBuildMinifiedStrings(configData);
       receivers.value = {

@@ -1,34 +1,45 @@
-import type { SimklLibraryMovieObject } from '../types/simkl/library';
+import type {
+  SimklLibraryMovieObject,
+  SimklLibraryShowObject,
+} from '../types/simkl/library';
 
-export const buildMovieUserDescription = (
-  movie: SimklLibraryMovieObject,
+export const buildLibraryObjectUserDescription = (
+  libraryObject: SimklLibraryMovieObject | SimklLibraryShowObject,
 ): string => {
   const description = [];
 
-  if (movie.added_to_watchlist_at) {
-    description.push(`----------------`);
+  if (libraryObject.added_to_watchlist_at) {
     description.push(
-      `• Added to watchlist: ${movie.added_to_watchlist_at
+      `• Added to watchlist: ${libraryObject.added_to_watchlist_at
         .split('T')[0]
         .replace(/-/g, '/')}`,
     );
-    if (movie.last_watched_at) {
+    if (libraryObject.last_watched_at) {
       description.push(
-        `• Last watched: ${movie.last_watched_at
+        `• Last watched: ${libraryObject.last_watched_at
           .split('T')[0]
           .replace(/-/g, '/')}`,
       );
     }
   }
 
-  if (movie.user_rating) {
-    description.push(`----------------`);
-    description.push(`• Rating: ${movie.user_rating}`);
-    if (movie.user_rated_at) {
+  if (libraryObject.user_rating) {
+    if (description.length > 0) {
+      description.push(`----------------`);
+    }
+
+    description.push(`• Rating: ${libraryObject.user_rating}`);
+    if (libraryObject.user_rated_at) {
       description.push(
-        `• Rated at: ${movie.user_rated_at.split('T')[0].replace(/-/g, '/')}`,
+        `• Rated at: ${libraryObject.user_rated_at
+          .split('T')[0]
+          .replace(/-/g, '/')}`,
       );
     }
+  }
+
+  if (description.length > 0) {
+    description.push(`----------------`);
   }
 
   return description.join('\n');

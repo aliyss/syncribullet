@@ -28,7 +28,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-anilist-anime-CURRENT',
     type: ManifestReceiverTypes.ANIME,
     name: 'Anilist - Watching',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.SEARCH, isRequired: false },
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
@@ -39,7 +38,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-anilist-anime-PLANNING',
     type: ManifestReceiverTypes.ANIME,
     name: 'Anilist - Planning',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.SEARCH, isRequired: false },
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
@@ -50,7 +48,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-anilist-anime-COMPLETED',
     type: ManifestReceiverTypes.ANIME,
     name: 'Anilist - Completed',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.SEARCH, isRequired: false },
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
@@ -61,7 +58,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-anilist-anime-PAUSED',
     type: ManifestReceiverTypes.ANIME,
     name: 'Anilist - On Hold',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.SEARCH, isRequired: false },
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
@@ -72,7 +68,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-anilist-anime-DROPPED',
     type: ManifestReceiverTypes.ANIME,
     name: 'Anilist - Dropped',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.SEARCH, isRequired: false },
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
@@ -83,7 +78,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-anilist-anime-REPEATING',
     type: ManifestReceiverTypes.ANIME,
     name: 'Anilist - Repeating',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.SEARCH, isRequired: false },
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },

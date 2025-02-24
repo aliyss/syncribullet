@@ -1,6 +1,11 @@
+import { axiosCache } from '../axios/cache';
 import { exists } from '../helpers/array';
 import type { PickByArrays } from '../helpers/types';
-import type { ManifestReceiverTypes } from '../manifest';
+import type {
+  ManifestBase,
+  ManifestCatalogItemBase,
+  ManifestReceiverTypes,
+} from '../manifest';
 import { ReceiverBase } from './receiver';
 import type { IDSources, IDs } from './types/id';
 import type {
@@ -79,6 +84,48 @@ export abstract class ReceiverServerExtended<
       this._convertPreviewObjectToMetaPreviewObject(x, options, i),
     );
     return await Promise.all(promises);
+  }
+
+  public static async getManifestFromAddonUrl(
+    url: string,
+  ): Promise<ManifestBase<ManifestCatalogItemBase>> {
+    const response = await axiosCache(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: {
+        ttl: 1000 * 60 * 60 * 24,
+        staleIfError: 60 * 60 * 24,
+        interpretHeader: false,
+      },
+    });
+    const info = await response.data;
+    if (!info) {
+      throw new Error(`Failed to fetch manifest for:\n${url}`);
+    }
+    return info as ManifestBase<ManifestCatalogItemBase>;
+  }
+
+  public async getMetaObjectFromAddonUrl(
+    url: string,
+  ): Promise<MCIT['receiverServerConfig']['metaObject']> {
+    const response = await axiosCache(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: {
+        ttl: 1000 * 60 * 60 * 5,
+        staleIfError: 1000 * 60 * 60 * 24,
+        interpretHeader: false,
+      },
+    });
+    const info = response.data.meta;
+    if (!info) {
+      throw new Error(`Failed to fetch meta object for:\n${url}`);
+    }
+    return info;
   }
 
   public async getMetaObject(

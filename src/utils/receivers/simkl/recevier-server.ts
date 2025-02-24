@@ -7,12 +7,15 @@ import type {
 import { ManifestReceiverTypes } from '~/utils/manifest';
 import { ReceiverServer } from '~/utils/receiver/receiver-server';
 import { type IDs, createIDCatalogString } from '~/utils/receiver/types/id';
+import type { ManifestCatalogExtraParametersOptions } from '~/utils/receiver/types/manifest-types';
 import type { MetaObject } from '~/utils/receiver/types/meta-object';
 import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-object';
 import type { IDSources } from '~/utils/simkl/validate';
 
 import { CinemetaServerReceiver } from '../cinemeta/receiver-server';
 import { CinemetaCatalogType } from '../cinemeta/types/catalog/catalog-type';
+import { KitsuAddonServerReceiver } from '../kitsu-addon/receiver-server';
+import { KitsuAddonCatalogType } from '../kitsu-addon/types/catalog/catalog-type';
 import { getSimklMetaPreviews } from './api/meta-previews';
 import {
   defaultCatalogs,
@@ -22,7 +25,7 @@ import {
   manifestCatalogItems,
   receiverInfo,
 } from './constants';
-import { buildMovieUserDescription } from './meta/description';
+import { buildLibraryObjectUserDescription } from './meta/description';
 import type { SimklCatalogStatus } from './types/catalog/catalog-status';
 import { SimklCatalogType } from './types/catalog/catalog-type';
 import type { SimklMCIT } from './types/manifest';
@@ -43,10 +46,12 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
   defaultLiveSyncTypes = defaultLiveSyncTypes;
 
   cinemetaServerReceiver: CinemetaServerReceiver;
+  kitsuAddonServerReceiver: KitsuAddonServerReceiver;
 
   constructor() {
     super();
     this.cinemetaServerReceiver = new CinemetaServerReceiver();
+    this.kitsuAddonServerReceiver = new KitsuAddonServerReceiver();
   }
 
   getMappingIds(id: string, source: string): Promise<IDs> {
@@ -61,12 +66,26 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
     // options?: ManifestCatalogExtraParametersOptions,
     // index?: number,
   ): Promise<MetaPreviewObject> {
-    return await this._convertObjectToMetaObject(
+    const meta = await this._convertObjectToMetaObject(
       previewObject,
       undefined,
       oldType,
       this.receiverTypeMapping[oldType],
     );
+
+    return {
+      id: meta.id,
+      type: meta.type,
+      releaseInfo: meta.releaseInfo as Year,
+      name: meta.name,
+      poster: meta.poster,
+      posterShape: meta.posterShape,
+      imdbRating: meta.imdbRating,
+      links: meta.links,
+      genres: meta.genres,
+      description: meta.description,
+      trailers: meta.trailers,
+    };
   }
 
   async _convertObjectToMetaObject(
@@ -78,13 +97,15 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
     potentialType: ManifestReceiverTypes,
   ): Promise<MetaObject> {
     let newIds: RequireAtLeastOne<IDs> | undefined;
-    let catalogType;
+    let cinemetaCatalogType;
+    let kitsuAddonCatalogType;
 
     let meta: MetaObject | undefined;
 
     if ('movie' in object) {
       newIds = object.movie.ids;
-      catalogType = CinemetaCatalogType.MOVIE;
+      cinemetaCatalogType = CinemetaCatalogType.MOVIE;
+      kitsuAddonCatalogType = KitsuAddonCatalogType.ANIME;
 
       const id = createIDCatalogString(object.movie.ids);
       if (!id) {
@@ -95,57 +116,100 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
         id,
         name: object.movie.title,
         type: ManifestReceiverTypes.MOVIE,
-        releaseInfo: object.movie.year.toString() as Year,
+        releaseInfo: object.movie.year?.toString() as Year,
         poster: 'https://simkl.in/posters/' + object.movie.poster + '_0.jpg',
         posterShape: 'poster',
-        imdbRating: object.user_rating ?? undefined,
-        trailers: [
-          {
-            name: 'Open Simkl',
-            description: 'Open Page in Simkl',
-            externalUrl: `https://simkl.com/movies/${object.movie.ids.simkl}`,
-          },
-        ],
-        description: buildMovieUserDescription(object),
+        description: buildLibraryObjectUserDescription(object),
       } satisfies MetaObject;
       meta = partialMeta;
     } else if ('show' in object) {
       newIds = object.show.ids;
-      catalogType = CinemetaCatalogType.SERIES;
+      let manifestCatalogType = ManifestReceiverTypes.SERIES;
+      cinemetaCatalogType = CinemetaCatalogType.SERIES;
+      kitsuAddonCatalogType = KitsuAddonCatalogType.ANIME;
+
+      if ('anime_type' in object) {
+        manifestCatalogType = ManifestReceiverTypes.ANIME;
+        if (['movie', 'music video', 'special'].includes(object.anime_type)) {
+          cinemetaCatalogType = CinemetaCatalogType.MOVIE;
+        }
+      }
 
       const id = createIDCatalogString(object.show.ids);
       if (!id) {
         throw new Error('No ID found!');
       }
-      throw new Error('Method not implemented.');
+
+      const partialMeta = {
+        id,
+        name: object.show.title,
+        type: manifestCatalogType,
+        releaseInfo: object.show.year?.toString() as Year,
+        poster: 'https://simkl.in/posters/' + object.show.poster + '_0.jpg',
+        posterShape: 'poster',
+        description: buildLibraryObjectUserDescription(object),
+      } satisfies MetaObject;
+      meta = partialMeta;
     }
 
-    if (newIds && catalogType && newIds.imdb) {
-      // Required to satisfy TypeScript
-      const usableIds = newIds as RequireAtLeastOne<IDs> &
-        Pick<IDs, IDSources.IMDB>;
-      const response = await this.cinemetaServerReceiver.getMetaObject(
-        usableIds,
-        catalogType,
-        potentialType,
-      );
-      meta = {
-        imdbRating: object.user_rating ?? undefined,
-        trailers: [
-          {
-            name: 'Open Simkl',
-            description: 'Open Page in Simkl',
-            externalUrl: `https://simkl.com/movies/${object.movie.ids.simkl}`,
-          },
-          ...(response.trailers ?? []),
-        ],
-        description: meta?.description + '\n' + response.description,
-        ...response,
-      };
+    if (newIds) {
+      let response;
+
+      if (newIds.kitsu && kitsuAddonCatalogType) {
+        try {
+          const usableIds = newIds as RequireAtLeastOne<IDs> &
+            Pick<IDs, IDSources.KITSU>;
+          response = await this.kitsuAddonServerReceiver.getMetaObject(
+            usableIds,
+            kitsuAddonCatalogType,
+            potentialType,
+          );
+        } catch (e) {
+          if (e instanceof Error && e.message.includes('Not found')) {
+            // Do nothing
+          } else if (e instanceof Error && e.message.includes('meta object')) {
+            console.log(e.message);
+          } else {
+            console.error(e);
+          }
+        }
+      }
+
+      if (!response && newIds.imdb && cinemetaCatalogType) {
+        // Required to satisfy TypeScript
+        const usableIds = newIds as RequireAtLeastOne<IDs> &
+          Pick<IDs, IDSources.IMDB>;
+        try {
+          response = await this.cinemetaServerReceiver.getMetaObject(
+            usableIds,
+            cinemetaCatalogType,
+            potentialType,
+          );
+        } catch (e) {
+          if (e instanceof Error && e.message.includes('Not found')) {
+            // Do nothing
+          } else if (e instanceof Error && e.message.includes('meta object')) {
+            console.log(e.message);
+          } else {
+            // console.error(e);
+          }
+        }
+      }
+
+      if (response) {
+        meta = {
+          ...(meta as any),
+          ...response,
+          trailers: [...(response.trailers ?? []), ...(meta?.trailers ?? [])],
+          description: meta?.description + '\n' + (response.description ?? ''),
+        };
+      }
     }
+
     if (!meta) {
       throw new Error('No meta found!');
     }
+
     return meta;
   }
 
@@ -153,7 +217,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
     type: SimklCatalogType,
     _potentialTypes: SimklCatalogType[],
     status: SimklCatalogStatus,
-    // _options?: ManifestCatalogExtraParametersOptions,
+    options?: ManifestCatalogExtraParametersOptions,
   ): Promise<SimklLibraryListEntry[]> {
     const previews = await getSimklMetaPreviews(
       type,
@@ -163,7 +227,16 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
     return [
       ...(previews.movies ?? []),
       ...(previews.shows ?? []),
-      ...(previews.anime ?? []),
+      ...(previews.anime?.filter((o) => {
+        if (
+          type === SimklCatalogType.ANIME &&
+          options?.genre &&
+          o.anime_type !== options.genre
+        ) {
+          return false;
+        }
+        return true;
+      }) ?? []),
     ];
   }
 

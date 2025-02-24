@@ -9,6 +9,7 @@ import type { MetaPreviewObject } from './meta-preview-object';
 import type { ReceiverMCITypes } from './receivers';
 
 export enum MetaLinkObjectCategory {
+  GENRE = 'Genres',
   ACTOR = 'actor',
   DIRECTOR = 'director',
   WRITER = 'writer',

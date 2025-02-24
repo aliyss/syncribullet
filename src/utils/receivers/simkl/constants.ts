@@ -110,7 +110,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-simkl-anime-plantowatch',
     type: ManifestReceiverTypes.ANIME,
     name: 'Simkl - Plan to Watch',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
       { name: ManifestCatalogExtraParameters.SKIP, isRequired: false },
@@ -120,7 +119,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-simkl-anime-completed',
     type: ManifestReceiverTypes.ANIME,
     name: 'Simkl - Completed',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
       { name: ManifestCatalogExtraParameters.SKIP, isRequired: false },
@@ -130,7 +128,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-simkl-anime-hold',
     type: ManifestReceiverTypes.ANIME,
     name: 'Simkl - On Hold',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
       { name: ManifestCatalogExtraParameters.SKIP, isRequired: false },
@@ -140,7 +137,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-simkl-anime-dropped',
     type: ManifestReceiverTypes.ANIME,
     name: 'Simkl - Dropped',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
       { name: ManifestCatalogExtraParameters.SKIP, isRequired: false },

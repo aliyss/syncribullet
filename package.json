@@ -56,6 +56,8 @@
     "@modular-forms/qwik": "^0.20.2",
     "@tdanks2000/anilist-wrapper": "^1.0.15",
     "anilist-node": "^1.14.0",
+    "axios": "^1.7.9",
+    "axios-cache-interceptor": "^1.6.2",
     "cors": "^2.8.5",
     "express": "4.18.2",
     "lz-string": "^1.5.0",

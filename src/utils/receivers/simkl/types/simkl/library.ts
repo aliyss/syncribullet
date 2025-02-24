@@ -35,7 +35,7 @@ export interface SimklLibraryObjectShow {
   title: string;
   poster: string;
   fanart: null | string;
-  year: number;
+  year?: number;
   year_start_end: number;
   genres: string[];
   overview: string;
@@ -58,7 +58,7 @@ export interface SimklLibraryObjectShow {
 export interface SimklLibraryObjectMovie {
   title: string;
   poster: string;
-  year: number;
+  year?: number;
   ids: RequireAtLeastOne<SimklIds>;
 }
 
