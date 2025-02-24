@@ -25,6 +25,7 @@ export type MetaPreviewObject = MetaPreviewObjectType & {
   name: string;
   poster: string;
   posterShape?: 'landscape' | 'poster' | 'square';
+  logo?: string;
   imdbRating?: number;
   links?: MetaLinkObject[];
   genres?: string[];

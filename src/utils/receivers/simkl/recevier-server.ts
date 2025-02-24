@@ -78,6 +78,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
       type: meta.type,
       releaseInfo: meta.releaseInfo as Year,
       name: meta.name,
+      logo: meta.logo,
       poster: meta.poster,
       posterShape: meta.posterShape,
       imdbRating: meta.imdbRating,
