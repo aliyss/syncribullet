@@ -5,5 +5,6 @@ export const axiosInstance = Axios.create();
 
 export const axiosCache = setupCache(axiosInstance, {
   staleIfError: 5 * 60 * 1000,
-  debug: console.log,
+  methods: ['get', 'post'],
+  debug: (x) => console.log(x),
 });

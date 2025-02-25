@@ -90,3 +90,5 @@ export type PickByArrays<
 ]
   ? PickByArray<T, Head> | PickByArrays<T, Rest>
   : never;
+
+export type Without<T, K> = Pick<T, Exclude<keyof T, K>>;

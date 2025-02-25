@@ -47,6 +47,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
 
   cinemetaServerReceiver: CinemetaServerReceiver;
   kitsuAddonServerReceiver: KitsuAddonServerReceiver;
+  HAS_INTERNAL_SKIP = false;
 
   constructor() {
     super();

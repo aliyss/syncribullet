@@ -27,6 +27,7 @@ export abstract class ReceiverServer<
   >;
 
   public userSettings: NonNullable<Receiver<MCIT>['userSettings']>;
+  public HAS_INTERNAL_SKIP = true;
 
   public setUserConfig(
     userSettings: ReceiverServer<MCIT>['userSettings'],
@@ -107,6 +108,9 @@ export abstract class ReceiverServer<
     );
     const promises = result
       .filter((_, i) => {
+        if (this.HAS_INTERNAL_SKIP) {
+          return true;
+        }
         if ((options?.skip || 0) <= i && i < (options?.skip || 0) + 100) {
           return true;
         }
