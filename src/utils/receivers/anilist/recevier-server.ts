@@ -181,6 +181,7 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
       currentUser,
       Math.ceil(((options?.skip || 1) - 1) / 100),
       100,
+      options?.genre,
     );
 
     const items = previews.MediaListCollection.lists.reduce((acc, list) => {

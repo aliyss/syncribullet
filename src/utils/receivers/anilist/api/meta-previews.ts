@@ -13,14 +13,15 @@ const animeQuery = async <U extends AnilistCurrentUser = AnilistCurrentUser>(
   status: AnilistCatalogStatus,
   chunk: number,
   perChunk: number,
+  genre?: string,
 ) => {
   const queryVals = generateQueryHeaders(
     'MediaListCollection',
     currentUser.id,
     'ANIME',
     status,
-    chunk,
-    perChunk,
+    !genre ? chunk : undefined,
+    !genre ? perChunk : undefined,
   );
 
   const query =
@@ -126,12 +127,14 @@ export const getAnilistMetaPreviews = async <
   currentUser: U,
   chunk: number,
   perChunk: number,
+  genre?: string,
 ): Promise<T> => {
   const { query, variables } = await animeQuery<U>(
     currentUser,
     status,
     chunk + 1,
     perChunk,
+    genre,
   );
 
   if (!query) {
@@ -145,8 +148,8 @@ export const getAnilistMetaPreviews = async <
   try {
     const response = await axiosCache(ANILIST_BASE_URL, {
       id: `anilist-${type}-${status}-${currentUser.id}-${
-        chunk + 1
-      }-${perChunk}`,
+        !genre ? chunk + 1 : undefined
+      }-${!genre ? perChunk : undefined}`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -165,6 +168,8 @@ export const getAnilistMetaPreviews = async <
         staleIfError: 1000 * 60 * 5,
       },
     });
+
+    console.log(response.id);
 
     if (response.status !== 200) {
       if (response.statusText)
