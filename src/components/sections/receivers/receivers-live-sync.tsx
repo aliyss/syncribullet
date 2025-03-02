@@ -9,10 +9,13 @@ import type {
   ReceiverClients,
   Receivers,
 } from '~/utils/receiver/types/receivers';
+import type { SyncriBulletGeneralSettingsId } from '~/utils/settings/general';
 
 export interface ReceiversLiveSyncProps {
   receivers: { [key in Receivers]: NoSerialize<ReceiverClients> };
-  onClick$: PropFunction<(id: Receivers) => void>;
+  onClick$: PropFunction<
+    (id: Receivers | SyncriBulletGeneralSettingsId) => void
+  >;
 }
 
 export default component$<ReceiversLiveSyncProps>(({ receivers, onClick$ }) => {

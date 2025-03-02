@@ -2,6 +2,7 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
+import { ALLOWED_ORIGINS } from '~/utils/auth/stremio';
 import type { MetaCatchAll } from '~/utils/catchall/types/meta';
 import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
 import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildServerReceivers';
@@ -11,12 +12,18 @@ import type { IDSources, IDs } from '~/utils/receiver/types/id';
 import { createIDsFromCatalogString } from '~/utils/receiver/types/id';
 import { KitsuAddonServerReceiver } from '~/utils/receivers/kitsu-addon/receiver-server';
 
-export const onGet: RequestHandler = async ({ json, params, env }) => {
-  const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
+export const onGet: RequestHandler = async ({ json, params, env, request }) => {
+  if (!ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '')) {
+    json(200, {});
+    return;
+  }
+  const config = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||
       '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
   );
+
+  const [userConfig] = Array.isArray(config) ? config : [config, {}];
 
   const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
     userConfig,

@@ -6,6 +6,7 @@ import type {
 } from '../receiver/types/receivers';
 import type { UserSettingsCatalog } from '../receiver/types/user-settings/catalog';
 import { CinemetaServerReceiver } from '../receivers/cinemeta/receiver-server';
+import type { GeneralSettings } from '../settings/general';
 import { decompress } from '../string/compression';
 import { decrypt } from '../string/encryption';
 import type { UserConfigBuildMinifiedString } from './types';
@@ -96,12 +97,19 @@ export const buildUserConfigBuildFromUserConfigBuildMinifiedStringClients = <
 export const decryptCompressToUserConfigBuildMinifiedStrings = (
   urlString: string,
   encryptionKey: string,
-): {
-  [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverServers>;
-} => {
+):
+  | [
+      {
+        [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverServers>;
+      },
+      GeneralSettings,
+    ]
+  | {
+      [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverServers>;
+    } => {
   const decrypted = decrypt(urlString, encryptionKey);
   try {
-    return JSON.parse(decompress(decompress(decrypted)));
+    return JSON.parse(decodeURIComponent(decompress(decompress(decrypted))));
   } catch (e) {
     console.error(e);
     throw new Error('Failed to decrypt and decompress');

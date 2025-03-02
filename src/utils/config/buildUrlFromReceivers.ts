@@ -1,4 +1,5 @@
 import type { ReceiverClients, Receivers } from '../receiver/types/receivers';
+import type { GeneralSettings } from '../settings/general';
 import { CompressionType, compress } from '../string/compression';
 import { EncryptionType, encrypt } from '../string/encryption';
 import type {
@@ -65,13 +66,23 @@ export const buildUserConfigBuildMinifiedStringsFromReceivers = <
 };
 
 export const encryptCompressFromUserConfigBuildMinifiedStrings = (
-  urlData: {
-    [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverClients>;
-  },
+  urlData:
+    | [
+        {
+          [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverClients>;
+        },
+        GeneralSettings,
+      ]
+    | {
+        [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverClients>;
+      },
   encryptionKey: string,
 ): string => {
   const compressed = compress(
-    compress(JSON.stringify(urlData), CompressionType.MAPPING),
+    compress(
+      encodeURIComponent(JSON.stringify(urlData)),
+      CompressionType.MAPPING,
+    ),
     CompressionType.LZ,
   );
   return encrypt(compressed, encryptionKey, EncryptionType.FPE);

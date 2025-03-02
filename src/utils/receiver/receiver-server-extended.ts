@@ -16,6 +16,7 @@ import type {
 import type { MetaObject } from './types/meta-object';
 import type { MetaPreviewObject } from './types/meta-preview-object';
 import type { ExtendedReceiverMCITypes } from './types/receivers';
+import { StreamObject } from './types/stream-object';
 
 export abstract class ReceiverServerExtended<
   MCIT extends ExtendedReceiverMCITypes,
@@ -112,6 +113,27 @@ export abstract class ReceiverServerExtended<
       throw new Error(`Failed to fetch manifest for:\n${url}`);
     }
     return info as ManifestBase<ManifestCatalogItemBase>;
+  }
+
+  public static async getStreamObjectsFromAddonUrl(
+    url: string,
+  ): Promise<{ streams: StreamObject[] }> {
+    const response = await axiosCache(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: {
+        ttl: 1000 * 60 * 60 * 24,
+        staleIfError: 60 * 60 * 24,
+        interpretHeader: true,
+      },
+    });
+    const info = await response.data;
+    if (!info) {
+      throw new Error(`Failed to fetch stream objects for:\n${url}`);
+    }
+    return info as { streams: StreamObject[] };
   }
 
   public async getMetaObjectFromAddonUrl(

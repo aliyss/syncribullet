@@ -51,6 +51,18 @@ export type ManifestCatalogItem<MCIT extends ReceiverMCITypes> =
     id: SyncribulletManifestCatalogItemId<MCIT>;
   };
 
+export type ManifestResourceType = 'catalog' | 'meta' | 'subtitles' | 'stream';
+
+export type ManifestResource<
+  MRT extends ManifestResourceType = ManifestResourceType,
+> =
+  | MRT
+  | {
+      name: MRT;
+      types: ManifestReceiverTypes[];
+      idPrefixes?: string[];
+    };
+
 export interface ManifestBase<MCIB extends ManifestCatalogItemBase> {
   id: string;
   name: string;
@@ -59,14 +71,7 @@ export interface ManifestBase<MCIB extends ManifestCatalogItemBase> {
   logo: string;
   background: string;
   catalogs: MCIB[];
-  resources: [
-    'catalog',
-    (
-      | 'meta'
-      | { name: 'meta'; types: ManifestReceiverTypes[]; idPrefixes: string[] }
-    ),
-    'subtitles',
-  ];
+  resources: ManifestResource[];
   types: ManifestReceiverTypes[];
   behaviorHints: {
     configurable: boolean;

@@ -5,12 +5,16 @@ import type {
   ReceiverClients,
   Receivers,
 } from '~/utils/receiver/types/receivers';
+import type { SyncriBulletGeneralSettingsId } from '~/utils/settings/general';
 
+import SyncribulletSection from '../syncribullet/syncribullet-section';
 import ReceiversLiveSync from './receivers-live-sync';
 
 export interface ReceiversSectionProps {
   receivers: { [key in Receivers]: NoSerialize<ReceiverClients> };
-  onClick$: PropFunction<(id: Receivers) => void>;
+  onClick$: PropFunction<
+    (id: Receivers | SyncriBulletGeneralSettingsId) => void
+  >;
 }
 
 export default component$<ReceiversSectionProps>(({ receivers, onClick$ }) => {
@@ -21,6 +25,9 @@ export default component$<ReceiversSectionProps>(({ receivers, onClick$ }) => {
       </h2>
       <div class="flex flex-col gap-6 pt-5 md:flex-row">
         <ReceiversLiveSync receivers={receivers} onClick$={onClick$} />
+      </div>
+      <div class="flex flex-col gap-6 pt-5 md:flex-row">
+        <SyncribulletSection onClick$={onClick$} />
       </div>
     </div>
   );

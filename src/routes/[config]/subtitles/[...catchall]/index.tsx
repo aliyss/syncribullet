@@ -2,6 +2,7 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
+import { ALLOWED_ORIGINS, ALLOWED_REFERERS } from '~/utils/auth/stremio';
 import type { MetaCatchAll } from '~/utils/catchall/types/meta';
 import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
 import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildServerReceivers';
@@ -13,12 +14,31 @@ import type { IDSources } from '~/utils/receiver/types/id';
 import { createIDsFromCatalogString } from '~/utils/receiver/types/id';
 import { KitsuAddonServerReceiver } from '~/utils/receivers/kitsu-addon/receiver-server';
 
-export const onGet: RequestHandler = async ({ json, params, env }) => {
-  const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
+export const onGet: RequestHandler = async ({
+  json,
+  params,
+  env,
+  request,
+  redirect,
+  query,
+}) => {
+  if (
+    !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
+    !ALLOWED_REFERERS.includes(request.headers.get('referer') ?? '')
+  ) {
+    json(200, {});
+    return;
+  }
+  const redirectQuery = query.get('r');
+  const redirectUrl = redirectQuery ? decodeURIComponent(redirectQuery) : null;
+
+  const config = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||
       '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
   );
+
+  const [userConfig] = Array.isArray(config) ? config : [config, {}];
 
   const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
     userConfig,
@@ -29,6 +49,9 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     .split('/') as MetaCatchAll;
 
   if (!potentialReceiverType || !metaProgress) {
+    if (redirectUrl) {
+      throw redirect(302, redirectUrl);
+    }
     json(200, {
       subtitles: [],
     });
@@ -37,6 +60,9 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
 
   const ids = createIDsFromCatalogString(metaProgress);
   if (!Object.keys(ids.ids).length) {
+    if (redirectUrl) {
+      throw redirect(302, redirectUrl);
+    }
     json(200, {
       subtitles: [],
     });
@@ -88,6 +114,9 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     .filter(exists);
 
   if (receiversAsList.length <= 0) {
+    if (redirectUrl) {
+      throw redirect(302, redirectUrl);
+    }
     json(200, {
       subtitles: [],
     });
@@ -104,12 +133,18 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
         potentialReceiverType,
       );
     }
+    if (redirectUrl) {
+      throw redirect(302, redirectUrl);
+    }
     json(200, {
       subtitles: [],
       cacheMaxAge: 24 * 60 * 60,
     });
   } catch (e) {
     console.error(e);
+    if (redirectUrl) {
+      throw redirect(302, redirectUrl);
+    }
     json(200, {
       subtitles: [],
     });
