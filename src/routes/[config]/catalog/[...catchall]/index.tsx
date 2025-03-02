@@ -101,7 +101,6 @@ export const onGet: RequestHandler = async ({ json, params, env, request }) => {
       // console.log('Genre not found', item.type, item.name);
       return true;
     }),
-    cacheMaxAge: 10 * 60,
   });
   return;
 };

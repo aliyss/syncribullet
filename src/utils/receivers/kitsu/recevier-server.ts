@@ -16,9 +16,7 @@ import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-obje
 
 import { KitsuAddonServerReceiver } from '../kitsu-addon/receiver-server';
 import { getKitsuCurrentUser } from './api/current-user';
-import { getAnilistMinimalMetaObject } from './api/meta-object';
 import { getKitsuMetaPreviews } from './api/meta-previews';
-import { syncAnilistMetaObject } from './api/sync';
 import {
   defaultCatalogs,
   defaultLiveSyncTypes,
@@ -209,48 +207,48 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
           }
         | undefined;
     },
-    type: KitsuMCIT['receiverCatalogType'],
+    // type: KitsuMCIT['receiverCatalogType'],
     // potentialTypes: AnilistMCIT['receiverCatalogType'][],
   ): Promise<void> {
     if (!ids.ids.kitsu) {
       throw new Error('No Kitsu ID provided!');
     }
-    const currentProgressMedia = await getAnilistMinimalMetaObject(
-      ids.ids.kitsu,
-      type,
-      this.userSettings,
-    );
-    let status = currentProgressMedia.Media.mediaListEntry?.status;
-    if (status === 'COMPLETED') {
-      return;
-    }
-    if (!status) {
-      status = 'CURRENT';
-    }
-    if (status === 'PAUSED' || status === 'DROPPED' || status === 'PLANNING') {
-      status = 'CURRENT';
-    }
-
-    if (status === 'CURRENT' && !ids.count) {
-      status = 'COMPLETED';
-      ids.count = {
-        season: 0,
-        episode: currentProgressMedia.Media.episodes,
-      };
-    } else if (
-      status === 'CURRENT' &&
-      (ids.count?.episode || 1) >= currentProgressMedia.Media.episodes &&
-      currentProgressMedia.Media.status === 'FINISHED'
-    ) {
-      status = 'COMPLETED';
-    }
-
-    await syncAnilistMetaObject(
-      ids.ids.kitsu,
-      status,
-      ids.count,
-      this.userSettings,
-    );
+    // const currentProgressMedia = await getAnilistMinimalMetaObject(
+    //   ids.ids.kitsu,
+    //   type,
+    //   this.userSettings,
+    // );
+    // let status = currentProgressMedia.Media.mediaListEntry?.status;
+    // if (status === 'COMPLETED') {
+    //   return;
+    // }
+    // if (!status) {
+    //   status = 'CURRENT';
+    // }
+    // if (status === 'PAUSED' || status === 'DROPPED' || status === 'PLANNING') {
+    //   status = 'CURRENT';
+    // }
+    //
+    // if (status === 'CURRENT' && !ids.count) {
+    //   status = 'COMPLETED';
+    //   ids.count = {
+    //     season: 0,
+    //     episode: currentProgressMedia.Media.episodes,
+    //   };
+    // } else if (
+    //   status === 'CURRENT' &&
+    //   (ids.count?.episode || 1) >= currentProgressMedia.Media.episodes &&
+    //   currentProgressMedia.Media.status === 'FINISHED'
+    // ) {
+    //   status = 'COMPLETED';
+    // }
+    //
+    // await syncAnilistMetaObject(
+    //   ids.ids.kitsu,
+    //   status,
+    //   ids.count,
+    //   this.userSettings,
+    // );
     // throw new Error('Method not implemented.');
   }
 }
