@@ -99,6 +99,7 @@ export const defaultCatalogs: Readonly<
 ] as const satisfies Readonly<(typeof manifestCatalogItems)[number]['id'][]>;
 
 export const liveSyncTypes = [
+  ManifestReceiverTypes.ANIME,
   ManifestReceiverTypes.MOVIE,
   ManifestReceiverTypes.SERIES,
 ] as const satisfies Readonly<ManifestReceiverTypes[]>;

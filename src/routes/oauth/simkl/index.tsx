@@ -19,7 +19,10 @@ export const validateCode = server$(async function (
     const data = await fetch(
       `https://api.simkl.com/oauth/pin/${code}?client_id=${client_id}`,
     );
-    return await data.json();
+    return {
+      ...(await data.json()),
+      client_id,
+    };
   } catch (e) {
     return;
   }
