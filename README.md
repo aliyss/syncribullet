@@ -70,8 +70,8 @@ Import Sync is theoretically a one-time action where the whole library get's syn
 - [ ] Import Sync from Stremio to Anilist
 - [ ] Import Sync from Stremio to Kitsu
 - [ ] Import Sync from Stremio to MyAnimelist
-- [ ] Import Sync from Stremio to Simkl (Alternative until tested: [simkl-stremio](https://github.com/aliyss/simkl-stremio)
-- [ ] Import Sync from Stremio to Trakt (Alternative until tested: [trakt-stremio-import](https://github.com/aliyss/trakt-stremio-import)
+- [ ] Import Sync from Stremio to Simkl (Alternative until tested: [simkl-stremio](https://github.com/aliyss/simkl-stremio))
+- [ ] Import Sync from Stremio to Trakt (Alternative until tested: [trakt-stremio-import](https://github.com/aliyss/trakt-stremio-import))
 
 ### Advanced Sync
 Advanced Sync is when the theoretical _Receivers_ share their data between each other, validating and keeping each other in sync.
