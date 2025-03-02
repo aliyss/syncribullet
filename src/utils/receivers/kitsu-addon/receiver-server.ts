@@ -1,6 +1,7 @@
-import type { PickByArrays } from '~/utils/helpers/types';
+import type { PickByArrays, RequireAtLeastOne } from '~/utils/helpers/types';
 import type { ManifestBase, ManifestCatalogItemBase } from '~/utils/manifest';
 import { ManifestReceiverTypes } from '~/utils/manifest';
+import { getMappingIdsKitsu } from '~/utils/mappings/kitsu';
 import { ReceiverServerExtended } from '~/utils/receiver/receiver-server-extended';
 import type { IDs } from '~/utils/receiver/types/id';
 import type { MetaObject } from '~/utils/receiver/types/meta-object';
@@ -20,12 +21,21 @@ export class KitsuAddonServerReceiver extends ReceiverServerExtended<KitsuAddonM
   receiverTypeMapping = {
     [KitsuAddonCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
   };
+  receiverTypeReverseMapping = {
+    [ManifestReceiverTypes.MOVIE]: KitsuAddonCatalogType.ANIME,
+    [ManifestReceiverTypes.SERIES]: KitsuAddonCatalogType.ANIME,
+    [ManifestReceiverTypes.ANIME]: KitsuAddonCatalogType.ANIME,
+    [ManifestReceiverTypes.CHANNELS]: KitsuAddonCatalogType.ANIME,
+    [ManifestReceiverTypes.TV]: KitsuAddonCatalogType.ANIME,
+  };
 
   receiverInfo = receiverInfo;
 
-  getMappingIds(id: string, source: string): Promise<IDs> {
-    console.log(id, source);
-    throw new Error('Method not implemented.');
+  async getMappingIds(id: string): Promise<RequireAtLeastOne<IDs> | {}> {
+    return {
+      kitsu: parseInt(id),
+      ...(await getMappingIdsKitsu(parseInt(id))),
+    };
   }
 
   async _convertPreviewObjectToMetaPreviewObject(

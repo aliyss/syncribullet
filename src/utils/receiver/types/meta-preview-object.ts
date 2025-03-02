@@ -10,10 +10,7 @@ export type MetaPreviewObjectType =
         | ManifestReceiverTypes.SERIES
         | ManifestReceiverTypes.CHANNELS
         | ManifestReceiverTypes.ANIME;
-      releaseInfo?: {
-        start: Year;
-        end: Year;
-      };
+      releaseInfo?: string;
     }
   | {
       type: ManifestReceiverTypes;

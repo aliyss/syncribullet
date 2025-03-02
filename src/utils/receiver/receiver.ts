@@ -30,7 +30,9 @@ export interface ReceiverInfo<R extends Receivers> extends ReceiverInfoBase<R> {
 }
 
 export abstract class ReceiverBase<R extends AllReceivers> {
-  public abstract receiverInfo: ReceiverInfoBase<R>;
+  public abstract receiverInfo: R extends Receivers
+    ? ReceiverInfo<R>
+    : ReceiverInfoBase<R>;
 }
 
 export abstract class Receiver<

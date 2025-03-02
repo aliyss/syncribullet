@@ -17,8 +17,8 @@ interface Media {
   nextAiringEpisode: MediaNextAiringEpisode;
   description: string;
   format: string;
-  startDate: FuzzyDate;
-  endDate: FuzzyDate;
+  startDate?: FuzzyDate;
+  endDate?: FuzzyDate;
   duration: number;
   genres: string[];
   synonyms: string[];
@@ -28,10 +28,25 @@ interface Media {
   siteUrl: string;
 }
 
+export type MinimalMedia = Pick<
+  Media,
+  | 'id'
+  | 'title'
+  | 'type'
+  | 'format'
+  | 'status'
+  | 'episodes'
+  | 'isAdult'
+  | 'nextAiringEpisode'
+> & {
+  isReviewBlocked: boolean;
+  mediaListEntry: Pick<Entry, 'id' | 'status' | 'score' | 'progress'> | null;
+};
+
 interface Entry {
   id: number;
   media: Media;
-  status: string;
+  status: AnilistCatalogStatus;
   score: number;
   progress: number;
   repeat: number;
@@ -40,8 +55,8 @@ interface Entry {
   notes: string;
   hiddenFromStatusLists: boolean;
   advancedScores: string[];
-  startedAt: FuzzyDate;
-  completedAt: FuzzyDate;
+  startedAt?: FuzzyDate;
+  completedAt?: FuzzyDate;
   updatedAt: string;
   createdAt: string;
 }
@@ -67,4 +82,8 @@ interface MediaListCollection {
 
 export interface AnimeListResponse {
   MediaListCollection: MediaListCollection;
+}
+
+export interface AnimeMinimalMediaResponse {
+  Media: MinimalMedia;
 }

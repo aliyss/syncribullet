@@ -1,13 +1,14 @@
 import { buildUserConfigBuildFromUserConfigBuildMinifiedString } from '../config/buildReceiversFromUrl';
 import type { UserConfigBuildMinifiedString } from '../config/types';
 import { exists } from '../helpers/array';
-import type { PickByArrays } from '../helpers/types';
-import type { ManifestReceiverTypes } from '../manifest';
+import type { PickByArrays, RequireAtLeastOne } from '../helpers/types';
+import { ManifestReceiverTypes } from '../manifest';
 import { Receiver } from './receiver';
-import type { IDSources, IDs } from './types/id';
+import { type IDSources, type IDs, testMaybeAnime } from './types/id';
 import type {
   ManifestCatalogExtraParametersOptions,
   ManifestReceiverTypesMapping,
+  ManifestReceiverTypesReverseMapping,
 } from './types/manifest-types';
 import type { MetaObject } from './types/meta-object';
 import type { MetaPreviewObject } from './types/meta-preview-object';
@@ -22,7 +23,11 @@ export abstract class ReceiverServer<
   MCIT extends ReceiverMCITypes,
 > extends Receiver<MCIT> {
   abstract internalIds: Readonly<Readonly<IDSources[]>[]>;
+  abstract syncIds: Readonly<Readonly<IDSources[]>[]>;
   abstract receiverTypeMapping: ManifestReceiverTypesMapping<
+    MCIT['receiverCatalogType']
+  >;
+  abstract receiverTypeReverseMapping: ManifestReceiverTypesReverseMapping<
     MCIT['receiverCatalogType']
   >;
 
@@ -53,7 +58,10 @@ export abstract class ReceiverServer<
     return this;
   }
 
-  abstract getMappingIds(id: string, source: IDSources): Promise<IDs>;
+  abstract getMappingIds(
+    id: string,
+    source: IDSources,
+  ): Promise<RequireAtLeastOne<IDs> | {}>;
 
   abstract _getMetaPreviews(
     type: MCIT['receiverCatalogType'],
@@ -63,10 +71,30 @@ export abstract class ReceiverServer<
   ): Promise<MCIT['receiverServerConfig']['metaPreviewObject'][]>;
 
   abstract _getMetaObject(
-    ids: PickByArrays<IDs, ReceiverServer<MCIT>['internalIds']>,
+    ids: PickByArrays<IDs, MCIT['internalIds']>,
     type: MCIT['receiverCatalogType'],
     potentialTypes: MCIT['receiverCatalogType'][],
   ): Promise<MCIT['receiverServerConfig']['metaObject']>;
+
+  abstract _getMetaObject(
+    ids: PickByArrays<IDs, MCIT['internalIds']>,
+    type: MCIT['receiverCatalogType'],
+    potentialTypes: MCIT['receiverCatalogType'][],
+  ): Promise<MCIT['receiverServerConfig']['metaObject']>;
+
+  abstract _syncMetaObject(
+    ids: {
+      ids: PickByArrays<IDs, MCIT['syncIds']>;
+      count:
+        | {
+            season: number;
+            episode: number;
+          }
+        | undefined;
+    },
+    type: MCIT['receiverCatalogType'],
+    potentialTypes: ManifestReceiverTypes,
+  ): Promise<void>;
 
   abstract _convertPreviewObjectToMetaPreviewObject(
     previewObject: MCIT['receiverServerConfig']['metaPreviewObject'],
@@ -77,7 +105,7 @@ export abstract class ReceiverServer<
 
   abstract _convertObjectToMetaObject(
     object: MCIT['receiverServerConfig']['metaObject'],
-    ids: PickByArrays<IDs, ReceiverServer<MCIT>['internalIds']>,
+    ids: PickByArrays<IDs, MCIT['internalIds']>,
     type: MCIT['receiverCatalogType'],
     potentialTypes: ManifestReceiverTypes,
   ): Promise<MetaObject>;
@@ -123,7 +151,7 @@ export abstract class ReceiverServer<
   }
 
   public async getMetaObject(
-    ids: PickByArrays<IDs, ReceiverServer<MCIT>['internalIds']>,
+    ids: PickByArrays<IDs, MCIT['internalIds']>,
     type: MCIT['receiverCatalogType'],
     potentialType: ManifestReceiverTypes,
   ): Promise<MetaObject> {
@@ -138,5 +166,31 @@ export abstract class ReceiverServer<
       type,
       potentialType,
     );
+  }
+
+  public async syncMetaObject(
+    ids: {
+      ids: PickByArrays<IDs, MCIT['syncIds']>;
+      count:
+        | {
+            season: number;
+            episode: number;
+          }
+        | undefined;
+    },
+    type: MCIT['receiverCatalogType'],
+    potentialType: ManifestReceiverTypes,
+  ): Promise<void> {
+    const syncTypes = this.getLiveSyncTypes(this.userSettings.liveSync);
+    if (
+      testMaybeAnime(ids.ids) &&
+      !syncTypes.includes(ManifestReceiverTypes.ANIME)
+    ) {
+      return;
+    }
+    if (!syncTypes.includes(potentialType)) {
+      return;
+    }
+    return await this._syncMetaObject(ids, type, potentialType);
   }
 }

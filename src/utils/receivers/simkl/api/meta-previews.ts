@@ -25,7 +25,7 @@ export async function getSimklMetaPreviews(
         cache: {
           ttl: 1000 * 60 * 20,
           interpretHeader: false,
-          staleIfError: 1000 * 60 * 5,
+          staleIfError: 60 * 60 * 5,
         },
       },
     );

@@ -32,7 +32,6 @@ import { exists } from '~/utils/helpers/array';
 // Types
 import { Receivers } from '~/utils/receiver/types/receivers';
 import type { ReceiverClients } from '~/utils/receiver/types/receivers';
-import type { ReceiverSettings } from '~/utils/settings/stringify';
 
 export type ApiClientForm = {
   client_id: string;
@@ -46,7 +45,7 @@ export type ApiClientCodeForm = {
   user_code: string;
 };
 
-export interface IManifestSettings extends ReceiverSettings {
+export interface IManifestSettings {
   catalogs: { id: string; name: string; value: boolean }[];
 }
 

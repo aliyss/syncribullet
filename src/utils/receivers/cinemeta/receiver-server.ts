@@ -21,6 +21,13 @@ export class CinemetaServerReceiver extends ReceiverServerExtended<CinemetaMCIT>
     [CinemetaCatalogType.MOVIE]: ManifestReceiverTypes.MOVIE,
     [CinemetaCatalogType.SERIES]: ManifestReceiverTypes.SERIES,
   };
+  receiverTypeReverseMapping = {
+    [ManifestReceiverTypes.MOVIE]: CinemetaCatalogType.MOVIE,
+    [ManifestReceiverTypes.SERIES]: CinemetaCatalogType.SERIES,
+    [ManifestReceiverTypes.ANIME]: CinemetaCatalogType.SERIES,
+    [ManifestReceiverTypes.CHANNELS]: CinemetaCatalogType.SERIES,
+    [ManifestReceiverTypes.TV]: CinemetaCatalogType.SERIES,
+  };
 
   receiverInfo = receiverInfo;
 

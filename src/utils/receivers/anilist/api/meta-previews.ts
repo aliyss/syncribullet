@@ -169,8 +169,6 @@ export const getAnilistMetaPreviews = async <
       },
     });
 
-    console.log(response.id);
-
     if (response.status !== 200) {
       if (response.statusText)
         throw new Error(

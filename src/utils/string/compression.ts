@@ -1,7 +1,4 @@
-import {
-  compressToEncodedURIComponent,
-  decompressFromEncodedURIComponent,
-} from 'lz-string';
+import lzString from 'lz-string';
 
 export enum CompressionType {
   LZ = 'l',
@@ -56,7 +53,7 @@ export const compress = (data: string, encryptionType: CompressionType) => {
       return cM + compressionTypeAppend(encryptionType);
     case CompressionType.LZ:
     default:
-      const cL = compressToEncodedURIComponent(data);
+      const cL = lzString.compressToEncodedURIComponent(data);
       if (cL.length > data.length) {
         return encodeURI(data) + 'n';
       }
@@ -81,6 +78,6 @@ export const decompress = (data: string) => {
       return dM;
     case CompressionType.LZ:
     default:
-      return decompressFromEncodedURIComponent(encrypted.data);
+      return lzString.decompressFromEncodedURIComponent(encrypted.data);
   }
 };

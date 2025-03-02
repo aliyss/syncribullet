@@ -1,3 +1,4 @@
+import { yearsToString } from '~/utils/helpers/date';
 import type {
   DeepWriteable,
   PickByArrays,
@@ -6,17 +7,18 @@ import type {
 } from '~/utils/helpers/types';
 import { ManifestReceiverTypes } from '~/utils/manifest';
 import { ReceiverServer } from '~/utils/receiver/receiver-server';
-import { type IDs, createIDCatalogString } from '~/utils/receiver/types/id';
+import type { IDSources, IDs } from '~/utils/receiver/types/id';
+import { createIDCatalogString } from '~/utils/receiver/types/id';
 import type { ManifestCatalogExtraParametersOptions } from '~/utils/receiver/types/manifest-types';
 import type { MetaObject } from '~/utils/receiver/types/meta-object';
 import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-object';
-import type { IDSources } from '~/utils/simkl/validate';
 
 import { CinemetaServerReceiver } from '../cinemeta/receiver-server';
 import { CinemetaCatalogType } from '../cinemeta/types/catalog/catalog-type';
 import { KitsuAddonServerReceiver } from '../kitsu-addon/receiver-server';
 import { KitsuAddonCatalogType } from '../kitsu-addon/types/catalog/catalog-type';
 import { getSimklMetaPreviews } from './api/meta-previews';
+import { syncSimklMetaObject } from './api/sync';
 import {
   defaultCatalogs,
   defaultLiveSyncTypes,
@@ -24,6 +26,7 @@ import {
   liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
+  syncIds,
 } from './constants';
 import { buildLibraryObjectUserDescription } from './meta/description';
 import type { SimklCatalogStatus } from './types/catalog/catalog-status';
@@ -33,10 +36,19 @@ import type { SimklLibraryListEntry } from './types/simkl/library';
 
 export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
   internalIds = internalIds;
+  syncIds = syncIds;
+
   receiverTypeMapping = {
     [SimklCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
     [SimklCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
     [SimklCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
+  };
+  receiverTypeReverseMapping = {
+    [ManifestReceiverTypes.MOVIE]: SimklCatalogType.MOVIES,
+    [ManifestReceiverTypes.SERIES]: SimklCatalogType.SHOWS,
+    [ManifestReceiverTypes.ANIME]: SimklCatalogType.ANIME,
+    [ManifestReceiverTypes.CHANNELS]: SimklCatalogType.SHOWS,
+    [ManifestReceiverTypes.TV]: SimklCatalogType.SHOWS,
   };
 
   receiverInfo = receiverInfo;
@@ -55,7 +67,10 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
     this.kitsuAddonServerReceiver = new KitsuAddonServerReceiver();
   }
 
-  getMappingIds(id: string, source: string): Promise<IDs> {
+  async getMappingIds(
+    id: string,
+    source: string,
+  ): Promise<RequireAtLeastOne<IDs> | {}> {
     console.log(id, source);
     throw new Error('Method not implemented.');
   }
@@ -106,6 +121,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
 
     if ('movie' in object) {
       newIds = object.movie.ids;
+      const manifestCatalogType = ManifestReceiverTypes.MOVIE;
       cinemetaCatalogType = CinemetaCatalogType.MOVIE;
       kitsuAddonCatalogType = KitsuAddonCatalogType.ANIME;
 
@@ -117,8 +133,8 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
       const partialMeta = {
         id,
         name: object.movie.title,
-        type: ManifestReceiverTypes.MOVIE,
-        releaseInfo: object.movie.year?.toString() as Year,
+        type: manifestCatalogType,
+        releaseInfo: yearsToString(object.movie.year, undefined),
         poster: 'https://simkl.in/posters/' + object.movie.poster + '_0.jpg',
         posterShape: 'poster',
         description: buildLibraryObjectUserDescription(object),
@@ -126,12 +142,11 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
       meta = partialMeta;
     } else if ('show' in object) {
       newIds = object.show.ids;
-      let manifestCatalogType = ManifestReceiverTypes.SERIES;
+      const manifestCatalogType = ManifestReceiverTypes.SERIES;
       cinemetaCatalogType = CinemetaCatalogType.SERIES;
       kitsuAddonCatalogType = KitsuAddonCatalogType.ANIME;
 
       if ('anime_type' in object) {
-        manifestCatalogType = ManifestReceiverTypes.ANIME;
         if (['movie', 'music video', 'special'].includes(object.anime_type)) {
           cinemetaCatalogType = CinemetaCatalogType.MOVIE;
         }
@@ -243,11 +258,23 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
   }
 
   _getMetaObject(
-    ids: IDs,
+    ids: PickByArrays<IDs, SimklMCIT['internalIds']>,
     type: SimklMCIT['receiverCatalogType'],
     // potentialTypes: AnilistMCIT['receiverCatalogType'][],
   ): Promise<SimklLibraryListEntry> {
     console.log('SimklServerReceiver -> _getMetaObject -> id', ids, type);
     throw new Error('Method not implemented.');
+  }
+
+  async _syncMetaObject(ids: {
+    ids: PickByArrays<IDs, SimklMCIT['syncIds']>;
+    count:
+      | {
+          season: number;
+          episode: number;
+        }
+      | undefined;
+  }): Promise<void> {
+    await syncSimklMetaObject(ids, this.userSettings);
   }
 }

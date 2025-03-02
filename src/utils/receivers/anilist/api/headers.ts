@@ -29,7 +29,22 @@ export const generateQueryHeaders = (
               chunk: chunk,
               perChunk: perChunk,
             },
-            'query ($id: Int, $type: MediaType, $status: MediaListStatus, $chunk: Int, $perChunk: Int) { MediaListCollection(userId: $id, type: $type, status: $status, chunk: $chunk, perChunk: $perChunk, sort: [ADDED_TIME_DESC, UPDATED_TIME_DESC, PROGRESS_DESC]) {',
+            `#graphql
+            query (
+              $id: Int,
+              $type: MediaType,
+              $status: MediaListStatus,
+              $chunk: Int,
+              $perChunk: Int
+            ) { 
+              MediaListCollection(
+                userId: $id,
+                type: $type,
+                status: $status,
+                chunk: $chunk,
+                perChunk: $perChunk,
+                sort: [ADDED_TIME_DESC, UPDATED_TIME_DESC, PROGRESS_DESC]
+              ) {`,
           ];
         case 'User':
         case 'Staff':
@@ -37,7 +52,13 @@ export const generateQueryHeaders = (
         case 'Studio':
         case 'Activity':
         case 'Thread':
-          return [{ id: item }, `query ($id: Int) { ${type} (id: $id) { `];
+          return [
+            { id: item },
+            `#graphql
+            query ($id: Int) { 
+              ${type} (id: $id) { 
+            `,
+          ];
         default:
           throw new Error("This type doesn't have a query assigned to it!");
       }
@@ -52,12 +73,30 @@ export const generateQueryHeaders = (
               chunk: chunk,
               perChunk: perChunk,
             },
-            'query ($name: String, $type: MediaType, $status: MediaListStatus, $chunk: Int, $perChunk: Int) { MediaListCollection(userName: $name, type: $type, status: $status, chunk: $chunk, perChunk: $perChunk, sort: [ADDED_TIME_DESC, UPDATED_TIME_DESC, PROGRESS_DESC]) {',
+            `#graphql 
+            query (
+              $name: String, 
+              $type: MediaType, 
+              $status: MediaListStatus, 
+              $chunk: Int, 
+              $perChunk: Int
+            ) {
+              MediaListCollection(
+                userName: $name, 
+                type: $type, 
+                status: $status, 
+                chunk: $chunk, 
+                perChunk: $perChunk, 
+                sort: [ADDED_TIME_DESC, UPDATED_TIME_DESC, PROGRESS_DESC]
+              ) {
+            `,
           ];
         case 'User':
           return [
             { name: item },
-            'query ($name: String) { User (name: $name) { ',
+            `#graphql
+            query ($name: String) { User (name: $name) {
+            `,
           ];
         // Both staff and character need the same query header.
         case 'Staff':
@@ -65,7 +104,9 @@ export const generateQueryHeaders = (
         case 'Studio':
           return [
             { search: item },
-            `query ($search: String) { ${type} (search: $search) { `,
+            `#graphql
+            query ($search: String) { ${type} (search: $search) {
+            `,
           ];
         default:
           throw new Error("This type doesn't have a query assigned to it!");

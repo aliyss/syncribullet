@@ -65,7 +65,6 @@ export interface ManifestBase<MCIB extends ManifestCatalogItemBase> {
       | 'meta'
       | { name: 'meta'; types: ManifestReceiverTypes[]; idPrefixes: string[] }
     ),
-    'stream',
     'subtitles',
   ];
   types: ManifestReceiverTypes[];
@@ -95,9 +94,8 @@ export const manifest: Manifest<ReceiverMCITypes> = {
         ManifestReceiverTypes.SERIES,
         ManifestReceiverTypes.ANIME,
       ],
-      idPrefixes: ['anilist_'],
+      idPrefixes: ['anilist:', 'kitsu:', 'mal:', 'tmdb:', 'tvdb:', 'simkl:'],
     },
-    'stream',
     'subtitles',
   ],
   types: [

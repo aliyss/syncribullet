@@ -9,6 +9,11 @@ export type ManifestReceiverTypesMapping<E extends string> = EnumMapping<
   ManifestReceiverTypes
 >;
 
+export type ManifestReceiverTypesReverseMapping<E extends string> = EnumMapping<
+  ManifestReceiverTypes,
+  E
+>;
+
 export interface ManifestCatalogExtraParametersOptions {
   [ManifestCatalogExtraParameters.SKIP]?: number;
   [ManifestCatalogExtraParameters.GENRE]?: string;

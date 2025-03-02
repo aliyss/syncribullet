@@ -1,21 +1,25 @@
+import { yearsToString } from '~/utils/helpers/date';
 import type {
-  DeepWriteable,
   PickByArrays,
   RequireAtLeastOne,
   Year,
 } from '~/utils/helpers/types';
 import { ManifestReceiverTypes } from '~/utils/manifest';
+import { getMappingIdsHaglund } from '~/utils/mappings/haglund';
+import { getMappingIdsToKitsu } from '~/utils/mappings/kitsu';
 import { ReceiverServer } from '~/utils/receiver/receiver-server';
-import type { IDSources, IDs } from '~/utils/receiver/types/id';
+import { IDSources } from '~/utils/receiver/types/id';
+import type { IDs } from '~/utils/receiver/types/id';
 import { createIDCatalogString } from '~/utils/receiver/types/id';
 import type { ManifestCatalogExtraParametersOptions } from '~/utils/receiver/types/manifest-types';
 import type { MetaObject } from '~/utils/receiver/types/meta-object';
 import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-object';
 
 import { KitsuAddonServerReceiver } from '../kitsu-addon/receiver-server';
-import { KitsuAddonCatalogType } from '../kitsu-addon/types/catalog/catalog-type';
 import { getAnilistCurrentUser } from './api/current-user';
+import { getAnilistMinimalMetaObject } from './api/meta-object';
 import { getAnilistMetaPreviews } from './api/meta-previews';
+import { syncAnilistMetaObject } from './api/sync';
 import {
   defaultCatalogs,
   defaultLiveSyncTypes,
@@ -23,7 +27,9 @@ import {
   liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
+  syncIds,
 } from './constants';
+import { buildLibraryObjectUserDescription } from './meta/description';
 import type { AnilistLibraryListEntry } from './types/anilist/library';
 import type { AnilistCatalogStatus } from './types/catalog/catalog-status';
 import { AnilistCatalogType } from './types/catalog/catalog-type';
@@ -31,10 +37,18 @@ import type { AnilistMCIT } from './types/manifest';
 
 export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
   internalIds = internalIds;
+  syncIds = syncIds;
   receiverTypeMapping = {
     [AnilistCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
     [AnilistCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
     [AnilistCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
+  };
+  receiverTypeReverseMapping = {
+    [ManifestReceiverTypes.MOVIE]: AnilistCatalogType.ANIME,
+    [ManifestReceiverTypes.SERIES]: AnilistCatalogType.ANIME,
+    [ManifestReceiverTypes.ANIME]: AnilistCatalogType.ANIME,
+    [ManifestReceiverTypes.CHANNELS]: AnilistCatalogType.ANIME,
+    [ManifestReceiverTypes.TV]: AnilistCatalogType.ANIME,
   };
 
   receiverInfo = receiverInfo;
@@ -50,22 +64,43 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
     this.kitsuAddonServerReceiver = new KitsuAddonServerReceiver();
   }
 
-  getMappingIds(id: string, source: string): Promise<IDs> {
-    console.log(id, source);
-    throw new Error('Method not implemented.');
+  async getMappingIds(
+    id: string,
+    source: IDSources,
+  ): Promise<RequireAtLeastOne<IDs> | {}> {
+    let mappingIds = {};
+    try {
+      mappingIds = {
+        ...mappingIds,
+        ...(await getMappingIdsHaglund(id, source)),
+      };
+    } catch (e) {
+      console.error(e);
+    }
+    if (!('kitsu' in mappingIds)) {
+      try {
+        mappingIds = {
+          ...mappingIds,
+          ...(await getMappingIdsToKitsu(id, source)),
+        };
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return mappingIds;
   }
 
   async _convertPreviewObjectToMetaPreviewObject(
     previewObject: AnilistLibraryListEntry,
-    oldType: AnilistMCIT['receiverCatalogType'],
+    // oldType: AnilistMCIT['receiverCatalogType'],
     // options?: ManifestCatalogExtraParametersOptions,
     // index?: number,
   ): Promise<MetaPreviewObject> {
     const meta = await this._convertObjectToMetaObject(
       previewObject,
-      undefined,
-      oldType,
-      this.receiverTypeMapping[oldType],
+      // undefined,
+      // oldType,
+      // this.receiverTypeMapping[oldType],
     );
 
     return {
@@ -86,19 +121,27 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
 
   async _convertObjectToMetaObject(
     object: AnilistLibraryListEntry,
-    oldIds:
-      | PickByArrays<IDs, DeepWriteable<AnilistServerReceiver['internalIds']>>
-      | undefined,
-    oldType: AnilistCatalogType,
-    potentialType: ManifestReceiverTypes,
+    // oldIds:
+    //   | PickByArrays<IDs, DeepWriteable<AnilistServerReceiver['internalIds']>>
+    //   | undefined,
+    // oldType: AnilistCatalogType,
+    // potentialType: ManifestReceiverTypes,
   ): Promise<MetaObject> {
-    const kitsuAddonCatalogType = KitsuAddonCatalogType.ANIME;
+    // const kitsuAddonCatalogType = KitsuAddonCatalogType.ANIME;
 
     const newIds = {
       anilist: object.media.id,
       mal: object.media.idMal,
-    } as RequireAtLeastOne<IDs> &
-      Pick<IDs, IDSources.ANILIST | IDSources.MAL | IDSources.KITSU>;
+      ...(await this.getMappingIds(
+        object.media.id.toString(),
+        IDSources.ANILIST,
+      )),
+    } as RequireAtLeastOne<IDs>;
+
+    const manifestCatalogType =
+      object.media.format === 'MOVIE'
+        ? ManifestReceiverTypes.MOVIE
+        : ManifestReceiverTypes.SERIES;
 
     const id = createIDCatalogString(newIds);
 
@@ -106,63 +149,26 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
       throw new Error('No ID found!');
     }
 
-    let meta: MetaObject | undefined = {
+    const meta: MetaObject | undefined = {
       id,
       name:
         object.media.title.userPreferred ??
         object.media.title.english ??
         object.media.title.native,
-      type: ManifestReceiverTypes.ANIME,
-      releaseInfo: object.media.startDate?.year
-        ? ((object.media.startDate.year.toString() +
-            '-' +
-            (object.media.endDate?.year
-              ? object.media.endDate.year.toString()
-              : '')) as Year)
+      type: manifestCatalogType,
+      logo: newIds.imdb
+        ? `https://images.metahub.space/logo/medium/${newIds.imdb}/img`
         : undefined,
+      releaseInfo: yearsToString(
+        object.media.startDate?.year,
+        object.media.endDate?.year,
+      ) as any,
       poster: object.media.coverImage.large,
       genres: [...object.media.genres, ...object.media.tags.map((o) => o.name)],
       imdbRating: object.media.averageScore / 10,
       posterShape: 'poster',
-      description: object.media.description,
+      description: buildLibraryObjectUserDescription(object),
     } satisfies MetaObject;
-
-    if (id) {
-      let response;
-
-      if (newIds.kitsu) {
-        try {
-          const usableIds = newIds as RequireAtLeastOne<IDs> &
-            Pick<IDs, IDSources.KITSU>;
-          response = await this.kitsuAddonServerReceiver.getMetaObject(
-            usableIds,
-            kitsuAddonCatalogType,
-            potentialType,
-          );
-        } catch (e) {
-          if (e instanceof Error && e.message.includes('Not found')) {
-            // Do nothing
-          } else if (e instanceof Error && e.message.includes('meta object')) {
-            console.log(e.message);
-          } else {
-            console.error(e);
-          }
-        }
-      }
-
-      if (response) {
-        meta = {
-          ...(meta as any),
-          ...response,
-          trailers: [...(response.trailers ?? []), ...(meta.trailers ?? [])],
-          description: meta.description + '\n' + (response.description ?? ''),
-        };
-      }
-    }
-
-    if (!meta) {
-      throw new Error('No meta found!');
-    }
 
     return meta;
   }
@@ -214,11 +220,66 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
   }
 
   _getMetaObject(
-    ids: IDs,
+    ids: PickByArrays<IDs, AnilistMCIT['internalIds']>,
     type: AnilistMCIT['receiverCatalogType'],
     // potentialTypes: AnilistMCIT['receiverCatalogType'][],
   ): Promise<AnilistLibraryListEntry> {
     console.log('SimklServerReceiver -> _getMetaObject -> id', ids, type);
     throw new Error('Method not implemented.');
+  }
+
+  async _syncMetaObject(
+    ids: {
+      ids: PickByArrays<IDs, AnilistMCIT['syncIds']>;
+      count:
+        | {
+            season: number;
+            episode: number;
+          }
+        | undefined;
+    },
+    type: AnilistMCIT['receiverCatalogType'],
+    // potentialTypes: AnilistMCIT['receiverCatalogType'][],
+  ): Promise<void> {
+    if (!ids.ids.anilist) {
+      throw new Error('No Anilist ID provided!');
+    }
+    const currentProgressMedia = await getAnilistMinimalMetaObject(
+      ids.ids.anilist,
+      type,
+      this.userSettings,
+    );
+    let status = currentProgressMedia.Media.mediaListEntry?.status;
+    if (status === 'COMPLETED') {
+      return;
+    }
+    if (!status) {
+      status = 'CURRENT';
+    }
+    if (status === 'PAUSED' || status === 'DROPPED' || status === 'PLANNING') {
+      status = 'CURRENT';
+    }
+
+    if (status === 'CURRENT' && !ids.count) {
+      status = 'COMPLETED';
+      ids.count = {
+        season: 0,
+        episode: currentProgressMedia.Media.episodes,
+      };
+    } else if (
+      status === 'CURRENT' &&
+      (ids.count?.episode || 1) >= currentProgressMedia.Media.episodes &&
+      currentProgressMedia.Media.status === 'FINISHED'
+    ) {
+      status = 'COMPLETED';
+    }
+
+    await syncAnilistMetaObject(
+      ids.ids.anilist,
+      status,
+      ids.count,
+      this.userSettings,
+    );
+    // throw new Error('Method not implemented.');
   }
 }

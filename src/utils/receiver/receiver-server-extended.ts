@@ -1,6 +1,6 @@
 import { axiosCache } from '../axios/cache';
 import { exists } from '../helpers/array';
-import type { PickByArrays } from '../helpers/types';
+import type { PickByArrays, RequireAtLeastOne } from '../helpers/types';
 import type {
   ManifestBase,
   ManifestCatalogItemBase,
@@ -11,6 +11,7 @@ import type { IDSources, IDs } from './types/id';
 import type {
   ManifestCatalogExtraParametersOptions,
   ManifestReceiverTypesMapping,
+  ManifestReceiverTypesReverseMapping,
 } from './types/manifest-types';
 import type { MetaObject } from './types/meta-object';
 import type { MetaPreviewObject } from './types/meta-preview-object';
@@ -23,12 +24,18 @@ export abstract class ReceiverServerExtended<
   abstract receiverTypeMapping: ManifestReceiverTypesMapping<
     MCIT['receiverCatalogType']
   >;
+  abstract receiverTypeReverseMapping: ManifestReceiverTypesReverseMapping<
+    MCIT['receiverCatalogType']
+  >;
 
   constructor() {
     super();
   }
 
-  abstract getMappingIds(id: string, source: IDSources): Promise<IDs>;
+  abstract getMappingIds(
+    id: string,
+    source: IDSources,
+  ): Promise<RequireAtLeastOne<IDs> | {}>;
 
   abstract _getMetaPreviews(
     type: MCIT['receiverCatalogType'],

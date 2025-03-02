@@ -23,6 +23,13 @@ export const internalIds = [[IDSources.SIMKL]] as const satisfies Readonly<
   Readonly<IDSources[]>[]
 >;
 
+export const syncIds = [
+  [IDSources.SIMKL],
+  [IDSources.IMDB],
+  [IDSources.MAL],
+  [IDSources.KITSU],
+] as const satisfies Readonly<Readonly<IDSources[]>[]>;
+
 export const manifestCatalogItems = [
   {
     id: 'syncribullet-simkl-movies-plantowatch',

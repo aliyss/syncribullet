@@ -3,7 +3,7 @@ import type { ManifestCatalogItemType } from '~/utils/manifest';
 import type { ReceiverServerConfig } from '~/utils/receiver/receiver-server';
 import type { Receivers } from '~/utils/receiver/types/receivers';
 
-import type { internalIds } from '../constants';
+import type { internalIds, syncIds } from '../constants';
 import type { SimklCatalogStatus } from './catalog/catalog-status';
 import type { SimklCatalogType } from './catalog/catalog-type';
 import type { SimklLibraryListEntry } from './simkl/library';
@@ -20,6 +20,7 @@ export type SimklMCIT = SimklCatalog & {
     client_id: string;
   };
   internalIds: DeepWriteable<typeof internalIds>;
+  syncIds: DeepWriteable<typeof syncIds>;
   receiverServerConfig: ReceiverServerConfig<
     SimklLibraryListEntry,
     SimklLibraryListEntry

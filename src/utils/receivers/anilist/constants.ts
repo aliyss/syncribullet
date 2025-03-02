@@ -23,6 +23,10 @@ export const internalIds = [[IDSources.ANILIST]] as const satisfies Readonly<
   Readonly<IDSources[]>[]
 >;
 
+export const syncIds = [[IDSources.ANILIST]] as const satisfies Readonly<
+  Readonly<IDSources[]>[]
+>;
+
 export const manifestCatalogItems = [
   {
     id: 'syncribullet-anilist-anime-CURRENT',
@@ -95,7 +99,6 @@ export const defaultCatalogs: Readonly<
 ] as const satisfies Readonly<(typeof manifestCatalogItems)[number]['id'][]>;
 
 export const liveSyncTypes = [
-  ManifestReceiverTypes.ANIME,
   ManifestReceiverTypes.MOVIE,
   ManifestReceiverTypes.SERIES,
 ] as const satisfies Readonly<ManifestReceiverTypes[]>;

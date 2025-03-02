@@ -10,15 +10,13 @@ export const buildLibraryObjectUserDescription = (
 
   if (libraryObject.added_to_watchlist_at) {
     description.push(
-      `• Added to watchlist: ${libraryObject.added_to_watchlist_at
-        .split('T')[0]
-        .replace(/-/g, '/')}`,
+      `• Added to watchlist: ${
+        libraryObject.added_to_watchlist_at.split('T')[0]
+      }`,
     );
     if (libraryObject.last_watched_at) {
       description.push(
-        `• Last watched: ${libraryObject.last_watched_at
-          .split('T')[0]
-          .replace(/-/g, '/')}`,
+        `• Last watched: ${libraryObject.last_watched_at.split('T')[0]}`,
       );
     }
   }
