@@ -136,7 +136,6 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
         type: manifestCatalogType,
         releaseInfo: yearsToString(object.movie.year, undefined),
         poster: 'https://simkl.in/posters/' + object.movie.poster + '_0.jpg',
-        posterShape: 'poster',
         description: buildLibraryObjectUserDescription(object),
       } satisfies MetaObject;
       meta = partialMeta;
@@ -163,7 +162,6 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
         type: manifestCatalogType,
         releaseInfo: object.show.year?.toString() as Year,
         poster: 'https://simkl.in/posters/' + object.show.poster + '_0.jpg',
-        posterShape: 'poster',
         description: buildLibraryObjectUserDescription(object),
       } satisfies MetaObject;
       meta = partialMeta;
@@ -217,7 +215,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
         meta = {
           ...(meta as any),
           ...response,
-          trailers: [...(response.trailers ?? []), ...(meta?.trailers ?? [])],
+          // trailers: [...(response.trailers ?? []), ...(meta?.trailers ?? [])],
           description: meta?.description + '\n' + (response.description ?? ''),
         };
       }

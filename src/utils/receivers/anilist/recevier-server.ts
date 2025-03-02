@@ -170,8 +170,7 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
       ) as any,
       poster: object.media.coverImage.large,
       genres: [...object.media.genres, ...object.media.tags.map((o) => o.name)],
-      imdbRating: object.media.averageScore / 10,
-      posterShape: 'poster',
+      imdbRating: (object.media.averageScore / 10).toString(),
       description: buildLibraryObjectUserDescription(object),
     } satisfies MetaObject;
 
