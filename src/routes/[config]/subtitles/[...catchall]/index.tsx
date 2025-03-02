@@ -2,43 +2,118 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
-import { convertStremioSubtitleInfoToStremioSubtitleId } from '~/utils/stremio/convert';
-import type { StremioSubtitleInfo } from '~/utils/stremio/types';
-
-import { updateNormal } from '~/utils/updaters/updateNormal';
+import type { MetaCatchAll } from '~/utils/catchall/types/meta';
+import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
+import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildServerReceivers';
+import { exists } from '~/utils/helpers/array';
+import type { PickByArrays } from '~/utils/helpers/types';
+import { getMappingIdsHaglundIMDB } from '~/utils/mappings/haglund';
+import type { IDs } from '~/utils/receiver/types/id';
+import type { IDSources } from '~/utils/receiver/types/id';
+import { createIDsFromCatalogString } from '~/utils/receiver/types/id';
+import { KitsuAddonServerReceiver } from '~/utils/receivers/kitsu-addon/receiver-server';
 
 export const onGet: RequestHandler = async ({ json, params, env }) => {
-  const userConfigString = decodeURI(params.config).split('|');
+  const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
+    params.config,
+    env.get('PRIVATE_ENCRYPTION_KEY') ||
+      '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+  );
 
-  const userConfig: Record<string, Record<string, string> | undefined> = {};
-  for (let i = 0; i < userConfigString.length; i++) {
-    const lineConfig = userConfigString[i].split('-=-');
-    const keyConfig = lineConfig[0].split('_');
-    userConfig[keyConfig[0]] = {
-      ...(userConfig[keyConfig[0]] ? userConfig[keyConfig[0]] : {}),
-      [keyConfig[1]]: lineConfig[1],
-    };
-  }
+  const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
+    userConfig,
+  );
 
-  const catchall = params.catchall.split('/');
+  const [potentialReceiverType, metaProgress] = params.catchall
+    .slice(0, -'.json'.length)
+    .split('/') as MetaCatchAll;
 
-  if (!catchall[0] || !catchall[1]) {
-    json(200, { subtitles: [] });
+  if (!potentialReceiverType || !metaProgress) {
+    json(200, {
+      subtitles: [],
+    });
     return;
   }
 
-  if (userConfig['simkl'] && !userConfig['simkl'].clientid) {
-    userConfig['simkl'].clientid = env.get('PRIVATE_SIMKL_CLIENT_ID') || '';
+  const ids = createIDsFromCatalogString(metaProgress);
+  if (!Object.keys(ids.ids).length) {
+    json(200, {
+      subtitles: [],
+    });
+    return;
   }
 
-  const stremioInfo = convertStremioSubtitleInfoToStremioSubtitleId(
-    catchall as StremioSubtitleInfo,
-  );
+  if (ids.ids.kitsu) {
+    const kitsuAddonServerReceiver = new KitsuAddonServerReceiver();
+    ids.ids = {
+      ...ids.ids,
+      ...(await kitsuAddonServerReceiver.getMappingIds(
+        ids.ids.kitsu.toString(),
+      )),
+    };
+  } else if (ids.ids.imdb) {
+    ids.ids = {
+      ...ids.ids,
+      ...(await getMappingIdsHaglundIMDB(
+        ids.ids.imdb.toString(),
+        ids.count?.season,
+      )),
+    };
+  }
+
+  const idTypes = Object.keys(ids.ids) as [IDSources];
+
+  const receiversAsList = Object.values(receivers)
+    .map((receiver) => {
+      if (!receiver) {
+        return;
+      }
+      const metaIds = [...receiver.syncIds].find((x) => {
+        return idTypes
+          .flatMap((idType) => idType)
+          .find((id) => x.includes(id as never));
+      });
+      if (!metaIds) {
+        return;
+      }
+      // TODO: Fix this typing so it works without the assignment
+      return {
+        receiver,
+        ids: ids as {
+          ids: PickByArrays<IDs, (typeof receiver)['syncIds']>;
+          count: { season: number; episode: number } | undefined;
+        },
+      };
+    })
+    .filter(exists);
+
+  if (receiversAsList.length <= 0) {
+    json(200, {
+      subtitles: [],
+    });
+    return;
+  }
 
   try {
-    await updateNormal(stremioInfo, userConfig);
+    for (const receiverEntry of receiversAsList) {
+      await receiverEntry.receiver.syncMetaObject(
+        receiverEntry.ids,
+        receiverEntry.receiver.receiverTypeReverseMapping[
+          potentialReceiverType
+        ] as never,
+        potentialReceiverType,
+      );
+    }
+    json(200, {
+      subtitles: [],
+      cacheMaxAge: 24 * 60 * 60,
+    });
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    json(200, {
+      subtitles: [],
+    });
   }
-  json(200, { subtitles: [] });
+
+  return;
 };

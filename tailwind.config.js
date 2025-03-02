@@ -9,6 +9,6 @@ export default withMaterialColors(
     plugins: [],
   },
   {
-    primary: '#7FFD4F',
+    primary: '#899ee4',
   },
 );

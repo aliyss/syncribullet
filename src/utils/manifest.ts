@@ -1,35 +1,83 @@
 import { description, version } from '../../package.json';
+import type {
+  AllReceivers,
+  ReceiverMCITypes,
+} from './receiver/types/receivers';
 
-export interface ManifestCatalogItem {
-  id: string;
-  type: 'movie' | 'series' | 'channels';
-  name: string;
-  genres?: string[];
-  extra?: { name: string; isRequired: boolean }[];
+export enum ManifestReceiverTypes {
+  MOVIE = 'movie',
+  SERIES = 'series',
+  ANIME = 'anime',
+  CHANNELS = 'channel',
+  TV = 'tv',
 }
 
-export interface Manifest {
+export enum ManifestCatalogExtraParameters {
+  GENRE = 'genre',
+  SEARCH = 'search',
+  SKIP = 'skip',
+}
+
+export type ManifestCatalogItemType<
+  R extends AllReceivers,
+  RCS extends string,
+  RCT extends string,
+> = {
+  receiverType: R;
+  receiverCatalogStatus: RCS;
+  receiverCatalogType: RCT;
+};
+
+export type SYNCRIBULLETID = 'syncribullet';
+
+export type SyncribulletManifestCatalogItemId<MCIT extends ReceiverMCITypes> =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  MCIT extends infer _ extends ReceiverMCITypes
+    ? `${SYNCRIBULLETID}-${MCIT['receiverType']}-${MCIT['receiverCatalogType']}-${MCIT['receiverCatalogStatus']}`
+    : never;
+
+export type ManifestCatalogItemBase = {
+  id: string;
+  type: ManifestReceiverTypes;
+  name: string;
+  genres?: readonly string[];
+  extra?: Readonly<
+    { name: ManifestCatalogExtraParameters; isRequired: boolean }[]
+  >;
+};
+
+export type ManifestCatalogItem<MCIT extends ReceiverMCITypes> =
+  ManifestCatalogItemBase & {
+    id: SyncribulletManifestCatalogItemId<MCIT>;
+  };
+
+export interface ManifestBase<MCIB extends ManifestCatalogItemBase> {
   id: string;
   name: string;
   version: string;
   description: string;
   logo: string;
   background: string;
-  catalogs: ManifestCatalogItem[];
+  catalogs: MCIB[];
   resources: [
     'catalog',
-    'meta' | { name: 'meta'; types: ['movie', 'series']; idPrefixes: string[] },
-    'stream',
+    (
+      | 'meta'
+      | { name: 'meta'; types: ManifestReceiverTypes[]; idPrefixes: string[] }
+    ),
     'subtitles',
   ];
-  types: ['series', 'movie'];
+  types: ManifestReceiverTypes[];
   behaviorHints: {
     configurable: boolean;
     configurationRequired: boolean;
   };
 }
 
-export const manifest: Manifest = {
+export interface Manifest<MCIT extends ReceiverMCITypes>
+  extends ManifestBase<ManifestCatalogItem<MCIT>> {}
+
+export const manifest: Manifest<ReceiverMCITypes> = {
   id: `com.aliyss.syncribullet`,
   name: 'syncribullet',
   version: version,
@@ -41,13 +89,20 @@ export const manifest: Manifest = {
     'catalog',
     {
       name: 'meta',
-      types: ['movie', 'series'],
-      idPrefixes: ['anilist_'],
+      types: [
+        ManifestReceiverTypes.MOVIE,
+        ManifestReceiverTypes.SERIES,
+        ManifestReceiverTypes.ANIME,
+      ],
+      idPrefixes: ['anilist:', 'kitsu:', 'mal:', 'tmdb:', 'tvdb:', 'simkl:'],
     },
-    'stream',
     'subtitles',
   ],
-  types: ['series', 'movie'],
+  types: [
+    ManifestReceiverTypes.MOVIE,
+    ManifestReceiverTypes.SERIES,
+    ManifestReceiverTypes.ANIME,
+  ],
   behaviorHints: {
     configurable: true,
     configurationRequired: true,

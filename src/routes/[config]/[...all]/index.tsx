@@ -1,75 +1,24 @@
 import type { RequestHandler } from '@builder.io/qwik-city';
 
-import { createAnilistCatalog } from '~/utils/anilist/helper';
-import type { ManifestCatalogItem } from '~/utils/manifest';
+import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
+import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildServerReceivers';
 import { manifest } from '~/utils/manifest';
-import {
-  ReceiverSettings,
-  unstringifySettings,
-} from '~/utils/settings/stringify';
-import { createSimklCatalog } from '~/utils/simkl/helper';
 
-export const onGet: RequestHandler = async ({ json, params, cacheControl }) => {
-  cacheControl({
-    public: false,
-    maxAge: 0,
-    sMaxAge: 0,
-    staleWhileRevalidate: 0,
-  });
-  const userConfigString = params.config.split('|');
+export const onGet: RequestHandler = async ({ json, params, env }) => {
+  const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
+    params.config,
+    env.get('PRIVATE_ENCRYPTION_KEY') ||
+      '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+  );
 
-  const userConfig: Record<string, Record<string, string> | undefined> = {};
+  const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
+    userConfig,
+  );
 
-  const catalogConfig = {
-    simkl: false,
-    anilist: false,
-  };
-
-  const senderSettings: Record<string, ReceiverSettings> = {
-    simkl: {
-      catalogs: [],
-    },
-    anilist: {
-      catalogs: [],
-    },
-  };
-
-  for (let i = 0; i < userConfigString.length; i++) {
-    const lineConfig = userConfigString[i].split('-=-');
-    const keyConfig = lineConfig[0].split('_');
-    userConfig[keyConfig[0]] = {
-      ...(userConfig[keyConfig[0]] ? userConfig[keyConfig[0]] : {}),
-      [keyConfig[1]]: lineConfig[1],
-    };
-    if (keyConfig[1] === 'settings') {
-      const settings = unstringifySettings(
-        lineConfig[1],
-        keyConfig[0] as 'anilist' | 'simkl',
-      );
-      senderSettings[keyConfig[0]] = settings;
-    } else if (keyConfig[0] === 'simkl' && lineConfig[1]) {
-      catalogConfig.simkl = true;
-    } else if (keyConfig[0] === 'anilist' && lineConfig[1]) {
-      catalogConfig.anilist = true;
-    }
-  }
-
-  let catalogs: ManifestCatalogItem[] = [];
-  if (catalogConfig.simkl) {
-    catalogs = [
-      ...catalogs,
-      ...createSimklCatalog(senderSettings['simkl'].catalogs),
-    ];
-  }
-
-  if (catalogConfig.anilist) {
-    catalogs = [
-      ...catalogs,
-      ...createAnilistCatalog(senderSettings['anilist'].catalogs),
-    ];
-  }
-
-  manifest.catalogs = catalogs;
+  manifest.catalogs = [
+    ...(receivers.simkl?.userSettings.catalogs ?? []),
+    ...(receivers.anilist?.userSettings.catalogs ?? []),
+  ];
 
   json(200, {
     ...manifest,

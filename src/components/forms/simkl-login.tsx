@@ -1,9 +1,13 @@
 import { $, component$, useSignal, useTask$ } from '@builder.io/qwik';
-import { server$, useLocation, useNavigate } from '@builder.io/qwik-city';
+import { Link, server$, useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
 import type { ApiClientCodeForm, ApiClientForm } from '~/routes';
+
+import { preauthString } from '~/utils/auth/preauth';
+import { Receivers } from '~/utils/receiver/types/receivers';
+import type { SimklPreAuth } from '~/utils/receivers/simkl/types/auth';
 
 export const getCode = server$(async function (
   redirect_url: string,
@@ -44,11 +48,11 @@ export default component$(() => {
 
   const setToken = $(() => {
     localStorage.setItem(
-      'simkl_code',
+      preauthString(Receivers.SIMKL),
       JSON.stringify({
         client_id: typeof client_id.value === 'string' ? client_id.value : '',
         code: code.value.user_code,
-      }),
+      } as SimklPreAuth),
     );
   });
 
@@ -100,12 +104,13 @@ export default component$(() => {
         <Form onSubmit$={handleSubmit}>
           <div class="flex flex-col gap-4 items-center">
             <p>
-              <a
+              <Link
                 href="https://simkl.com/settings/developer/new/"
                 class="text-primary"
+                target="_blank"
               >
                 Create an app
-              </a>{' '}
+              </Link>{' '}
               and set the redirect_uri to{' '}
               <p>
                 <span class="rounded-full text-primary bg-surface">
