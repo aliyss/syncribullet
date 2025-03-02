@@ -32,6 +32,7 @@ Complaints? [Click this](https://github.com/aliyss/syncribullet/issues/34)
     - [Stars](#stars)
     - [Contact](#contact)
 - [Support](#support)
+    - [Special Thanks](#special-thanks)
 
 
 ## Info
@@ -142,3 +143,7 @@ If you like what I do consider buying me a coffee ;)
 
 [Paypal (preferred)](https://www.paypal.me/aliyssnow)
 [Buy Me A Coffee](https://www.buymeacoffee.com/aliyss)
+
+### Special Thanks
+- [haumarco](https://github.com/haumarco) for saving an extra character when compressing the user settings.
+- [Anilist Wrapper](https://github.com/Api-Wrappers/anilist-wrapper/) for providing the initial code for the Anilist API, which I shamelessly copied and modified.
