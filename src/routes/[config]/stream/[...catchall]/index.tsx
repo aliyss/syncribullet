@@ -2,7 +2,6 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
-import { ALLOWED_ORIGINS } from '~/utils/auth/stremio';
 import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
 import { ReceiverServerExtended } from '~/utils/receiver/receiver-server-extended';
 import type { StreamObject } from '~/utils/receiver/types/stream-object';
@@ -12,12 +11,14 @@ export const onGet: RequestHandler = async ({
   params,
   env,
   url,
-  request,
+  // request,
 }) => {
-  if (!ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '')) {
-    json(200, {});
-    return;
-  }
+  // if (!ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '')) {
+  //   json(200, {
+  //     streams: [],
+  //   });
+  //   return;
+  // }
   const config = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||

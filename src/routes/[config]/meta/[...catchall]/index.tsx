@@ -2,7 +2,6 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
-import { ALLOWED_ORIGINS } from '~/utils/auth/stremio';
 import type { MetaCatchAll } from '~/utils/catchall/types/meta';
 import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
 import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildServerReceivers';
@@ -12,11 +11,13 @@ import type { IDSources, IDs } from '~/utils/receiver/types/id';
 import { createIDsFromCatalogString } from '~/utils/receiver/types/id';
 import { KitsuAddonServerReceiver } from '~/utils/receivers/kitsu-addon/receiver-server';
 
-export const onGet: RequestHandler = async ({ json, params, env, request }) => {
-  if (!ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '')) {
-    json(200, {});
-    return;
-  }
+export const onGet: RequestHandler = async ({ json, params, env }) => {
+  // if (!ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '')) {
+  //   json(200, {
+  //     meta: {},
+  //   });
+  //   return;
+  // }
   const config = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||
@@ -34,12 +35,16 @@ export const onGet: RequestHandler = async ({ json, params, env, request }) => {
     .split('/') as MetaCatchAll;
 
   if (!potentialReceiverType || !metaId) {
-    json(200, {});
+    json(200, {
+      meta: {},
+    });
     return;
   }
   const ids = createIDsFromCatalogString(metaId);
   if (!Object.keys(ids.ids).length) {
-    json(200, {});
+    json(200, {
+      meta: {},
+    });
     return;
   }
 
@@ -77,7 +82,9 @@ export const onGet: RequestHandler = async ({ json, params, env, request }) => {
     .filter(exists);
 
   if (receiversAsList.length <= 0) {
-    json(200, {});
+    json(200, {
+      meta: {},
+    });
     return;
   }
 

@@ -2,7 +2,6 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
-import { ALLOWED_ORIGINS } from '~/utils/auth/stremio';
 import { buildCatchAllParams } from '~/utils/catchall/params';
 import type { CatalogCatchAll } from '~/utils/catchall/types/catalog';
 import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
@@ -10,11 +9,13 @@ import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config
 import { exists } from '~/utils/helpers/array';
 import type { ReceiverServers } from '~/utils/receiver/types/receivers';
 
-export const onGet: RequestHandler = async ({ json, params, env, request }) => {
-  if (!ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '')) {
-    json(200, {});
-    return;
-  }
+export const onGet: RequestHandler = async ({ json, params, env }) => {
+  // if (!ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '')) {
+  //   json(200, {
+  //     metas: [],
+  //   });
+  //   return;
+  // }
   const config = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||
