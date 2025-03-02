@@ -3,6 +3,7 @@ export type ID = string | number;
 export enum IDSources {
   ANILIST = 'anilist',
   KITSU = 'kitsu',
+  KITSU_NSFW = 'kitsu-nsfw',
   SIMKL = 'simkl',
   IMDB = 'imdb',
   TMDB = 'tmdb',
@@ -17,6 +18,7 @@ export type IDs = Record<IDSources, ID | undefined> & {
   [IDSources.ANILIST]: number | undefined;
   [IDSources.SIMKL]: number | undefined;
   [IDSources.KITSU]: number | undefined;
+  [IDSources.KITSU_NSFW]: number | undefined;
   [IDSources.TMDB]: number | undefined;
   [IDSources.TVDB]: number | undefined;
   [IDSources.MAL]: number | undefined;
@@ -25,7 +27,7 @@ export type IDs = Record<IDSources, ID | undefined> & {
 };
 
 export const testMaybeAnime = (ids: Partial<IDs>): boolean => {
-  if (ids.kitsu || ids.anilist || ids.mal) {
+  if (ids['kitsu-nsfw'] || ids.kitsu || ids.anilist || ids.mal) {
     return true;
   }
   return false;
@@ -36,6 +38,9 @@ export const createIDCatalogString = (
 ): string | undefined => {
   if (!ids) {
     return;
+  }
+  if (ids['kitsu-nsfw']) {
+    return `kitsu-nsfw:${ids['kitsu-nsfw']}`;
   }
   if (ids.kitsu) {
     return `kitsu:${ids.kitsu}`;
@@ -73,7 +78,13 @@ export const createIDsFromCatalogString = (
 } => {
   let usableId: Partial<IDs> = {};
   let tempId: string[] = [];
-  if (id.startsWith('kitsu:')) {
+  if (id.startsWith('kitsu-nsfw:')) {
+    tempId = id.slice('kitsu-nsfw:'.length).split(':');
+    usableId = {
+      'kitsu-nsfw': parseInt(tempId[0]),
+      kitsu: parseInt(tempId[0]),
+    };
+  } else if (id.startsWith('kitsu:')) {
     tempId = id.slice('kitsu:'.length).split(':');
     usableId = {
       kitsu: parseInt(tempId[0]),

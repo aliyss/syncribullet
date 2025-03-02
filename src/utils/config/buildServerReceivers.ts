@@ -1,6 +1,7 @@
 import type { ReceiverServers } from '../receiver/types/receivers';
 import { Receivers } from '../receiver/types/receivers';
 import { AnilistServerReceiver } from '../receivers/anilist/recevier-server';
+import { KitsuServerReceiver } from '../receivers/kitsu/recevier-server';
 import { SimklServerReceiver } from '../receivers/simkl/recevier-server';
 import type { UserConfigBuildMinifiedString } from './types';
 
@@ -12,7 +13,7 @@ export const buildReceiversFromUserConfigBuildMinifiedStrings = async <
   const urlData: {
     [Receivers.SIMKL]: SimklServerReceiver | undefined;
     [Receivers.ANILIST]: AnilistServerReceiver | undefined;
-    [Receivers.KITSU]: undefined;
+    [Receivers.KITSU]: KitsuServerReceiver | undefined;
   } = {
     [Receivers.SIMKL]: undefined,
     [Receivers.ANILIST]: undefined,
@@ -31,6 +32,8 @@ export const buildReceiversFromUserConfigBuildMinifiedStrings = async <
         urlData[key] = receiver;
         break;
       case Receivers.KITSU:
+        receiver = await new KitsuServerReceiver().withUserConfig(value);
+        urlData[key] = receiver;
         break;
     }
   }

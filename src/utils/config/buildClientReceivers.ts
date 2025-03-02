@@ -1,6 +1,7 @@
 import { Receivers } from '../receiver/types/receivers';
 import type { ReceiverClients } from '../receiver/types/receivers';
 import { AnilistClientReceiver } from '../receivers/anilist/recevier-client';
+import { KitsuClientReceiver } from '../receivers/kitsu/recevier-client';
 import { SimklClientReceiver } from '../receivers/simkl/recevier-client';
 import type { UserConfigBuildMinifiedString } from './types';
 
@@ -12,7 +13,7 @@ export const buildClientReceiversFromUserConfigBuildMinifiedStrings = <
   const urlData: {
     [Receivers.SIMKL]: SimklClientReceiver | undefined;
     [Receivers.ANILIST]: AnilistClientReceiver | undefined;
-    [Receivers.KITSU]: undefined;
+    [Receivers.KITSU]: KitsuClientReceiver | undefined;
   } = {
     [Receivers.SIMKL]: undefined,
     [Receivers.ANILIST]: undefined,
@@ -31,6 +32,8 @@ export const buildClientReceiversFromUserConfigBuildMinifiedStrings = <
         urlData[key] = receiver;
         break;
       case Receivers.KITSU:
+        receiver = new KitsuClientReceiver().withUserConfig(value);
+        urlData[key] = receiver;
         break;
     }
   });

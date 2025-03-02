@@ -125,7 +125,7 @@ export default component$(() => {
       receivers.value = {
         [Receivers.SIMKL]: noSerialize(configReceivers[Receivers.SIMKL]),
         [Receivers.ANILIST]: noSerialize(configReceivers[Receivers.ANILIST]),
-        [Receivers.KITSU]: undefined,
+        [Receivers.KITSU]: noSerialize(configReceivers[Receivers.KITSU]),
       };
       return;
     }
@@ -133,7 +133,7 @@ export default component$(() => {
     receivers.value = {
       [Receivers.SIMKL]: noSerialize(configuredReceivers[Receivers.SIMKL]),
       [Receivers.ANILIST]: noSerialize(configuredReceivers[Receivers.ANILIST]),
-      [Receivers.KITSU]: undefined,
+      [Receivers.KITSU]: noSerialize(configuredReceivers[Receivers.KITSU]),
     };
 
     const settings = localStorage.getItem('syncribullet-settings');

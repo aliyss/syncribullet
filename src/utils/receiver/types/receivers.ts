@@ -1,6 +1,7 @@
 import type { AnilistMCIT } from '~/utils/receivers/anilist/types/manifest';
 import type { CinemetaMCIT } from '~/utils/receivers/cinemeta/types/manifest';
 import type { KitsuAddonMCIT } from '~/utils/receivers/kitsu-addon/types/manifest';
+import type { KitsuMCIT } from '~/utils/receivers/kitsu/types/manifest';
 import type { SimklMCIT } from '~/utils/receivers/simkl/types/manifest';
 
 import type { ReceiverClient } from '../receiver-client';
@@ -19,7 +20,7 @@ export enum ExtendedReceivers {
 
 export type AllReceivers = Receivers | ExtendedReceivers;
 
-export type ReceiverMCITypes = SimklMCIT | AnilistMCIT;
+export type ReceiverMCITypes = SimklMCIT | AnilistMCIT | KitsuMCIT;
 export type ExtendedReceiverMCITypes = CinemetaMCIT | KitsuAddonMCIT;
 
 export type ReceiverClients = ReceiverClient<ReceiverMCITypes>;

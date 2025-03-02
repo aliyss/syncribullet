@@ -6,7 +6,6 @@ import type {
 } from '~/utils/helpers/types';
 import { ManifestReceiverTypes } from '~/utils/manifest';
 import { getMappingIdsHaglund } from '~/utils/mappings/haglund';
-import { getMappingIdsToKitsu } from '~/utils/mappings/kitsu';
 import { ReceiverServer } from '~/utils/receiver/receiver-server';
 import { IDSources } from '~/utils/receiver/types/id';
 import type { IDs } from '~/utils/receiver/types/id';
@@ -16,9 +15,9 @@ import type { MetaObject } from '~/utils/receiver/types/meta-object';
 import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-object';
 
 import { KitsuAddonServerReceiver } from '../kitsu-addon/receiver-server';
-import { getAnilistCurrentUser } from './api/current-user';
+import { getKitsuCurrentUser } from './api/current-user';
 import { getAnilistMinimalMetaObject } from './api/meta-object';
-import { getAnilistMetaPreviews } from './api/meta-previews';
+import { getKitsuMetaPreviews } from './api/meta-previews';
 import { syncAnilistMetaObject } from './api/sync';
 import {
   defaultCatalogs,
@@ -30,25 +29,25 @@ import {
   syncIds,
 } from './constants';
 import { buildLibraryObjectUserDescription } from './meta/description';
-import type { AnilistLibraryListEntry } from './types/anilist/library';
-import type { AnilistCatalogStatus } from './types/catalog/catalog-status';
-import { AnilistCatalogType } from './types/catalog/catalog-type';
-import type { AnilistMCIT } from './types/manifest';
+import type { KitsuCatalogStatus } from './types/catalog/catalog-status';
+import { KitsuCatalogType } from './types/catalog/catalog-type';
+import type { KitsuLibraryEntry } from './types/kitsu/library-entry';
+import type { KitsuMCIT } from './types/manifest';
 
-export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
+export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
   internalIds = internalIds;
   syncIds = syncIds;
   receiverTypeMapping = {
-    [AnilistCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
-    [AnilistCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
-    [AnilistCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
+    [KitsuCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
+    [KitsuCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
+    [KitsuCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
   };
   receiverTypeReverseMapping = {
-    [ManifestReceiverTypes.MOVIE]: AnilistCatalogType.ANIME,
-    [ManifestReceiverTypes.SERIES]: AnilistCatalogType.ANIME,
-    [ManifestReceiverTypes.ANIME]: AnilistCatalogType.ANIME,
-    [ManifestReceiverTypes.CHANNELS]: AnilistCatalogType.ANIME,
-    [ManifestReceiverTypes.TV]: AnilistCatalogType.ANIME,
+    [ManifestReceiverTypes.MOVIE]: KitsuCatalogType.ANIME,
+    [ManifestReceiverTypes.SERIES]: KitsuCatalogType.ANIME,
+    [ManifestReceiverTypes.ANIME]: KitsuCatalogType.ANIME,
+    [ManifestReceiverTypes.CHANNELS]: KitsuCatalogType.ANIME,
+    [ManifestReceiverTypes.TV]: KitsuCatalogType.ANIME,
   };
 
   receiverInfo = receiverInfo;
@@ -77,21 +76,11 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
     } catch (e) {
       console.error(e);
     }
-    if (!('kitsu' in mappingIds)) {
-      try {
-        mappingIds = {
-          ...mappingIds,
-          ...(await getMappingIdsToKitsu(id, source)),
-        };
-      } catch (e) {
-        console.error(e);
-      }
-    }
     return mappingIds;
   }
 
   async _convertPreviewObjectToMetaPreviewObject(
-    previewObject: AnilistLibraryListEntry,
+    previewObject: KitsuLibraryEntry,
     // oldType: AnilistMCIT['receiverCatalogType'],
     // options?: ManifestCatalogExtraParametersOptions,
     // index?: number,
@@ -120,7 +109,7 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
   }
 
   async _convertObjectToMetaObject(
-    object: AnilistLibraryListEntry,
+    object: KitsuLibraryEntry,
     // oldIds:
     //   | PickByArrays<IDs, DeepWriteable<AnilistServerReceiver['internalIds']>>
     //   | undefined,
@@ -129,22 +118,14 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
   ): Promise<MetaObject> {
     // const kitsuAddonCatalogType = KitsuAddonCatalogType.ANIME;
 
-    const mappingIds = await this.getMappingIds(
-      object.media.id.toString(),
-      IDSources.ANILIST,
-    );
     const newIds = {
-      anilist: object.media.id,
-      mal: object.media.idMal,
-      ...mappingIds,
+      'kitsu-nsfw': object.meta.attributes.nsfw ? object.meta.id : undefined,
+      kitsu: object.meta.id,
+      ...(await this.getMappingIds(object.meta.id.toString(), IDSources.KITSU)),
     } as RequireAtLeastOne<IDs>;
 
-    if (newIds.kitsu && object.media.isAdult) {
-      newIds['kitsu-nsfw'] = newIds.kitsu;
-    }
-
     const manifestCatalogType =
-      object.media.format === 'MOVIE'
+      object.meta.attributes.showType.toUpperCase() === 'MOVIE'
         ? ManifestReceiverTypes.MOVIE
         : ManifestReceiverTypes.SERIES;
 
@@ -156,21 +137,23 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
 
     const meta: MetaObject | undefined = {
       id,
-      name:
-        object.media.title.userPreferred ??
-        object.media.title.english ??
-        object.media.title.native,
+      name: object.meta.attributes.titles.en,
       type: manifestCatalogType,
       logo: newIds.imdb
         ? `https://images.metahub.space/logo/medium/${newIds.imdb}/img`
         : undefined,
       releaseInfo: yearsToString(
-        object.media.startDate?.year,
-        object.media.endDate?.year,
+        object.meta.attributes.startDate?.split('-')[0] as any,
+        object.meta.attributes.endDate?.split('-')[0] as any,
       ) as any,
-      poster: object.media.coverImage.large,
-      genres: [...object.media.genres, ...object.media.tags.map((o) => o.name)],
-      imdbRating: object.media.averageScore / 10,
+      poster:
+        object.meta.attributes.posterImage.medium ??
+        object.meta.attributes.posterImage.large ??
+        object.meta.attributes.posterImage.original,
+      genres: [],
+      imdbRating:
+        Math.round(parseFloat(object.meta.attributes.averageRating || '0')) /
+        10,
       posterShape: 'poster',
       description: buildLibraryObjectUserDescription(object),
     } satisfies MetaObject;
@@ -179,44 +162,27 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
   }
 
   async _getMetaPreviews(
-    type: AnilistCatalogType,
-    _potentialTypes: AnilistCatalogType[],
-    status: AnilistCatalogStatus,
+    type: KitsuCatalogType,
+    _potentialTypes: KitsuCatalogType[],
+    status: KitsuCatalogStatus,
     options?: ManifestCatalogExtraParametersOptions,
-  ): Promise<AnilistLibraryListEntry[]> {
-    const currentUser = await getAnilistCurrentUser(this.userSettings);
-    const previews = await getAnilistMetaPreviews(
+  ): Promise<KitsuLibraryEntry[]> {
+    const currentUser = await getKitsuCurrentUser(this.userSettings);
+    const previews = await getKitsuMetaPreviews(
       type,
       status,
       this.userSettings,
       currentUser,
-      Math.ceil(((options?.skip || 1) - 1) / 100),
+      options?.skip || 0,
       100,
       options?.genre,
     );
 
-    const items = previews.MediaListCollection.lists.reduce((acc, list) => {
-      return [
-        ...acc,
-        ...list.entries.map((entry) => {
-          return {
-            ...entry,
-            listData: {
-              name: list.name,
-              status: list.status,
-              isCustomList: list.isCustomList,
-              isSplitCompletedList: list.isSplitCompletedList,
-            },
-          } as AnilistLibraryListEntry;
-        }),
-      ];
-    }, [] as AnilistLibraryListEntry[]);
-
-    return items.filter((o) => {
+    return previews.filter((o) => {
       if (
-        type === AnilistCatalogType.ANIME &&
+        type === KitsuCatalogType.ANIME &&
         options?.genre &&
-        o.media.format.toUpperCase() !== options.genre.toUpperCase()
+        o.meta.attributes.showType.toUpperCase() !== options.genre.toUpperCase()
       ) {
         return false;
       }
@@ -225,17 +191,17 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
   }
 
   _getMetaObject(
-    ids: PickByArrays<IDs, AnilistMCIT['internalIds']>,
-    type: AnilistMCIT['receiverCatalogType'],
+    ids: PickByArrays<IDs, KitsuMCIT['internalIds']>,
+    type: KitsuMCIT['receiverCatalogType'],
     // potentialTypes: AnilistMCIT['receiverCatalogType'][],
-  ): Promise<AnilistLibraryListEntry> {
-    console.log('SimklServerReceiver -> _getMetaObject -> id', ids, type);
+  ): Promise<KitsuLibraryEntry> {
+    console.log('KitsuServerReceiver -> _getMetaObject -> id', ids, type);
     throw new Error('Method not implemented.');
   }
 
   async _syncMetaObject(
     ids: {
-      ids: PickByArrays<IDs, AnilistMCIT['syncIds']>;
+      ids: PickByArrays<IDs, KitsuMCIT['syncIds']>;
       count:
         | {
             season: number;
@@ -243,14 +209,14 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
           }
         | undefined;
     },
-    type: AnilistMCIT['receiverCatalogType'],
+    type: KitsuMCIT['receiverCatalogType'],
     // potentialTypes: AnilistMCIT['receiverCatalogType'][],
   ): Promise<void> {
-    if (!ids.ids.anilist) {
-      throw new Error('No Anilist ID provided!');
+    if (!ids.ids.kitsu) {
+      throw new Error('No Kitsu ID provided!');
     }
     const currentProgressMedia = await getAnilistMinimalMetaObject(
-      ids.ids.anilist,
+      ids.ids.kitsu,
       type,
       this.userSettings,
     );
@@ -280,7 +246,7 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
     }
 
     await syncAnilistMetaObject(
-      ids.ids.anilist,
+      ids.ids.kitsu,
       status,
       ids.count,
       this.userSettings,

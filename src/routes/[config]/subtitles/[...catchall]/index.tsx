@@ -90,6 +90,7 @@ export const onGet: RequestHandler = async ({
   const idTypes = Object.keys(ids.ids) as [IDSources];
 
   const receiversAsList = Object.values(receivers)
+    .filter((x) => x?.receiverInfo.id !== 'kitsu')
     .map((receiver) => {
       if (!receiver) {
         return;
@@ -138,7 +139,6 @@ export const onGet: RequestHandler = async ({
     }
     json(200, {
       subtitles: [],
-      cacheMaxAge: 24 * 60 * 60,
     });
   } catch (e) {
     console.error(e);

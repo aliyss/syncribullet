@@ -50,7 +50,12 @@ export const onGet: RequestHandler = async ({ json, params, env, request }) => {
   ]);
 
   const receiversAsList = [
-    ...Object.values(receivers),
+    ...Object.values(receivers).filter((x) => {
+      if (ids.ids['kitsu-nsfw']) {
+        return true;
+      }
+      return x?.receiverInfo.id !== 'kitsu';
+    }),
     ...extendedReceiversAsList,
   ]
     .map((receiver) => {

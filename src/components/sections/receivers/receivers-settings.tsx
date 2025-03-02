@@ -2,6 +2,7 @@ import { component$ } from '@builder.io/qwik';
 import type { PropFunction } from '@builder.io/qwik';
 
 import AnilistLogin from '~/components/forms/anilist-login';
+import KitsuLogin from '~/components/forms/kitsu-login';
 import ManifestSettings from '~/components/forms/manifest-settings';
 import SimklLogin from '~/components/forms/simkl-login';
 
@@ -38,10 +39,18 @@ export default component$<ReceiversSettingsProps>(
                   currentReceiver={currentReceiver}
                   updateReceiver$={updateReceiver$}
                 />
-              ) : currentReceiver.receiverInfo.id === 'anilist' ? (
-                <AnilistLogin />
+              ) : currentReceiver.userSettings &&
+                currentReceiver.receiverInfo.id === Receivers.KITSU ? (
+                <ManifestSettings
+                  currentReceiver={currentReceiver}
+                  updateReceiver$={updateReceiver$}
+                />
               ) : currentReceiver.receiverInfo.id === 'simkl' ? (
                 <SimklLogin />
+              ) : currentReceiver.receiverInfo.id === 'anilist' ? (
+                <AnilistLogin />
+              ) : currentReceiver.receiverInfo.id === 'kitsu' ? (
+                <KitsuLogin />
               ) : (
                 <></>
               )}
