@@ -149,10 +149,9 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
         object.meta.attributes.posterImage.large ??
         object.meta.attributes.posterImage.original,
       genres: [],
-      imdbRating:
-        Math.round(parseFloat(object.meta.attributes.averageRating || '0')) /
-        10,
-      posterShape: 'poster',
+      imdbRating: (
+        Math.round(parseFloat(object.meta.attributes.averageRating || '0')) / 10
+      ).toString(),
       description: buildLibraryObjectUserDescription(object),
     } satisfies MetaObject;
 
