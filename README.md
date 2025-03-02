@@ -1,10 +1,13 @@
-# syncribullet
+# syncribullet (v2)
 SyncriBullet is a Stremio Addon that synchronizes your watchlist with other services.
 
 > [!CAUTION]
 > syncribullet v2 is almost a complete rewrite and is not compatible with v1.
-> Reasoning: v1 was a mess and I wanted to cleanup. Also stuff is now kind of encrypted. Sorry (not sorry) for the inconvenience.
-> If you are looking for v1, you can find it [here](https://github.com/aliyss/syncribullet/tree/v1) and self-host it.
+
+Reasoning: v1 was a mess and I wanted to cleanup. Also stuff is now at least kind of encrypted. Sorry (not sorry) for the inconvenience.
+If you are looking for v1, you can find it [here](https://github.com/aliyss/syncribullet/tree/v1) and self-host it.
+
+Complaints? [Click this](https://github.com/aliyss/syncribullet/issues/34)
 
 
 ## Table of Contents
@@ -59,7 +62,7 @@ Dynamic Sync is when an item in the _Senders_ is updated, that it get's reflecte
 - [ ] Dynamic Sync from Stremio to Kitsu
 - [ ] Dynamic Sync from Stremio to MyAnimelist
 - [X] Dynamic Sync from Stremio to Simkl
-- [-] Dynamic Sync from Stremio to Trakt (Already native Support use that)
+- [ ] Dynamic Sync from Stremio to Trakt (Already native Support use that)
 
 ### Import Sync
 Import Sync is theoretically a one-time action where the whole library get's synchronised from the _Senders_ to the _Receivers_ and vice-versa. But the plan is, that this can be run multiple times without wierd issues.
@@ -67,8 +70,8 @@ Import Sync is theoretically a one-time action where the whole library get's syn
 - [ ] Import Sync from Stremio to Anilist
 - [ ] Import Sync from Stremio to Kitsu
 - [ ] Import Sync from Stremio to MyAnimelist
-- [-] Import Sync from Stremio to Simkl (Alternative until tested: [[https://github.com/aliyss/simkl-stremio][simkl-stremio]])
-- [-] Import Sync from Stremio to Trakt (Alternative until tested: [[https://github.com/aliyss/trakt-stremio-import][trakt-stremio-import]])
+- [ ] Import Sync from Stremio to Simkl (Alternative until tested: [simkl-stremio](https://github.com/aliyss/simkl-stremio)
+- [ ] Import Sync from Stremio to Trakt (Alternative until tested: [trakt-stremio-import](https://github.com/aliyss/trakt-stremio-import)
 
 ### Advanced Sync
 Advanced Sync is when the theoretical _Receivers_ share their data between each other, validating and keeping each other in sync.
