@@ -54,7 +54,8 @@ export const onGet: RequestHandler = async ({
           'https://www.stremio.com/warning#' +
           encodeURIComponent(
             [
-              url.origin,
+              url.origin +
+                (url.origin.startsWith('localhost') ? '' : '.baby-beamup.club'),
               encodeURIComponent(params.config),
               'subtitles',
               usableExternalAddonPath,
