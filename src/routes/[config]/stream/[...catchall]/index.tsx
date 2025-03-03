@@ -2,27 +2,21 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
-import { ALLOWED_ORIGINS } from '~/utils/auth/stremio';
+// import { ALLOWED_ORIGINS } from '~/utils/auth/stremio';
 import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
 import { ReceiverServerExtended } from '~/utils/receiver/receiver-server-extended';
 import type { StreamObject } from '~/utils/receiver/types/stream-object';
 
-export const onGet: RequestHandler = async ({
-  json,
-  params,
-  env,
-  url,
-  request,
-}) => {
-  if (
-    !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
-    request.headers.get('host') !== env.get('PRIVATE_SYNCRIBULLET_HOST')
-  ) {
-    json(200, {
-      streams: [],
-    });
-    return;
-  }
+export const onGet: RequestHandler = async ({ json, params, env, url }) => {
+  // if (
+  //   !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
+  //   request.headers.get('host') !== env.get('PRIVATE_SYNCRIBULLET_HOST')
+  // ) {
+  //   json(200, {
+  //     streams: [],
+  //   });
+  //   return;
+  // }
   const config = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||
