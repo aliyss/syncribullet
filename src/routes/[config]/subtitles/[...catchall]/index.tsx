@@ -2,6 +2,7 @@
 // Types
 import type { RequestHandler } from '@builder.io/qwik-city';
 
+import { ALLOWED_ORIGINS, ALLOWED_REFERERS } from '~/utils/auth/stremio';
 import type { MetaCatchAll } from '~/utils/catchall/types/meta';
 import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
 import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildServerReceivers';
@@ -17,19 +18,20 @@ export const onGet: RequestHandler = async ({
   json,
   params,
   env,
-  // request,
+  request,
   redirect,
   query,
 }) => {
-  // if (
-  //   !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
-  //   !ALLOWED_REFERERS.includes(request.headers.get('referer') ?? '')
-  // ) {
-  //   json(200, {
-  //     subtitles: [],
-  //   });
-  //   return;
-  // }
+  if (
+    !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
+    !ALLOWED_REFERERS.includes(request.headers.get('referer') ?? '') &&
+    request.headers.get('host') !== env.get('PRIVATE_SYNCRIBULLET_HOST')
+  ) {
+    json(200, {
+      subtitles: [],
+    });
+    return;
+  }
   const redirectQuery = query.get('r');
   const redirectUrl = redirectQuery ? decodeURIComponent(redirectQuery) : null;
 

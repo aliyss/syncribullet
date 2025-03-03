@@ -13,7 +13,10 @@ import { exists } from '~/utils/helpers/array';
 import type { ReceiverServers } from '~/utils/receiver/types/receivers';
 
 export const onGet: RequestHandler = async ({ json, params, env, request }) => {
-  if (!ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '')) {
+  if (
+    !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
+    request.headers.get('host') !== env.get('PRIVATE_SYNCRIBULLET_HOST')
+  ) {
     try {
       throw new Error(`Origin not allowed: ${request.headers.get('origin')}`);
     } catch (e) {
