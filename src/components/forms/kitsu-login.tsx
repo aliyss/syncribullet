@@ -71,6 +71,16 @@ export default component$(() => {
             not yet supported
           </Link>{' '}
           for Kitsu. You will need to login using username and password.
+          Credentials are directly sent to Kitsu API and not processed by the
+          server. See{' '}
+          <Link
+            href="https://github.com/aliyss/syncribullet/blob/master/src/components/forms/kitsu-login.tsx#L28"
+            class="text-primary"
+            target="_blank"
+          >
+            this file
+          </Link>{' '}
+          for more information.
         </p>
         <Field name="username">
           {(field, props) => (

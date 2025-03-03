@@ -1,11 +1,22 @@
 import { defineConfig } from "vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(() => {
   return {
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths()],
+    build: {
+      sourcemap: true,
+    },
+    plugins: [qwikCity(), qwikVite(), tsconfigPaths(), sentryVitePlugin(
+      {
+        org: process.env.SENTRY_ORG,
+        project: process.env.SENTRY_PROJECT,
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        telemetry: false,
+      }
+    )],
     preview: {
       headers: {
         "Cache-Control": "public, max-age=600",

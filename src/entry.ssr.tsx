@@ -17,6 +17,7 @@ import {
 
 import { manifest } from '@qwik-client-manifest';
 
+import './instrument';
 import Root from './root';
 
 export default function (opts: RenderToStreamOptions) {

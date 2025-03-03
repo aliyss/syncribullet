@@ -20,6 +20,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import render from './entry.ssr';
+import './instrument';
 
 declare global {
   interface QwikCityPlatform extends PlatformNode {}

@@ -54,6 +54,9 @@
   },
   "dependencies": {
     "@modular-forms/qwik": "^0.20.2",
+    "@sentry/node": "^9.3.0",
+    "@sentry/profiling-node": "^9.3.0",
+    "@sentry/vite-plugin": "^3.2.1",
     "@tdanks2000/anilist-wrapper": "^1.0.15",
     "anilist-node": "^1.14.0",
     "axios": "^1.7.9",
