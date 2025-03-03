@@ -11,7 +11,6 @@
  */
 import { type RenderOptions, render } from '@builder.io/qwik';
 
-import './instrument';
 import Root from './root';
 
 export default function (opts: RenderOptions) {
