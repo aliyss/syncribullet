@@ -74,13 +74,7 @@ export abstract class ReceiverServer<
     ids: PickByArrays<IDs, MCIT['internalIds']>,
     type: MCIT['receiverCatalogType'],
     potentialTypes: MCIT['receiverCatalogType'][],
-  ): Promise<MCIT['receiverServerConfig']['metaObject']>;
-
-  abstract _getMetaObject(
-    ids: PickByArrays<IDs, MCIT['internalIds']>,
-    type: MCIT['receiverCatalogType'],
-    potentialTypes: MCIT['receiverCatalogType'][],
-  ): Promise<MCIT['receiverServerConfig']['metaObject']>;
+  ): Promise<MCIT['receiverServerConfig']['metaObject'] | undefined>;
 
   abstract _syncMetaObject(
     ids: {
@@ -154,12 +148,15 @@ export abstract class ReceiverServer<
     ids: PickByArrays<IDs, MCIT['internalIds']>,
     type: MCIT['receiverCatalogType'],
     potentialType: ManifestReceiverTypes,
-  ): Promise<MetaObject> {
+  ): Promise<MetaObject | undefined> {
     const result = await this._getMetaObject(
       ids,
       type,
       this.convertManifestTypeToLibraryType(potentialType),
     );
+    if (!result) {
+      return;
+    }
     return await this._convertObjectToMetaObject(
       result,
       ids,

@@ -220,13 +220,12 @@ export default component$(() => {
                 ? await buildURL([urlData, settings])
                 : await buildURL(urlData);
 
-              console.log(url);
-
               const link = `stremio://${location.url.host}${
                 location.url.host.endsWith('syncribullet')
                   ? '.baby-beamup.club'
                   : ''
               }/${encodeURI(url)}/manifest.json`;
+              console.log(link);
               await nav(link);
             }}
           />

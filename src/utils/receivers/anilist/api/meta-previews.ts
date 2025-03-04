@@ -26,7 +26,8 @@ const animeQuery = async <U extends AnilistCurrentUser = AnilistCurrentUser>(
 
   const query =
     queryVals[1] +
-    `lists {
+    `#graphql
+      lists {
           name
           isCustomList
           isSplitCompletedList
@@ -55,6 +56,11 @@ const animeQuery = async <U extends AnilistCurrentUser = AnilistCurrentUser>(
               }
               bannerImage
               episodes
+              trailer {
+                id
+                site
+                thumbnail
+              }
               nextAiringEpisode {
                 id
                 episode

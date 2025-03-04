@@ -1,3 +1,4 @@
+import { ManifestCatalogExtraParameters } from '../manifest';
 import { ANIME_GENRES } from '../receiver/defaults/genres';
 import type { ReceiverMCITypes, Receivers } from '../receiver/types/receivers';
 import type {
@@ -21,16 +22,26 @@ export const mapGenresToCatalogs = async (
         switch (catalog.type) {
           case 'anime':
             catalog.genres = ANIME_GENRES;
+            catalog.extra = [
+              {
+                name: ManifestCatalogExtraParameters.GENRE,
+                options: ANIME_GENRES,
+              },
+            ];
             break;
           case 'movie':
-            catalog.genres = CINEMETA_MANIFEST.catalogs.find(
+            const movieCatalogInfo = CINEMETA_MANIFEST.catalogs.find(
               (c) => c.type === 'movie' && c.id === 'top',
-            )?.genres;
+            );
+            catalog.genres = movieCatalogInfo?.genres;
+            catalog.extra = movieCatalogInfo?.extra;
             break;
           case 'series':
-            catalog.genres = CINEMETA_MANIFEST.catalogs.find(
-              (c) => c.type === 'series' && c.id === 'top',
-            )?.genres;
+            const seriesCatalogInfo = CINEMETA_MANIFEST.catalogs.find(
+              (c) => c.type === 'movie' && c.id === 'top',
+            );
+            catalog.genres = seriesCatalogInfo?.genres;
+            catalog.extra = seriesCatalogInfo?.extra;
             break;
         }
       }

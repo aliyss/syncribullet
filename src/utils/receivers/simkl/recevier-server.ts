@@ -215,7 +215,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
         meta = {
           ...(meta as any),
           ...response,
-          // trailers: [...(response.trailers ?? []), ...(meta?.trailers ?? [])],
+          trailers: [...(response.trailers ?? []), ...(meta?.trailers ?? [])],
           description: meta?.description + '\n' + (response.description ?? ''),
         };
       }

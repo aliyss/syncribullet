@@ -5,6 +5,8 @@ import type { KitsuCatalogStatus } from '../types/catalog/catalog-status';
 import type { KitsuCatalogType } from '../types/catalog/catalog-type';
 import type {
   KitsuLibraryEntry,
+  KitsuLibraryEntryIncluded,
+  KitsuLibraryEntryIncludedGenres,
   KitsuLibraryEntryResponse,
 } from '../types/kitsu/library-entry';
 import type { KitsuCurrentUser } from '../types/kitsu/user';
@@ -21,7 +23,7 @@ export const getKitsuMetaPreviews = async (
   perChunk: number,
   genre?: string,
 ): Promise<KitsuLibraryEntry[]> => {
-  const include = [`include=${type}`];
+  const include = [`include=${type},${type}.genres`];
   const filters = [
     `filter[status]=${status}`,
     `filter[kind]=${type}`,
@@ -29,7 +31,8 @@ export const getKitsuMetaPreviews = async (
   ];
   const fields = [
     `fields[libraryEntries]=status,anime,progress,notes,rating,startedAt,finishedAt,updatedAt,createdAt`,
-    `fields[${type}]=titles,description,averageRating,posterImage,status,startDate,endDate,episodeCount,showType,nsfw`,
+    `fields[${type}]=titles,description,averageRating,posterImage,status,startDate,endDate,episodeCount,showType,nsfw,genres`,
+    `fields[genres]=name`,
   ];
   const pagination = [`page[limit]=${perChunk}`, `page[offset]=${chunk}`];
 
@@ -67,21 +70,41 @@ export const getKitsuMetaPreviews = async (
     if (!response.data || !response.data.data || !response.data.data.length) {
       throw new Error('No catalog data found!');
     }
+
     const data = response.data as KitsuLibraryEntryResponse;
     const items = data.data
       .map((entry) => {
         const included = data.included.find(
-          (o) => o.id === entry.relationships.anime.data.id,
-        );
+          (o) =>
+            o.id === entry.relationships.anime?.data?.id && o.type === 'anime',
+        ) as KitsuLibraryEntryIncluded | undefined;
+        const genres = included?.relationships?.genres?.data
+          ?.map(
+            (o) =>
+              data.included.find(
+                (i) => i.id === o.id && i.type === 'genres',
+              ) as KitsuLibraryEntryIncludedGenres | undefined,
+          )
+          .filter(exists);
         if (!included) {
           return;
         }
         return {
           ...entry,
           meta: included,
+          genres: genres?.map((o) => o.attributes.name) ?? [],
         } satisfies KitsuLibraryEntry;
       })
-      .filter(exists);
+      .filter(exists)
+      .filter((o) => {
+        if (
+          genre &&
+          o.meta.attributes.showType.toUpperCase() !== genre.toUpperCase()
+        ) {
+          return false;
+        }
+        return true;
+      });
 
     return items;
   } catch (error) {

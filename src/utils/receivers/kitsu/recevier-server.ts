@@ -16,6 +16,7 @@ import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-obje
 
 import { KitsuAddonServerReceiver } from '../kitsu-addon/receiver-server';
 import { getKitsuCurrentUser } from './api/current-user';
+import { getKitsuMetaObject } from './api/meta-object';
 import { getKitsuMetaPreviews } from './api/meta-previews';
 import {
   defaultCatalogs,
@@ -29,6 +30,7 @@ import {
 import { buildLibraryObjectUserDescription } from './meta/description';
 import type { KitsuCatalogStatus } from './types/catalog/catalog-status';
 import { KitsuCatalogType } from './types/catalog/catalog-type';
+import type { KitsuAnimeEntry } from './types/kitsu/anime-entry';
 import type { KitsuLibraryEntry } from './types/kitsu/library-entry';
 import type { KitsuMCIT } from './types/manifest';
 
@@ -78,17 +80,56 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
   }
 
   async _convertPreviewObjectToMetaPreviewObject(
-    previewObject: KitsuLibraryEntry,
-    // oldType: AnilistMCIT['receiverCatalogType'],
+    object: KitsuLibraryEntry,
+    // oldType: KitsuMCIT['receiverCatalogType'],
     // options?: ManifestCatalogExtraParametersOptions,
     // index?: number,
   ): Promise<MetaPreviewObject> {
-    const meta = await this._convertObjectToMetaObject(
-      previewObject,
-      // undefined,
-      // oldType,
-      // this.receiverTypeMapping[oldType],
-    );
+    const newIds = {
+      'kitsu-nsfw': object.meta.attributes.nsfw ? object.meta.id : undefined,
+      kitsu: object.meta.id,
+      ...(await this.getMappingIds(object.meta.id.toString(), IDSources.KITSU)),
+    } as RequireAtLeastOne<IDs>;
+
+    const manifestCatalogType =
+      object.meta.attributes.showType.toUpperCase() === 'MOVIE' ||
+      (object.meta.attributes.nsfw &&
+        object.meta.attributes.showType.toUpperCase() === 'OVA')
+        ? ManifestReceiverTypes.MOVIE
+        : ManifestReceiverTypes.SERIES;
+
+    const id = createIDCatalogString(newIds, true);
+
+    if (!id) {
+      throw new Error('No ID found!');
+    }
+
+    const meta: MetaObject | undefined = {
+      id,
+      name:
+        object.meta.attributes.titles.en ??
+        object.meta.attributes.titles.en_us ??
+        object.meta.attributes.titles.en_jp ??
+        object.meta.attributes.titles.ja_jp ??
+        'Unknown Title',
+      type: manifestCatalogType,
+      logo: newIds.imdb
+        ? `https://images.metahub.space/logo/medium/${newIds.imdb}/img`
+        : undefined,
+      releaseInfo: yearsToString(
+        object.meta.attributes.startDate?.split('-')[0] as any,
+        object.meta.attributes.endDate?.split('-')[0] as any,
+      ) as any,
+      poster:
+        object.meta.attributes.posterImage.medium ??
+        object.meta.attributes.posterImage.large ??
+        object.meta.attributes.posterImage.original,
+      genres: object.genres || [],
+      imdbRating: (
+        Math.round(parseFloat(object.meta.attributes.averageRating || '0')) / 10
+      ).toString(),
+      description: buildLibraryObjectUserDescription(object),
+    } satisfies MetaObject;
 
     return {
       id: meta.id,
@@ -107,52 +148,98 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
   }
 
   async _convertObjectToMetaObject(
-    object: KitsuLibraryEntry,
+    object: KitsuAnimeEntry,
     // oldIds:
-    //   | PickByArrays<IDs, DeepWriteable<AnilistServerReceiver['internalIds']>>
+    //   | PickByArrays<IDs, DeepWriteable<KitsuServerReceiver['internalIds']>>
     //   | undefined,
-    // oldType: AnilistCatalogType,
+    // oldType: KitsuCatalogType,
     // potentialType: ManifestReceiverTypes,
   ): Promise<MetaObject> {
-    // const kitsuAddonCatalogType = KitsuAddonCatalogType.ANIME;
-
     const newIds = {
-      'kitsu-nsfw': object.meta.attributes.nsfw ? object.meta.id : undefined,
-      kitsu: object.meta.id,
-      ...(await this.getMappingIds(object.meta.id.toString(), IDSources.KITSU)),
+      'kitsu-nsfw': object.attributes.nsfw ? object.id : undefined,
+      kitsu: object.id,
+      ...(await this.getMappingIds(object.id.toString(), IDSources.KITSU)),
     } as RequireAtLeastOne<IDs>;
 
     const manifestCatalogType =
-      object.meta.attributes.showType.toUpperCase() === 'MOVIE'
+      object.attributes.showType.toUpperCase() === 'MOVIE' ||
+      (object.attributes.nsfw &&
+        object.attributes.showType.toUpperCase() === 'OVA')
         ? ManifestReceiverTypes.MOVIE
         : ManifestReceiverTypes.SERIES;
 
-    const id = createIDCatalogString(newIds);
+    const id = createIDCatalogString(newIds, false);
 
     if (!id) {
       throw new Error('No ID found!');
     }
 
     const meta: MetaObject | undefined = {
-      id,
-      name: object.meta.attributes.titles.en,
+      id: object.attributes.slug || id,
+      name:
+        object.attributes.titles.en_jp ??
+        object.attributes.titles.en ??
+        object.attributes.titles.en_us ??
+        object.attributes.titles.ja_jp ??
+        'Unknown Title',
       type: manifestCatalogType,
       logo: newIds.imdb
         ? `https://images.metahub.space/logo/medium/${newIds.imdb}/img`
         : undefined,
       releaseInfo: yearsToString(
-        object.meta.attributes.startDate?.split('-')[0] as any,
-        object.meta.attributes.endDate?.split('-')[0] as any,
+        object.attributes.startDate?.split('-')[0] as any,
+        object.attributes.endDate?.split('-')[0] as any,
       ) as any,
+      background:
+        object.attributes.coverImage?.original ??
+        object.attributes.coverImage?.large ??
+        object.attributes.posterImage.original,
       poster:
-        object.meta.attributes.posterImage.medium ??
-        object.meta.attributes.posterImage.large ??
-        object.meta.attributes.posterImage.original,
-      genres: [],
+        object.attributes.posterImage.medium ??
+        object.attributes.posterImage.large ??
+        object.attributes.posterImage.original,
+      genres: object.genres || [],
+      videos: object.episodes?.map(
+        (episode) =>
+          ({
+            id: object.attributes.nsfw
+              ? (object.episodes?.length || 1) <= 1
+                ? `${object.attributes.slug}`
+                : `${object.attributes.slug}-${episode.attributes.number}`
+              : `${id}:${episode.attributes.number}`,
+            title:
+              (episode.attributes.titles?.en_jp ??
+                episode.attributes.titles?.en ??
+                episode.attributes.titles?.en_us ??
+                episode.attributes.titles?.ja_jp ??
+                episode.attributes.canonicalTitle ??
+                object.attributes.titles.en_jp ??
+                object.attributes.titles.en ??
+                object.attributes.titles.en_us ??
+                object.attributes.titles.ja_jp ??
+                'Unknown Title') +
+              ' Ep.' +
+              episode.attributes.number,
+            season: episode.attributes.seasonNumber || 1,
+            episode:
+              episode.attributes.relativeNumber ??
+              episode.attributes.number ??
+              1,
+            released: episode.attributes.airdate
+              ? new Date(episode.attributes.airdate).toISOString()
+              : new Date(
+                  object.attributes.startDate || episode.attributes.createdAt,
+                ).toISOString(),
+            thumbnail:
+              episode.attributes.thumbnail?.original ??
+              object.attributes.posterImage.original,
+            overview: episode.attributes.description,
+          }) as any,
+      ),
       imdbRating: (
-        Math.round(parseFloat(object.meta.attributes.averageRating || '0')) / 10
+        Math.round(parseFloat(object.attributes.averageRating || '0')) / 10
       ).toString(),
-      description: buildLibraryObjectUserDescription(object),
+      description: object.attributes.description,
     } satisfies MetaObject;
 
     return meta;
@@ -175,25 +262,21 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
       options?.genre,
     );
 
-    return previews.filter((o) => {
-      if (
-        type === KitsuCatalogType.ANIME &&
-        options?.genre &&
-        o.meta.attributes.showType.toUpperCase() !== options.genre.toUpperCase()
-      ) {
-        return false;
-      }
-      return true;
-    });
+    return previews;
   }
 
-  _getMetaObject(
+  async _getMetaObject(
     ids: PickByArrays<IDs, KitsuMCIT['internalIds']>,
     type: KitsuMCIT['receiverCatalogType'],
     // potentialTypes: AnilistMCIT['receiverCatalogType'][],
-  ): Promise<KitsuLibraryEntry> {
-    console.log('KitsuServerReceiver -> _getMetaObject -> id', ids, type);
-    throw new Error('Method not implemented.');
+  ): Promise<KitsuAnimeEntry | undefined> {
+    if ('kitsu-nsfw' in ids && ids['kitsu-nsfw']) {
+      return await getKitsuMetaObject(
+        ids['kitsu-nsfw'],
+        type,
+        this.userSettings,
+      );
+    }
   }
 
   async _syncMetaObject(

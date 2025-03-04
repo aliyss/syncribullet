@@ -113,7 +113,6 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       ) {
         return false;
       }
-      // console.log('Genre not found', item.type, item.name);
       return true;
     }),
   });

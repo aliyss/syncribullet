@@ -16,7 +16,7 @@ interface Media {
   episodes: number;
   nextAiringEpisode: MediaNextAiringEpisode;
   description: string;
-  format: string;
+  format?: string;
   startDate?: FuzzyDate;
   endDate?: FuzzyDate;
   duration: number;
@@ -26,6 +26,11 @@ interface Media {
   isFavourite: boolean;
   isAdult: boolean;
   siteUrl: string;
+  trailer?: {
+    site?: string;
+    thumbnail?: string;
+    id?: string;
+  };
 }
 
 export type MinimalMedia = Pick<

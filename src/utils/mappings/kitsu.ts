@@ -80,22 +80,24 @@ export async function getMappingIdsToKitsu(
     if (!usableSource) {
       throw new Error('Invalid source provided!');
     }
-    const response = await axiosCache(
-      `https://kitsu.io/api/edge/mappings?filter[externalSite]=${usableSource}&filter[externalId]=${id}&fields[mappings]=externalSite,externalId`,
-      {
-        id: `kitsu-mappings-${id}-${source}`,
-        method: 'GET',
-        cache: {
-          ttl: 1000 * 60 * 60 * 24,
-          interpretHeader: false,
-          staleIfError: 60 * 60 * 5,
-        },
+    const url = `https://kitsu.io/api/edge/mappings?include=item&fields[anime]=id&filter[externalSite]=${usableSource}&filter[externalId]=${id}`;
+    const response = await axiosCache(url, {
+      id: `kitsu-mappings-${id}-${source}`,
+      method: 'GET',
+      cache: {
+        ttl: 1000 * 60 * 60 * 24,
+        interpretHeader: false,
+        staleIfError: 60 * 60 * 5,
       },
-    );
+    });
+
     if (response.data && response.data.data && response.data.data.length) {
-      if (response.data.data[0].id) {
+      if (
+        response.data.data[0].id &&
+        response.data.data[0].relationships?.item?.data?.id
+      ) {
         return {
-          kitsu: response.data.data[0].id,
+          kitsu: response.data.data[0].relationships?.item?.data?.id,
         };
       }
     }

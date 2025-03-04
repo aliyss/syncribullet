@@ -59,12 +59,7 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
   ]);
 
   const receiversAsList = [
-    ...Object.values(receivers).filter((x) => {
-      if (ids.ids['kitsu-nsfw']) {
-        return true;
-      }
-      return x?.receiverInfo.id !== 'kitsu';
-    }),
+    ...Object.values(receivers),
     ...extendedReceiversAsList,
   ]
     .map((receiver) => {
@@ -72,7 +67,9 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
         return;
       }
       const metaIds = [...receiver.internalIds].find((x) => {
-        return JSON.stringify(x) === JSON.stringify(idTypes);
+        return idTypes
+          .flatMap((idType) => idType)
+          .find((id) => x.includes(id as never));
       });
       if (!metaIds) {
         return;
@@ -92,19 +89,30 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     return;
   }
 
-  const usableReceiver = receiversAsList[0].receiver;
-  const usableMetaIds = receiversAsList[0].ids;
+  for (const receiver of receiversAsList) {
+    try {
+      const metaObject = await receiver.receiver.getMetaObject(
+        receiver.ids,
+        receiver.receiver.receiverTypeReverseMapping[
+          potentialReceiverType
+        ] as never,
+        potentialReceiverType,
+      );
+      if (!metaObject) {
+        continue;
+      }
 
-  const metaObject = await usableReceiver.getMetaObject(
-    usableMetaIds,
-    usableReceiver.receiverTypeReverseMapping[potentialReceiverType] as never,
-    potentialReceiverType,
-  );
-
-  json(200, {
-    meta: metaObject,
-    cacheMaxAge: 24 * 60 * 60,
-    staleRevalidate: 28 * 60 * 60,
-  });
-  return;
+      json(200, {
+        meta: metaObject,
+        cacheMaxAge: 24 * 60 * 60,
+        staleRevalidate: 28 * 60 * 60,
+      });
+      return;
+    } catch (e) {
+      if (receiver.receiver.receiverInfo.id === 'kitsu') {
+        console.log(e);
+      }
+      console.log('Error');
+    }
+  }
 };

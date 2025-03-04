@@ -144,7 +144,8 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
     }
 
     const manifestCatalogType =
-      object.media.format === 'MOVIE'
+      object.media.format?.toUpperCase() === 'MOVIE' ||
+      (object.media.isAdult && object.media.format?.toUpperCase() === 'OVA')
         ? ManifestReceiverTypes.MOVIE
         : ManifestReceiverTypes.SERIES;
 
@@ -171,7 +172,17 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
       poster: object.media.coverImage.large,
       genres: [...object.media.genres, ...object.media.tags.map((o) => o.name)],
       imdbRating: (object.media.averageScore / 10).toString(),
+      posterShape: 'poster',
       description: buildLibraryObjectUserDescription(object),
+      trailers:
+        object.media.trailer?.id && object.media.trailer.site === 'youtube'
+          ? [
+              {
+                source: object.media.trailer.id,
+                type: 'Trailer',
+              },
+            ]
+          : [],
     } satisfies MetaObject;
 
     return meta;
@@ -215,7 +226,7 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
       if (
         type === AnilistCatalogType.ANIME &&
         options?.genre &&
-        o.media.format.toUpperCase() !== options.genre.toUpperCase()
+        o.media.format?.toUpperCase() !== options.genre.toUpperCase()
       ) {
         return false;
       }

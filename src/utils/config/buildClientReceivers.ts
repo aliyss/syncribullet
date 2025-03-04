@@ -11,29 +11,25 @@ export const buildClientReceiversFromUserConfigBuildMinifiedStrings = <
   [key in Receivers]?: UserConfigBuildMinifiedString<RC>;
 }) => {
   const urlData: {
-    [Receivers.SIMKL]: SimklClientReceiver | undefined;
-    [Receivers.ANILIST]: AnilistClientReceiver | undefined;
-    [Receivers.KITSU]: KitsuClientReceiver | undefined;
+    [Receivers.SIMKL]: SimklClientReceiver;
+    [Receivers.ANILIST]: AnilistClientReceiver;
+    [Receivers.KITSU]: KitsuClientReceiver;
   } = {
-    [Receivers.SIMKL]: undefined,
-    [Receivers.ANILIST]: undefined,
-    [Receivers.KITSU]: undefined,
+    [Receivers.SIMKL]: new SimklClientReceiver(),
+    [Receivers.ANILIST]: new AnilistClientReceiver(),
+    [Receivers.KITSU]: new KitsuClientReceiver(),
   };
 
   Object.entries(userConfigBuildMinifiedString).forEach(([key, value]) => {
-    let receiver;
     switch (key) {
       case Receivers.SIMKL:
-        receiver = new SimklClientReceiver().withUserConfig(value);
-        urlData[key] = receiver;
+        urlData[key].withUserConfig(value);
         break;
       case Receivers.ANILIST:
-        receiver = new AnilistClientReceiver().withUserConfig(value);
-        urlData[key] = receiver;
+        urlData[key].withUserConfig(value);
         break;
       case Receivers.KITSU:
-        receiver = new KitsuClientReceiver().withUserConfig(value);
-        urlData[key] = receiver;
+        urlData[key].withUserConfig(value);
         break;
     }
   });

@@ -6,6 +6,7 @@ import type { Receivers } from '~/utils/receiver/types/receivers';
 import type { internalIds, syncIds } from '../constants';
 import type { KitsuCatalogStatus } from './catalog/catalog-status';
 import type { KitsuCatalogType } from './catalog/catalog-type';
+import type { KitsuAnimeEntry } from './kitsu/anime-entry';
 import type { KitsuLibraryEntry } from './kitsu/library-entry';
 
 export type KitsuMCIT = ManifestCatalogItemType<
@@ -23,6 +24,6 @@ export type KitsuMCIT = ManifestCatalogItemType<
   syncIds: DeepWriteable<typeof syncIds>;
   receiverServerConfig: ReceiverServerConfig<
     KitsuLibraryEntry,
-    KitsuLibraryEntry
+    KitsuAnimeEntry
   >;
 };

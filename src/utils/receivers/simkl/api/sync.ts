@@ -50,9 +50,7 @@ export async function syncSimklMetaObject(
       headers: createSimklHeaders(userConfig.auth),
       data,
     });
-    const info = await response.data;
-    console.log(info);
-    return info;
+    return await response.data;
   } catch (e) {
     console.log(e);
     throw new Error('Failed to fetch data from Simkl API!');

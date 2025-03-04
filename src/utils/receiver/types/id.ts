@@ -35,11 +35,12 @@ export const testMaybeAnime = (ids: Partial<IDs>): boolean => {
 
 export const createIDCatalogString = (
   ids: Partial<IDs> | undefined,
+  nsfw = true,
 ): string | undefined => {
   if (!ids) {
     return;
   }
-  if (ids['kitsu-nsfw']) {
+  if (ids['kitsu-nsfw'] && nsfw) {
     return `kitsu-nsfw:${ids['kitsu-nsfw']}`;
   }
   if (ids.kitsu) {

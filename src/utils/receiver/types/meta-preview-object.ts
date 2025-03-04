@@ -27,5 +27,5 @@ export type MetaPreviewObject = MetaPreviewObjectType & {
   links?: MetaLinkObject[];
   genres?: string[];
   description?: string;
-  trailers?: StreamObject[];
+  trailers?: (StreamObject | { source: string; type: 'Trailer' })[];
 };

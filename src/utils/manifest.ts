@@ -42,7 +42,11 @@ export type ManifestCatalogItemBase = {
   name: string;
   genres?: readonly string[];
   extra?: Readonly<
-    { name: ManifestCatalogExtraParameters; isRequired: boolean }[]
+    {
+      name: ManifestCatalogExtraParameters;
+      isRequired?: boolean;
+      options?: string[];
+    }[]
   >;
 };
 
