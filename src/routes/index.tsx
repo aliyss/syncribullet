@@ -224,7 +224,7 @@ export default component$(() => {
                 location.url.host.endsWith('syncribullet')
                   ? '.baby-beamup.club'
                   : ''
-              }/${encodeURI(url)}/manifest.json`;
+              }/${encodeURIComponent(url)}/manifest.json`;
               console.log(link);
               await nav(link);
             }}

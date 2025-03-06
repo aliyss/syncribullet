@@ -51,6 +51,11 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     return;
   }
 
+  // if (searchParams && !currentCatalogs.includes(catalogId)) {
+  //   json(200, { metas: [] });
+  //   return;
+  // }
+
   const receiversAsList = Object.values(receivers)
     .map((receiver) => {
       if (!receiver) {
@@ -116,5 +121,4 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       return true;
     }),
   });
-  return;
 };

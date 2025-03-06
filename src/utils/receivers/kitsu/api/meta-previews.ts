@@ -54,6 +54,11 @@ export const getKitsuMetaPreviews = async (
         ttl: 1000 * 60 * 20,
         interpretHeader: false,
         staleIfError: 1000 * 60 * 5,
+        cachePredicate: {
+          responseMatch: ({ data }) => {
+            return data?.data?.length > 0;
+          },
+        },
       },
     });
 

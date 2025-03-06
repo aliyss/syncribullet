@@ -1,94 +1,12 @@
-import { axiosInstance } from '~/utils/axios/cache';
-
 import type { KitsuCatalogStatus } from '../types/catalog/catalog-status';
+import type { KitsuCurrentUser } from '../types/kitsu/user';
 import type { KitsuUserSettings } from '../types/user-settings';
+import { createKitsuHeaders } from './headers';
 import { KITSU_BASE_URL } from './url';
 
-const animeMutation = (
-  mediaId: number,
-  status: KitsuCatalogStatus,
-  progress: number | undefined,
-) => {
-  const mutation = `#graphql
-    mutation(
-      $id:Int 
-      $mediaId:Int 
-      $status:MediaListStatus 
-      $score:Float 
-      $progress:Int 
-      $progressVolumes:Int 
-      $repeat:Int 
-      $private:Boolean 
-      $notes:String 
-      $customLists:[String]
-      $hiddenFromStatusLists:Boolean 
-      $advancedScores:[Float]
-      $startedAt:FuzzyDateInput 
-      $completedAt:FuzzyDateInput
-    ) {
-      SaveMediaListEntry(
-        id:$id 
-        mediaId:$mediaId 
-        status:$status 
-        score:$score 
-        progress:$progress 
-        progressVolumes:$progressVolumes 
-        repeat:$repeat 
-        private:$private 
-        notes:$notes 
-        customLists:$customLists 
-        hiddenFromStatusLists:$hiddenFromStatusLists 
-        advancedScores:$advancedScores 
-        startedAt:$startedAt 
-        completedAt:$completedAt
-      ) {
-          id 
-          mediaId 
-          status 
-          score 
-          advancedScores 
-          progress 
-          progressVolumes 
-          repeat 
-          priority 
-          private 
-          hiddenFromStatusLists 
-          customLists 
-          notes 
-          updatedAt 
-          startedAt{year month day} 
-          completedAt{year month day} 
-          user{id name} 
-          media{
-            id 
-            title{userPreferred}
-            type 
-            format 
-            status 
-            episodes 
-            volumes 
-            chapters 
-            averageScore 
-            popularity 
-            isAdult 
-            startDate{year}
-          }
-        }
-      }
-  `;
-  return {
-    query: mutation,
-    variables: {
-      mediaId: mediaId,
-      status: status,
-      progress: progress,
-    },
-  };
-};
-
-export const syncAnilistMetaObject = async (
+export const syncKitsuMetaObject = async (
   id: number,
-  status: KitsuCatalogStatus,
+  status: KitsuCatalogStatus | undefined,
   count:
     | {
         season: number;
@@ -96,44 +14,67 @@ export const syncAnilistMetaObject = async (
       }
     | undefined,
   userConfig: KitsuUserSettings,
+  currentUser: KitsuCurrentUser,
+  libraryEntryId: string | undefined,
 ): Promise<void> => {
-  const { query, variables } = animeMutation(id, status, count?.episode || 1);
+  let url = `${KITSU_BASE_URL}/library-entries`;
 
-  if (!query) {
-    throw new Error('No query provided');
-  }
+  const data = {
+    data: {
+      attributes: {
+        status: status || 'current',
+        progress: count?.episode,
+      },
+      relationships: {
+        anime: {
+          data: {
+            id: id.toString(),
+            type: 'anime',
+          },
+        },
+        user: {
+          data: {
+            id: currentUser.id,
+            type: 'users',
+          },
+        },
+      },
+      type: 'library-entries',
+    },
+  } as Record<string, any>;
 
-  if (query.startsWith('mutation') && !userConfig.auth) {
-    throw new Error('No user config! This should not happen!');
+  let method = 'POST';
+  if (libraryEntryId) {
+    url += `/${libraryEntryId}`;
+    data.data.id = libraryEntryId;
+    method = 'PATCH';
   }
 
   try {
-    const response = await axiosInstance(KITSU_BASE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: userConfig.auth?.access_token
-          ? `Bearer ${userConfig.auth.access_token}`
-          : undefined,
-      },
-      data: {
-        query,
-        variables,
-      },
+    // Has to be done with fetch because axios or kitsu do something wierd.
+    const response = await fetch(url, {
+      method: method,
+      headers: Object.entries(createKitsuHeaders(userConfig.auth)).map(
+        ([key, value]) => [`${key}`, `${value}`] as [string, string],
+      ),
+      body: JSON.stringify(data),
     });
 
-    if (response.status !== 200) {
+    if (response.status >= 200 && response.status < 300) {
+      try {
+        return await response.json();
+      } catch (error) {
+        return;
+      }
+    } else {
       if (response.statusText)
         throw new Error(
-          `Anilist Api returned with a ${response.status} status. ${response.statusText}`,
+          `Kitsu Api returned with a ${response.status} status. ${response.statusText}`,
         );
       throw new Error(
-        `Anilist Api returned with a ${response.status} status. The api might be down!`,
+        `Kitsu Api returned with a ${response.status} status. The api might be down!`,
       );
     }
-
-    return await response.data.data;
   } catch (error) {
     if ((error as Error).name === 'AbortError') {
       throw new Error(`Request timed out after ${5000}ms`);

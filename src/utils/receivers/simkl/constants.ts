@@ -107,7 +107,6 @@ export const manifestCatalogItems = [
     id: 'syncribullet-simkl-anime-watching',
     type: ManifestReceiverTypes.ANIME,
     name: 'Simkl - Watching',
-    genres: ['tv', 'special', 'ova', 'movie', 'music video', 'ona'],
     extra: [
       { name: ManifestCatalogExtraParameters.GENRE, isRequired: false },
       { name: ManifestCatalogExtraParameters.SKIP, isRequired: false },

@@ -1,4 +1,5 @@
 import type { ManifestCatalogExtraParametersOptions } from '../receiver/types/manifest-types';
+import type { ReceiverServers } from '../receiver/types/receivers';
 
 export type CatchAllParams = ManifestCatalogExtraParametersOptions;
 
@@ -19,7 +20,9 @@ export const buildCatchAllParams = (
         skip = 0;
       }
     } else if (item[0] === 'genre') {
-      genre = item[1];
+      if (item[1] !== 'Default') {
+        genre = item[1];
+      }
     } else if (item[0] === 'search') {
       search = item[1];
     }
@@ -27,3 +30,11 @@ export const buildCatchAllParams = (
 
   return { skip, genre, search };
 };
+
+export const currentCatalogs: ReceiverServers['manifestCatalogItems'][number]['id'][] =
+  [
+    'syncribullet-kitsu-anime-current',
+    'syncribullet-anilist-anime-CURRENT',
+    'syncribullet-simkl-shows-watching',
+    'syncribullet-simkl-anime-watching',
+  ];

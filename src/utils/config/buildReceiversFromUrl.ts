@@ -1,4 +1,7 @@
-import { ManifestCatalogExtraParameters } from '../manifest';
+import {
+  ManifestCatalogExtraParameters,
+  ManifestReceiverTypes,
+} from '../manifest';
 import { ANIME_GENRES } from '../receiver/defaults/genres';
 import type { ReceiverMCITypes, Receivers } from '../receiver/types/receivers';
 import type {
@@ -17,34 +20,56 @@ export const mapGenresToCatalogs = async (
 ) => {
   try {
     const CINEMETA_MANIFEST = await CinemetaServerReceiver.getManifest();
+    const movieCatalogInfo = CINEMETA_MANIFEST.catalogs.find(
+      (c) => c.type === 'movie' && c.id === 'top',
+    );
+    const seriesCatalogInfo = CINEMETA_MANIFEST.catalogs.find(
+      (c) => c.type === 'series' && c.id === 'top',
+    );
     return catalogs?.map((catalog) => {
       if (!catalog.genres) {
         switch (catalog.type) {
-          case 'anime':
-            catalog.genres = ANIME_GENRES;
+          case ManifestReceiverTypes.ANIME:
+            catalog.genres = ['Default', ...ANIME_GENRES];
             catalog.extra = [
               {
                 name: ManifestCatalogExtraParameters.GENRE,
-                options: ANIME_GENRES,
+                options: ['Default', ...ANIME_GENRES],
+              },
+              {
+                name: ManifestCatalogExtraParameters.SKIP,
               },
             ];
+            catalog.extraRequired = [ManifestCatalogExtraParameters.GENRE];
             break;
-          case 'movie':
-            const movieCatalogInfo = CINEMETA_MANIFEST.catalogs.find(
-              (c) => c.type === 'movie' && c.id === 'top',
-            );
-            catalog.genres = movieCatalogInfo?.genres;
-            catalog.extra = movieCatalogInfo?.extra;
+          case ManifestReceiverTypes.MOVIE:
+            catalog.genres = ['Default', ...(movieCatalogInfo?.genres ?? [])];
+            catalog.extra = movieCatalogInfo?.extra
+              ?.filter((e) => e.name !== ManifestCatalogExtraParameters.SEARCH)
+              .map((e) => {
+                if (e.name === ManifestCatalogExtraParameters.GENRE) {
+                  e.options = ['Default', ...(e.options ?? [])];
+                }
+                return e;
+              });
+            catalog.extraRequired = [ManifestCatalogExtraParameters.GENRE];
             break;
-          case 'series':
-            const seriesCatalogInfo = CINEMETA_MANIFEST.catalogs.find(
-              (c) => c.type === 'movie' && c.id === 'top',
-            );
-            catalog.genres = seriesCatalogInfo?.genres;
-            catalog.extra = seriesCatalogInfo?.extra;
+          case ManifestReceiverTypes.SERIES:
+            catalog.genres = ['Default', ...(seriesCatalogInfo?.genres ?? [])];
+            catalog.extra = seriesCatalogInfo?.extra
+              ?.filter((e) => e.name !== ManifestCatalogExtraParameters.SEARCH)
+              .map((e) => {
+                if (e.name === ManifestCatalogExtraParameters.GENRE) {
+                  e.options = ['Default', ...(e.options ?? [])];
+                }
+                return e;
+              });
+            catalog.extraRequired = [ManifestCatalogExtraParameters.GENRE];
             break;
         }
       }
+
+      catalog.extraSupported = catalog.extra?.map((e) => e.name) ?? [];
       return catalog;
     });
   } catch (e) {

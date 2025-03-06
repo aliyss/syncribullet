@@ -16,8 +16,12 @@ import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-obje
 
 import { KitsuAddonServerReceiver } from '../kitsu-addon/receiver-server';
 import { getKitsuCurrentUser } from './api/current-user';
-import { getKitsuMetaObject } from './api/meta-object';
+import {
+  getKitsuMetaObject,
+  getKitsuMinimalMetaObject,
+} from './api/meta-object';
 import { getKitsuMetaPreviews } from './api/meta-previews';
+import { syncKitsuMetaObject } from './api/sync';
 import {
   defaultCatalogs,
   defaultLiveSyncTypes,
@@ -31,7 +35,10 @@ import { buildLibraryObjectUserDescription } from './meta/description';
 import type { KitsuCatalogStatus } from './types/catalog/catalog-status';
 import { KitsuCatalogType } from './types/catalog/catalog-type';
 import type { KitsuAnimeEntry } from './types/kitsu/anime-entry';
-import type { KitsuLibraryEntry } from './types/kitsu/library-entry';
+import type {
+  KitsuLibraryEntry,
+  KitsuLibraryEntryIncluded,
+} from './types/kitsu/library-entry';
 import type { KitsuMCIT } from './types/manifest';
 
 export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
@@ -289,48 +296,64 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
           }
         | undefined;
     },
-    // type: KitsuMCIT['receiverCatalogType'],
+    type: KitsuMCIT['receiverCatalogType'],
     // potentialTypes: AnilistMCIT['receiverCatalogType'][],
   ): Promise<void> {
     if (!ids.ids.kitsu) {
       throw new Error('No Kitsu ID provided!');
     }
-    // const currentProgressMedia = await getAnilistMinimalMetaObject(
-    //   ids.ids.kitsu,
-    //   type,
-    //   this.userSettings,
-    // );
-    // let status = currentProgressMedia.Media.mediaListEntry?.status;
-    // if (status === 'COMPLETED') {
-    //   return;
-    // }
-    // if (!status) {
-    //   status = 'CURRENT';
-    // }
-    // if (status === 'PAUSED' || status === 'DROPPED' || status === 'PLANNING') {
-    //   status = 'CURRENT';
-    // }
-    //
-    // if (status === 'CURRENT' && !ids.count) {
-    //   status = 'COMPLETED';
-    //   ids.count = {
-    //     season: 0,
-    //     episode: currentProgressMedia.Media.episodes,
-    //   };
-    // } else if (
-    //   status === 'CURRENT' &&
-    //   (ids.count?.episode || 1) >= currentProgressMedia.Media.episodes &&
-    //   currentProgressMedia.Media.status === 'FINISHED'
-    // ) {
-    //   status = 'COMPLETED';
-    // }
-    //
-    // await syncAnilistMetaObject(
-    //   ids.ids.kitsu,
-    //   status,
-    //   ids.count,
-    //   this.userSettings,
-    // );
-    // throw new Error('Method not implemented.');
+    const currentUser = await getKitsuCurrentUser(this.userSettings);
+    const currentProgressMedia = await getKitsuMinimalMetaObject(
+      ids.ids.kitsu,
+      type,
+      this.userSettings,
+      currentUser,
+    );
+    let status =
+      'type' in currentProgressMedia.data[0] &&
+      currentProgressMedia.data[0].type === 'anime'
+        ? 'current'
+        : currentProgressMedia.data[0]?.attributes?.status;
+
+    if (status === 'completed') {
+      return;
+    }
+    if (status === 'on_hold' || status === 'dropped' || status === 'planned') {
+      status = 'current';
+    }
+    const anime = (
+      currentProgressMedia.included[0] as KitsuLibraryEntryIncluded | undefined
+    )?.attributes;
+    const animeEpisodeCount = anime?.episodeCount || 1;
+
+    if (status === 'current' && !ids.count) {
+      status = 'completed';
+      ids.count = {
+        season: 0,
+        episode: animeEpisodeCount,
+      };
+    } else if (
+      status === 'current' &&
+      (ids.count?.episode || 1) >= animeEpisodeCount &&
+      anime?.status === 'finished'
+    ) {
+      status = 'completed';
+      ids.count = {
+        season: 0,
+        episode: animeEpisodeCount,
+      };
+    }
+
+    await syncKitsuMetaObject(
+      ids.ids.kitsu,
+      status,
+      ids.count,
+      this.userSettings,
+      currentUser,
+      'type' in currentProgressMedia.data[0] &&
+        currentProgressMedia.data[0].type === 'anime'
+        ? undefined
+        : currentProgressMedia.data[0].id,
+    );
   }
 }

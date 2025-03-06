@@ -1,6 +1,10 @@
 # syncribullet (v2)
 SyncriBullet is a Stremio Addon that synchronizes your watchlist with other services.
 
+> [!NOTE]
+> (2025.03.06) Added support for Kitsu! (also helps with NSFW content)
+
+
 > [!CAUTION]
 > syncribullet v2 is almost a complete rewrite and is not compatible with v1.
 
@@ -38,11 +42,11 @@ Complaints? [Click this](https://github.com/aliyss/syncribullet/issues/34)
 ## Info
 Currently the addon synchronizes with following services:
 - Anilist
+- Kitsu
 - Simkl
 
 I plan on adding the following in the very near future:
 - MyAnimelist
-- Kitsu
 - Trakt
 
 ### Goal
@@ -60,7 +64,7 @@ I want to implement a two way sync over multiple services with Stremio acting as
 Dynamic Sync is when an item in the _Senders_ is updated, that it get's reflected on the _Receivers_.
 
 - [X] Dynamic Sync from Stremio to Anilist
-- [ ] Dynamic Sync from Stremio to Kitsu
+- [X] Dynamic Sync from Stremio to Kitsu
 - [ ] Dynamic Sync from Stremio to MyAnimelist
 - [X] Dynamic Sync from Stremio to Simkl
 - [ ] Dynamic Sync from Stremio to Trakt (Already native Support use that)
@@ -86,7 +90,7 @@ Of course I'm going for the two-way sync. However this is harder than it actuall
 Stremio Catalog Support, self explanatory if you are using stremio.
 
 - [X] Anilist
-- [ ] Kitsu
+- [X] Kitsu
 - [ ] MyAnimelist
 - [X] Simkl
 - [ ] Trakt

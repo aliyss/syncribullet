@@ -36,18 +36,22 @@ export type SyncribulletManifestCatalogItemId<MCIT extends ReceiverMCITypes> =
     ? `${SYNCRIBULLETID}-${MCIT['receiverType']}-${MCIT['receiverCatalogType']}-${MCIT['receiverCatalogStatus']}`
     : never;
 
-export type ManifestCatalogItemBase = {
+export type ManifestCatalogExtra = {
+  name: ManifestCatalogExtraParameters;
+  isRequired?: boolean;
+  options?: string[];
+};
+
+export type ManifestCatalogItemBase<
+  MCE extends ManifestCatalogExtra = ManifestCatalogExtra,
+> = {
   id: string;
   type: ManifestReceiverTypes;
   name: string;
   genres?: readonly string[];
-  extra?: Readonly<
-    {
-      name: ManifestCatalogExtraParameters;
-      isRequired?: boolean;
-      options?: string[];
-    }[]
-  >;
+  extra?: Readonly<MCE[]>;
+  extraSupported?: MCE['name'][];
+  extraRequired?: MCE['name'][];
 };
 
 export type ManifestCatalogItem<MCIT extends ReceiverMCITypes> =

@@ -8,7 +8,7 @@ export interface KitsuTitles {
 export interface KitsuLibraryEntryData {
   id: string;
   attributes: {
-    status: string;
+    status?: 'current' | 'planned' | 'completed' | 'on_hold' | 'dropped';
     progress?: number;
     notes?: string;
     rating?: string;
