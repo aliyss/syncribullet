@@ -114,7 +114,7 @@ export default component$(() => {
   useVisibleTask$(async () => {
     const config = location.url.searchParams.get('config');
     if (config) {
-      const configData = await retrieveConfig(config);
+      const configData = await retrieveConfig(decodeURIComponent(config));
       const configReceivers = Array.isArray(configData)
         ? buildClientReceiversFromUserConfigBuildMinifiedStrings(configData[0])
         : buildClientReceiversFromUserConfigBuildMinifiedStrings(configData);
