@@ -20,7 +20,7 @@ export const buildCatchAllParams = (
         skip = 0;
       }
     } else if (item[0] === 'genre') {
-      if (item[1] !== 'All') {
+      if (item[1] !== 'All' && item[1] !== 'Default') {
         genre = item[1];
       }
     } else if (item[0] === 'search') {

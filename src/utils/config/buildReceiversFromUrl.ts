@@ -30,41 +30,28 @@ export const mapGenresToCatalogs = async (
       if (!catalog.genres) {
         switch (catalog.type) {
           case ManifestReceiverTypes.ANIME:
-            catalog.genres = ['All', ...ANIME_GENRES];
+            catalog.genres = ANIME_GENRES;
             catalog.extra = [
               {
                 name: ManifestCatalogExtraParameters.GENRE,
-                options: ['All', ...ANIME_GENRES],
+                options: ANIME_GENRES,
               },
               {
                 name: ManifestCatalogExtraParameters.SKIP,
               },
             ];
-            catalog.extraRequired = [ManifestCatalogExtraParameters.GENRE];
             break;
           case ManifestReceiverTypes.MOVIE:
-            catalog.genres = ['All', ...(movieCatalogInfo?.genres ?? [])];
-            catalog.extra = movieCatalogInfo?.extra
-              ?.filter((e) => e.name !== ManifestCatalogExtraParameters.SEARCH)
-              .map((e) => {
-                if (e.name === ManifestCatalogExtraParameters.GENRE) {
-                  e.options = ['All', ...(e.options ?? [])];
-                }
-                return e;
-              });
-            catalog.extraRequired = [ManifestCatalogExtraParameters.GENRE];
+            catalog.genres = movieCatalogInfo?.genres ?? [];
+            catalog.extra = movieCatalogInfo?.extra?.filter(
+              (e) => e.name !== ManifestCatalogExtraParameters.SEARCH,
+            );
             break;
           case ManifestReceiverTypes.SERIES:
-            catalog.genres = ['All', ...(seriesCatalogInfo?.genres ?? [])];
-            catalog.extra = seriesCatalogInfo?.extra
-              ?.filter((e) => e.name !== ManifestCatalogExtraParameters.SEARCH)
-              .map((e) => {
-                if (e.name === ManifestCatalogExtraParameters.GENRE) {
-                  e.options = ['All', ...(e.options ?? [])];
-                }
-                return e;
-              });
-            catalog.extraRequired = [ManifestCatalogExtraParameters.GENRE];
+            catalog.genres = seriesCatalogInfo?.genres ?? [];
+            catalog.extra = seriesCatalogInfo?.extra?.filter(
+              (e) => e.name !== ManifestCatalogExtraParameters.SEARCH,
+            );
             break;
         }
       }
