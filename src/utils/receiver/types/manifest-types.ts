@@ -11,7 +11,7 @@ export type ManifestReceiverTypesMapping<E extends string> = EnumMapping<
 
 export type ManifestReceiverTypesReverseMapping<E extends string> = EnumMapping<
   ManifestReceiverTypes,
-  E
+  E | undefined
 >;
 
 export interface ManifestCatalogExtraParametersOptions {

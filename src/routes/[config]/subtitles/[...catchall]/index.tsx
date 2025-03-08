@@ -9,6 +9,7 @@ import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config
 import { exists } from '~/utils/helpers/array';
 import type { PickByArrays } from '~/utils/helpers/types';
 import { getMappingIdsHaglundIMDB } from '~/utils/mappings/haglund';
+import { getMappingIdsTVTimeIMDB } from '~/utils/mappings/tvtime';
 import type { IDs } from '~/utils/receiver/types/id';
 import type { IDSources } from '~/utils/receiver/types/id';
 import { createIDsFromCatalogString } from '~/utils/receiver/types/id';
@@ -86,6 +87,13 @@ export const onGet: RequestHandler = async ({
         ids.ids.imdb.toString(),
         ids.count?.season,
       )),
+      ...(receivers.tvtime
+        ? await getMappingIdsTVTimeIMDB(
+            ids.ids.imdb.toString(),
+            receivers.tvtime.receiverTypeReverseMapping[potentialReceiverType],
+            receivers.tvtime.userSettings,
+          )
+        : {}),
     };
   }
 
@@ -131,8 +139,8 @@ export const onGet: RequestHandler = async ({
       await receiverEntry.receiver.syncMetaObject(
         receiverEntry.ids,
         receiverEntry.receiver.receiverTypeReverseMapping[
-          potentialReceiverType
-        ] as never,
+          potentialReceiverType as never
+        ],
         potentialReceiverType,
       );
     }

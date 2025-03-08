@@ -11,6 +11,7 @@ export enum IDSources {
   MAL = 'mal',
   TRAKT = 'trakt',
   AOZORA = 'aozora',
+  TVTIME = 'tvtime',
 }
 
 export type IDs = Record<IDSources, ID | undefined> & {
@@ -24,6 +25,7 @@ export type IDs = Record<IDSources, ID | undefined> & {
   [IDSources.MAL]: number | undefined;
   [IDSources.TRAKT]: number | undefined;
   [IDSources.AOZORA]: string | undefined;
+  [IDSources.TVTIME]: string | undefined;
 };
 
 export const testMaybeAnime = (ids: Partial<IDs>): boolean => {
@@ -63,6 +65,9 @@ export const createIDCatalogString = (
   }
   if (ids.simkl) {
     return `simkl:${ids.simkl}`;
+  }
+  if (ids.tvtime) {
+    return `tvtime:${ids.simkl}`;
   }
 };
 
@@ -119,6 +124,11 @@ export const createIDsFromCatalogString = (
     tempId = id.slice('simkl:'.length).split(':');
     usableId = {
       simkl: parseInt(tempId[0]),
+    };
+  } else if (id.startsWith('tvtime:')) {
+    tempId = id.slice('tvtime:'.length).split(':');
+    usableId = {
+      tvtime: tempId[0],
     };
   } else if (id.startsWith('tt')) {
     tempId = id.split(':');

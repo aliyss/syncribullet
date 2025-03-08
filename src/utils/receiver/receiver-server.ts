@@ -86,7 +86,7 @@ export abstract class ReceiverServer<
           }
         | undefined;
     },
-    type: MCIT['receiverCatalogType'],
+    type: MCIT['receiverCatalogType'] | undefined,
     potentialTypes: ManifestReceiverTypes,
   ): Promise<void>;
 
@@ -175,7 +175,7 @@ export abstract class ReceiverServer<
           }
         | undefined;
     },
-    type: MCIT['receiverCatalogType'],
+    type: MCIT['receiverCatalogType'] | undefined,
     potentialType: ManifestReceiverTypes,
   ): Promise<void> {
     const syncTypes = this.getLiveSyncTypes(this.userSettings.liveSync);

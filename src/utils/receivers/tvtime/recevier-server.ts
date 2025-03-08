@@ -41,9 +41,9 @@ export class TVTimeServerReceiver extends ReceiverServer<TVTimeMCIT> {
   receiverTypeReverseMapping = {
     [ManifestReceiverTypes.MOVIE]: TVTimeCatalogType.MOVIE,
     [ManifestReceiverTypes.SERIES]: TVTimeCatalogType.SERIES,
-    [ManifestReceiverTypes.ANIME]: TVTimeCatalogType.SERIES,
-    [ManifestReceiverTypes.CHANNELS]: TVTimeCatalogType.SERIES,
-    [ManifestReceiverTypes.TV]: TVTimeCatalogType.SERIES,
+    [ManifestReceiverTypes.ANIME]: undefined,
+    [ManifestReceiverTypes.CHANNELS]: undefined,
+    [ManifestReceiverTypes.TV]: undefined,
   };
 
   receiverInfo = receiverInfo;
@@ -111,6 +111,7 @@ export class TVTimeServerReceiver extends ReceiverServer<TVTimeMCIT> {
     const newIds = {
       imdb: object.meta.imdb_id,
       tvdb: object.meta.external_sources.find((x) => x.source === 'tvdb')?.id,
+      tvtime: object.uuid,
     } as RequireAtLeastOne<IDs>;
 
     const manifestCatalogType = ManifestReceiverTypes.MOVIE;
