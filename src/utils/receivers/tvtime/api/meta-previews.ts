@@ -60,7 +60,7 @@ export const getTVTimeMetaPreviewsSeries = async (
     const url = `${TVTIME_BASE_URL}?${sidecar.join('&')}`;
     try {
       const response = await axiosCache(url, {
-        id: `tvtime-series-${status}-${auth.id}-${iOffset}-${iLimit}`,
+        id: `tvtime-series-${auth.id}-${iOffset}-${iLimit}`,
         method: 'GET',
         headers: createTVTimeHeaders(auth),
         cache: {
