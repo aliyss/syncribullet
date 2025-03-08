@@ -16,7 +16,7 @@ import type {
 import type { MetaObject } from './types/meta-object';
 import type { MetaPreviewObject } from './types/meta-preview-object';
 import type { ExtendedReceiverMCITypes } from './types/receivers';
-import { StreamObject } from './types/stream-object';
+import type { StreamObject } from './types/stream-object';
 
 export abstract class ReceiverServerExtended<
   MCIT extends ExtendedReceiverMCITypes,

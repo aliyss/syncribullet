@@ -59,7 +59,7 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
   ]);
 
   const receiversAsList = [
-    ...Object.values(receivers),
+    ...Object.values(receivers).filter((x) => x?.receiverInfo.id !== 'tvtime'),
     ...extendedReceiversAsList,
   ]
     .map((receiver) => {

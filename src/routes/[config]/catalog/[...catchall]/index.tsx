@@ -63,16 +63,14 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       }
       const catalogItem = [...receiver.manifestCatalogItems].find(
         (x) => x.id === catalogId,
-      ) as (typeof receiver.manifestCatalogItems)[number] | undefined;
+      );
       if (!catalogItem) {
         return;
       }
-      // TODO: Fix this typing so it works without the assignment
-      return { receiver, catalogItem } as {
-        receiver: NonNullable<ReceiverServers>;
-        catalogItem: NonNullable<
-          (typeof receiver.manifestCatalogItems)[number]
-        >;
+      // TODO: Remove this type assertion
+      return { receiver, catalogItem } as unknown as {
+        receiver: ReceiverServers;
+        catalogItem: typeof catalogItem;
       };
     })
     .filter(exists);

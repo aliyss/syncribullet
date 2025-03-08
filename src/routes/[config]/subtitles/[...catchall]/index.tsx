@@ -92,6 +92,7 @@ export const onGet: RequestHandler = async ({
   const idTypes = Object.keys(ids.ids) as [IDSources];
 
   const receiversAsList = Object.values(receivers)
+    .filter((x) => x?.receiverInfo.id !== 'tvtime')
     .map((receiver) => {
       if (!receiver) {
         return;

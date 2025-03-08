@@ -5,6 +5,7 @@ import AnilistLogin from '~/components/forms/anilist-login';
 import KitsuLogin from '~/components/forms/kitsu-login';
 import ManifestSettings from '~/components/forms/manifest-settings';
 import SimklLogin from '~/components/forms/simkl-login';
+import TvtimeLogin from '~/components/forms/tvtime-login';
 
 import type { KnownNoSerialize } from '~/utils/helpers/qwik-types';
 import {
@@ -45,12 +46,20 @@ export default component$<ReceiversSettingsProps>(
                   currentReceiver={currentReceiver}
                   updateReceiver$={updateReceiver$}
                 />
+              ) : currentReceiver.userSettings &&
+                currentReceiver.receiverInfo.id === Receivers.TVTIME ? (
+                <ManifestSettings
+                  currentReceiver={currentReceiver}
+                  updateReceiver$={updateReceiver$}
+                />
               ) : currentReceiver.receiverInfo.id === 'simkl' ? (
                 <SimklLogin />
               ) : currentReceiver.receiverInfo.id === 'anilist' ? (
                 <AnilistLogin />
               ) : currentReceiver.receiverInfo.id === 'kitsu' ? (
                 <KitsuLogin />
+              ) : currentReceiver.receiverInfo.id === 'tvtime' ? (
+                <TvtimeLogin />
               ) : (
                 <></>
               )}

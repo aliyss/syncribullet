@@ -103,6 +103,7 @@ export default component$(() => {
     [Receivers.SIMKL]: undefined,
     [Receivers.ANILIST]: undefined,
     [Receivers.KITSU]: undefined,
+    [Receivers.TVTIME]: undefined,
   });
 
   const currentReceiver = useSignal<
@@ -126,6 +127,7 @@ export default component$(() => {
         [Receivers.SIMKL]: noSerialize(configReceivers[Receivers.SIMKL]),
         [Receivers.ANILIST]: noSerialize(configReceivers[Receivers.ANILIST]),
         [Receivers.KITSU]: noSerialize(configReceivers[Receivers.KITSU]),
+        [Receivers.TVTIME]: noSerialize(configReceivers[Receivers.TVTIME]),
       };
       return;
     }
@@ -134,6 +136,7 @@ export default component$(() => {
       [Receivers.SIMKL]: noSerialize(configuredReceivers[Receivers.SIMKL]),
       [Receivers.ANILIST]: noSerialize(configuredReceivers[Receivers.ANILIST]),
       [Receivers.KITSU]: noSerialize(configuredReceivers[Receivers.KITSU]),
+      [Receivers.TVTIME]: noSerialize(configuredReceivers[Receivers.TVTIME]),
     };
 
     const settings = localStorage.getItem('syncribullet-settings');
