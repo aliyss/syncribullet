@@ -2,7 +2,7 @@
 SyncriBullet is a Stremio Addon that synchronizes your watchlist with other services.
 
 > [!NOTE]
-> (2025.03.08) Added support for TVTime! (only catalogs for now, awful API btw)
+> (2025.03.09) Added support for TVTime! (awful API btw)
 > (2025.03.06) Added support for Kitsu! (also helps with NSFW content)
 
 
@@ -45,11 +45,11 @@ Currently the addon synchronizes with following services:
 - Anilist
 - Kitsu
 - Simkl
+- TVTime
 
 I plan on adding the following in the very near future:
 - MyAnimelist
 - Trakt
-- TVTime
 
 ### Goal
 I want to implement a two way sync over multiple services with Stremio acting as the _Sender_ and the watchlists acting as the _Receivers_.
@@ -67,10 +67,10 @@ Dynamic Sync is when an item in the _Senders_ is updated, that it get's reflecte
 
 - [X] Dynamic Sync from Stremio to Anilist
 - [X] Dynamic Sync from Stremio to Kitsu
-- [X] Dynamic Sync from Stremio to TVTime
 - [ ] Dynamic Sync from Stremio to MyAnimelist
 - [X] Dynamic Sync from Stremio to Simkl
 - [ ] Dynamic Sync from Stremio to Trakt (Already native Support use that)
+- [X] Dynamic Sync from Stremio to TVTime
 
 ### Import Sync
 Import Sync is theoretically a one-time action where the whole library get's synchronised from the _Senders_ to the _Receivers_ and vice-versa. But the plan is, that this can be run multiple times without wierd issues.

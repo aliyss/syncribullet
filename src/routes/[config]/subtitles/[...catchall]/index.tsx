@@ -100,7 +100,6 @@ export const onGet: RequestHandler = async ({
   const idTypes = Object.keys(ids.ids) as [IDSources];
 
   const receiversAsList = Object.values(receivers)
-    .filter((x) => x?.receiverInfo.id !== 'tvtime')
     .map((receiver) => {
       if (!receiver) {
         return;
@@ -136,13 +135,17 @@ export const onGet: RequestHandler = async ({
 
   try {
     for (const receiverEntry of receiversAsList) {
-      await receiverEntry.receiver.syncMetaObject(
-        receiverEntry.ids,
-        receiverEntry.receiver.receiverTypeReverseMapping[
-          potentialReceiverType as never
-        ],
-        potentialReceiverType,
-      );
+      try {
+        await receiverEntry.receiver.syncMetaObject(
+          receiverEntry.ids,
+          receiverEntry.receiver.receiverTypeReverseMapping[
+            potentialReceiverType as never
+          ],
+          potentialReceiverType,
+        );
+      } catch (e) {
+        console.error(e);
+      }
     }
     if (redirectUrl) {
       throw redirect(302, redirectUrl);

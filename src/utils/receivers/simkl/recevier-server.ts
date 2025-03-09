@@ -256,7 +256,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
   }
 
   _getMetaObject(
-    ids: PickByArrays<IDs, SimklMCIT['internalIds']>,
+    ids: PickByArrays<IDs, SimklMCIT['syncIds']>,
     type: SimklMCIT['receiverCatalogType'],
     // potentialTypes: AnilistMCIT['receiverCatalogType'][],
   ): Promise<SimklLibraryListEntry> {

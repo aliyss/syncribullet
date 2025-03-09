@@ -1,5 +1,9 @@
 import { yearsToString } from '~/utils/helpers/date';
-import type { RequireAtLeastOne, Year } from '~/utils/helpers/types';
+import type {
+  PickByArrays,
+  RequireAtLeastOne,
+  Year,
+} from '~/utils/helpers/types';
 import { ManifestReceiverTypes } from '~/utils/manifest';
 import { getMappingIdsHaglund } from '~/utils/mappings/haglund';
 import { ReceiverServer } from '~/utils/receiver/receiver-server';
@@ -11,8 +15,10 @@ import type { MetaObject } from '~/utils/receiver/types/meta-object';
 import type { MetaPreviewObject } from '~/utils/receiver/types/meta-preview-object';
 
 import { KitsuAddonServerReceiver } from '../kitsu-addon/receiver-server';
+import { episodesTVTimeMetaObject } from './api/episodes';
 import './api/meta-object';
 import { getTVTimeMetaPreviews } from './api/meta-previews';
+import { syncTVTimeMetaObject } from './api/sync';
 import {
   defaultCatalogs,
   defaultLiveSyncTypes,
@@ -227,71 +233,44 @@ export class TVTimeServerReceiver extends ReceiverServer<TVTimeMCIT> {
     // }
   }
 
-  async _syncMetaObject() // ids: {
-  //   ids: PickByArrays<IDs, TVTimeMCIT['syncIds']>;
-  //   count:
-  //     | {
-  //         season: number;
-  //         episode: number;
-  //       }
-  //     | undefined;
-  // },
-  // type: TVTimeMCIT['receiverCatalogType'],
-  // potentialTypes: AnilistMCIT['receiverCatalogType'][],
-  : Promise<void> {
-    // if (!ids.ids.imdb) {
-    //   throw new Error('No TVTime ID provided!');
-    // }
-    // const currentProgressMedia = await getTVTimeMinimalMetaObject(
-    //   ids.ids.imdb,
-    //   type,
-    //   this.userSettings,
-    // );
-    // let status =
-    //   'type' in currentProgressMedia.data[0] &&
-    //   currentProgressMedia.data[0].type === 'anime'
-    //     ? 'current'
-    //     : currentProgressMedia.data[0]?.attributes?.status;
-    //
-    // if (status === 'completed') {
-    //   return;
-    // }
-    // if (status === 'on_hold' || status === 'dropped' || status === 'planned') {
-    //   status = 'current';
-    // }
-    // const anime = (
-    //   currentProgressMedia.included[0] as TVTimeLibraryEntryIncluded | undefined
-    // )?.attributes;
-    // const animeEpisodeCount = anime?.episodeCount || 1;
-    //
-    // if (status === 'current' && !ids.count) {
-    //   status = 'completed';
-    //   ids.count = {
-    //     season: 0,
-    //     episode: animeEpisodeCount,
-    //   };
-    // } else if (
-    //   status === 'current' &&
-    //   (ids.count?.episode || 1) >= animeEpisodeCount &&
-    //   anime?.status === 'finished'
-    // ) {
-    //   status = 'completed';
-    //   ids.count = {
-    //     season: 0,
-    //     episode: animeEpisodeCount,
-    //   };
-    // }
-    //
-    // await syncTVTimeMetaObject(
-    //   ids.ids.imdb,
-    //   status,
-    //   ids.count,
-    //   this.userSettings,
-    //   currentUser,
-    //   'type' in currentProgressMedia.data[0] &&
-    //     currentProgressMedia.data[0].type === 'anime'
-    //     ? undefined
-    //     : currentProgressMedia.data[0].id,
-    // );
+  async _syncMetaObject(
+    ids: {
+      ids: PickByArrays<IDs, TVTimeMCIT['syncIds']>;
+      count:
+        | {
+            season: number;
+            episode: number;
+          }
+        | undefined;
+    },
+    type: TVTimeMCIT['receiverCatalogType'], // potentialTypes: AnilistMCIT['receiverCatalogType'][],
+  ): Promise<void> {
+    const id =
+      'tvtime' in ids.ids && ids.ids.tvtime
+        ? ids.ids.tvtime
+        : 'tvdb' in ids.ids && ids.ids.tvdb && !ids.count
+        ? ids.ids.tvdb
+        : undefined;
+
+    if (!id) {
+      throw new Error('No valid ID found for TVTime!');
+    }
+
+    let episode = undefined;
+
+    if (type === TVTimeCatalogType.SERIES && ids.count) {
+      episode = await episodesTVTimeMetaObject(
+        id.toString(),
+        ids.count,
+        this.userSettings,
+      );
+    }
+
+    await syncTVTimeMetaObject(
+      id.toString(),
+      type,
+      this.userSettings,
+      episode ? episode.id : undefined,
+    );
   }
 }

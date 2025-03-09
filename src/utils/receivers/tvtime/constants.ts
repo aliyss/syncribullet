@@ -23,9 +23,10 @@ export const internalIds = [[IDSources.IMDB]] as const satisfies Readonly<
   Readonly<IDSources[]>[]
 >;
 
-export const syncIds = [[IDSources.IMDB]] as const satisfies Readonly<
-  Readonly<IDSources[]>[]
->;
+export const syncIds = [
+  [IDSources.TVTIME],
+  [IDSources.TVDB],
+] as const satisfies Readonly<Readonly<IDSources[]>[]>;
 
 export const manifestCatalogItems = [
   {

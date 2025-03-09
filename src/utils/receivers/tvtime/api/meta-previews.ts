@@ -106,7 +106,8 @@ export const getTVTimeMetaPreviewsSeries = async (
       return entry.filters.find(
         (x) =>
           x.id === 'progress' &&
-          x.values.includes(status === 'up_to_date' ? 'watching' : status),
+          (x.values.includes(status) ||
+            (status === 'watching' ? x.values.includes('up_to_date') : false)),
       );
     })
     .map((entry) => {
@@ -120,7 +121,6 @@ export const getTVTimeMetaPreviewsMovie = async (
   status: TVTimeCatalogMovieStatus,
   auth: NonNullable<TVTimeUserSettings['auth']>,
   chunk: number,
-  perChunk: number,
 ): Promise<TVTimeLibraryEntryMovie[]> => {
   const sidecar = [
     `o=https://msapi.tvtime.com/prod/v1/tracking/cgw/follows/user/${auth.id}`,
@@ -130,37 +130,59 @@ export const getTVTimeMetaPreviewsMovie = async (
   ];
 
   const pagination = {
-    'Page-Limit': `${perChunk}`,
+    'Page-Limit': `${500}`,
     'Page-Last-Key': ``,
   };
 
   const url = `${TVTIME_BASE_URL}?${sidecar.join('&')}`;
 
   try {
-    const response = await axiosCache(url, {
-      id: `tvtime-movie-${status}-${auth.id}-${chunk}-${perChunk}`,
-      method: 'GET',
-      headers: createTVTimeHeaders(
-        auth,
-        pagination['Page-Limit'],
-        pagination['Page-Last-Key'],
-      ),
-      cache: {
-        ttl: 1000 * 60 * 20,
-        interpretHeader: false,
-        staleIfError: 1000 * 60 * 5,
-      },
-    });
+    let response;
+    let iteration = 0;
+    do {
+      response = await axiosCache(url, {
+        id: `tvtime-movie-${status}-${auth.id}-${pagination['Page-Last-Key']}`,
+        method: 'GET',
+        headers: createTVTimeHeaders(
+          auth,
+          pagination['Page-Limit'],
+          pagination['Page-Last-Key'],
+        ),
+        cache: {
+          ttl: 1000 * 60 * 20,
+          interpretHeader: false,
+          staleIfError: 1000 * 60 * 5,
+        },
+      });
 
-    if (response.status !== 200) {
-      if (response.statusText)
+      pagination['Page-Last-Key'] = response.headers['Page-Last-Key']
+        ? response.headers['Page-Last-Key']
+        : '';
+
+      if (response.status !== 200) {
+        if (response.statusText)
+          throw new Error(
+            `TVTime Api returned with a ${response.status} status. ${response.statusText}`,
+          );
         throw new Error(
-          `TVTime Api returned with a ${response.status} status. ${response.statusText}`,
+          `TVTime Api returned with a ${response.status} status. The api might be down!`,
         );
-      throw new Error(
-        `TVTime Api returned with a ${response.status} status. The api might be down!`,
-      );
-    }
+      }
+
+      if (
+        !response.data ||
+        !response.data.data ||
+        !response.data.data.objects ||
+        !response.data.data.objects.length
+      ) {
+        throw new Error('TVTime Api: No catalog data found!');
+      }
+
+      iteration++;
+    } while (
+      pagination['Page-Last-Key'] &&
+      chunk + 500 < (iteration + 1) * 500
+    );
 
     if (
       !response.data ||
@@ -203,6 +225,5 @@ export const getTVTimeMetaPreviews = async (
     status as TVTimeCatalogMovieStatus,
     userConfig.auth,
     chunk,
-    perChunk,
   );
 };
