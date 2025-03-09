@@ -252,7 +252,11 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
         }
         return true;
       }) ?? []),
-    ];
+    ].sort((a, b) => {
+      const dateA = a.last_watched_at || a.added_to_watchlist_at;
+      const dateB = b.last_watched_at || b.added_to_watchlist_at;
+      return dateB.localeCompare(dateA);
+    });
   }
 
   _getMetaObject(
