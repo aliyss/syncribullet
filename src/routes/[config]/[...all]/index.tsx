@@ -7,6 +7,12 @@ import type { ManifestResource } from '~/utils/manifest';
 import { ReceiverServerExtended } from '~/utils/receiver/receiver-server-extended';
 
 export const onGet: RequestHandler = async ({ json, params, env }) => {
+  if (params.config === 'manifest.json') {
+    json(200, {
+      ...manifest,
+    });
+    return;
+  }
   const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||
