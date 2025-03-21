@@ -96,6 +96,7 @@ export class TVTimeServerReceiver extends ReceiverServer<TVTimeMCIT> {
       releaseInfo: meta.releaseInfo as Year,
       name: meta.name,
       logo: meta.logo,
+      background: meta.background,
       poster: meta.poster,
       posterShape: meta.posterShape,
       imdbRating: meta.imdbRating,

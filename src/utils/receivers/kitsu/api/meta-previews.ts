@@ -31,7 +31,7 @@ export const getKitsuMetaPreviews = async (
   ];
   const fields = [
     `fields[libraryEntries]=status,anime,progress,notes,rating,startedAt,finishedAt,updatedAt,createdAt`,
-    `fields[${type}]=titles,description,averageRating,posterImage,status,startDate,endDate,episodeCount,showType,nsfw,genres`,
+    `fields[${type}]=titles,description,averageRating,posterImage,status,startDate,endDate,episodeCount,showType,nsfw,coverImage,genres`,
     `fields[genres]=name`,
   ];
   const pagination = [`page[limit]=${perChunk}`, `page[offset]=${chunk}`];
