@@ -131,6 +131,10 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
         object.meta.attributes.posterImage.medium ??
         object.meta.attributes.posterImage.large ??
         object.meta.attributes.posterImage.original,
+      background:
+        object.meta.attributes.coverImage?.original ??
+        object.meta.attributes.coverImage?.large ??
+        object.meta.attributes.posterImage.original,
       genres: object.genres || [],
       imdbRating: (
         Math.round(parseFloat(object.meta.attributes.averageRating || '0')) / 10
@@ -144,6 +148,7 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
       releaseInfo: meta.releaseInfo as Year,
       name: meta.name,
       logo: meta.logo,
+      background: meta.background,
       poster: meta.poster,
       posterShape: meta.posterShape,
       imdbRating: meta.imdbRating,

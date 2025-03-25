@@ -95,6 +95,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
       releaseInfo: meta.releaseInfo as Year,
       name: meta.name,
       logo: meta.logo,
+      background: meta.background,
       poster: meta.poster,
       posterShape: meta.posterShape,
       imdbRating: meta.imdbRating,
@@ -162,6 +163,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
         type: manifestCatalogType,
         releaseInfo: object.show.year?.toString() as Year,
         poster: 'https://simkl.in/posters/' + object.show.poster + '_0.jpg',
+        background: object.show.fanart ?? undefined,
         description: buildLibraryObjectUserDescription(object),
       } satisfies MetaObject;
       meta = partialMeta;
