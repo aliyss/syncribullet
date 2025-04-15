@@ -13,6 +13,9 @@ I'd like to see the following feature ...
 **Concerning following**
 - [ ] Anilist
 - [ ] Simkl
+- [ ] Kitsu
+- [ ] TVTime
+
 - [ ] Stremio
 - [ ] SyncriBullet Website
 
