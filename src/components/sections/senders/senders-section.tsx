@@ -7,10 +7,11 @@ import { senderInfo } from '~/utils/senders/stremio/constants';
 import SendersApplications from './senders-applications';
 
 export interface SendersSectionProps {
+  url?: string;
   onClick$: PropFunction<(id: Senders) => void>;
 }
 
-export default component$<SendersSectionProps>(({ onClick$ }) => {
+export default component$<SendersSectionProps>(({ onClick$, url }) => {
   const senders = [senderInfo];
 
   return (
@@ -19,6 +20,15 @@ export default component$<SendersSectionProps>(({ onClick$ }) => {
       <div class="flex flex-col gap-6 pt-5 md:flex-row">
         <SendersApplications senders={senders} onClick$={onClick$} />
       </div>
+      {url && (
+        <div class="flex flex-col gap-4 pt-5">
+          <input
+            class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+            value={url}
+            readOnly
+          />
+        </div>
+      )}
     </div>
   );
 });

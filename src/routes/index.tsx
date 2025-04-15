@@ -111,6 +111,7 @@ export default component$(() => {
   >(null);
 
   const syncriBulletSettings = useSignal<GeneralSettings>({});
+  const syncriBulletUrl = useSignal<string | undefined>();
 
   useVisibleTask$(async () => {
     const config = location.url.searchParams.get('config');
@@ -199,6 +200,7 @@ export default component$(() => {
           (item) => item && item.userSettings,
         ).length > 0 && (
           <SendersSection
+            url={syncriBulletUrl.value}
             onClick$={async () => {
               const receiverList = Object.values(receivers.value).filter(
                 exists,
@@ -223,13 +225,18 @@ export default component$(() => {
                 ? await buildURL([urlData, settings])
                 : await buildURL(urlData);
 
-              const link = `stremio://${location.url.host}${
+              const link = `stremio://${location.url.host.replace(
+                'localhost',
+                '127.0.0.1',
+              )}${
                 location.url.host.endsWith('syncribullet')
                   ? '.baby-beamup.club'
                   : ''
               }/${encodeURIComponent(url)}/manifest.json`;
+
               console.log(link);
               await nav(link);
+              syncriBulletUrl.value = link;
             }}
           />
         )}

@@ -13,6 +13,11 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     });
     return;
   }
+
+  if (params.all !== 'manifest.json') {
+    return;
+  }
+
   const userConfig = decryptCompressToUserConfigBuildMinifiedStrings(
     params.config,
     env.get('PRIVATE_ENCRYPTION_KEY') ||

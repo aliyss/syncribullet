@@ -2,8 +2,8 @@
 SyncriBullet is a Stremio Addon that synchronizes your watchlist with other services.
 
 > [!NOTE]
-> (2025.03.09) Added support for TVTime! (awful API btw)
-> (2025.03.06) Added support for Kitsu! (also helps with NSFW content)
+> - (2025.03.09) Added support for TVTime! (awful API btw)
+> - (2025.03.06) Added support for Kitsu! (also helps with NSFW content)
 
 
 > [!CAUTION]
@@ -117,7 +117,7 @@ npm run build
 Start the program. Then open the browser at the url mentioned, if this doesn't already happen automatically.
 
 ```bash
-npm run start
+npm run start:local
 ```
 
 ### Develop
