@@ -86,6 +86,10 @@ export interface ManifestBase<MCIB extends ManifestCatalogItemBase> {
     configurable: boolean;
     configurationRequired: boolean;
   };
+  stremioAddonsConfig?: {
+    issuer: string;
+    signature: string;
+  };
 }
 
 export interface Manifest<MCIT extends ReceiverMCITypes>
@@ -127,5 +131,10 @@ export const manifest: Manifest<ReceiverMCITypes> = {
   behaviorHints: {
     configurable: true,
     configurationRequired: true,
+  },
+  stremioAddonsConfig: {
+    issuer: 'https://stremio-addons.net',
+    signature:
+      'eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..leB1OWjQlKUFVGIWo2J-qA.8PNXMfIEnzJTjbbf0R-zDadxmlEUtmZE2omzQyNPpXZUzou-fpLQpbstavJNw85ZjqKkrv2XJHT2uvLj9x4SkNRpABb3-J22Itht5aUVzQ-miSdBKRgs-HzpUAai7Z_d.WTMHXlrK3UTsEgFqZLkj3w',
   },
 };
