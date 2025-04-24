@@ -76,11 +76,12 @@ export interface ManifestBase<MCIB extends ManifestCatalogItemBase> {
   name: string;
   version: string;
   description: string;
-  logo: string;
-  background: string;
   catalogs: MCIB[];
   resources: ManifestResource[];
   types: ManifestReceiverTypes[];
+  background?: string;
+  logo: string;
+  contactEmail?: string;
   behaviorHints: {
     configurable: boolean;
     configurationRequired: boolean;
@@ -93,10 +94,9 @@ export interface Manifest<MCIT extends ReceiverMCITypes>
 export const manifest: Manifest<ReceiverMCITypes> = {
   id: `com.aliyss.syncribullet`,
   name: 'syncribullet',
-  version: version,
+  version,
   description,
   logo: 'https://github.com/aliyss/syncribullet/blob/master/public/android-chrome-192x192.png?raw=true',
-  background: '',
   catalogs: [],
   resources: [
     'catalog',

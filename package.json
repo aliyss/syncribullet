@@ -1,7 +1,8 @@
 {
   "name": "syncribullet",
   "description": "App that mixes your syncs",
-  "version": "2.0.1",
+  "author": "aliyss",
+  "version": "2.0.2",
   "engines": {
     "node": ">=15.0.0"
   },
