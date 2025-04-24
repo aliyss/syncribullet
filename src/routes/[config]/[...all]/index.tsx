@@ -32,7 +32,11 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     config,
   );
 
-  manifest.catalogs = [
+  const newManifest = {
+    ...manifest,
+  };
+
+  newManifest.catalogs = [
     ...(receivers.simkl?.userSettings.catalogs ?? []),
     ...(receivers.anilist?.userSettings.catalogs ?? []),
     ...(receivers.kitsu?.userSettings.catalogs ?? []),
@@ -92,12 +96,12 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
       }
     }
     if (resourceStream) {
-      manifest.resources.push(resourceStream);
+      newManifest.resources.push(resourceStream);
     }
   }
 
   json(200, {
-    ...manifest,
+    ...newManifest,
     behaviorHints: {
       configurable: true,
       configurationRequired: false,
