@@ -1,3 +1,8 @@
+import type {
+  ImporterMCITypes,
+  Importers,
+} from '~/utils/importer/types/importers';
+import type { ImportCatalogs } from '~/utils/importer/types/user-settings/import-catalogs';
 import {
   ManifestCatalogExtraParameters,
   ManifestReceiverTypes,
@@ -16,7 +21,7 @@ export const receiverInfo: ReceiverInfo<Receivers.ANILIST> = {
   backgroundColour: 'bg-[#00cdff]/60',
   borderColour: 'border-[#00cdff]',
   liveSync: true,
-  fullSync: true,
+  importSync: true,
 };
 
 export const internalIds = [[IDSources.ANILIST]] as const satisfies Readonly<
@@ -97,6 +102,21 @@ export const defaultCatalogs: Readonly<
   'syncribullet-anilist-anime-PLANNING',
   'syncribullet-anilist-anime-COMPLETED',
 ] as const satisfies Readonly<(typeof manifestCatalogItems)[number]['id'][]>;
+
+export const defaultImportCatalogs: Readonly<
+  Record<Importers, Readonly<ImportCatalogs<AnilistMCIT, ImporterMCITypes>[]>>
+> = {
+  stremio: [
+    {
+      id: 'syncribullet-anilist-anime-CURRENT',
+      filters: {
+        stateFlaggedWatched: false,
+      },
+    },
+  ],
+} as const satisfies Readonly<
+  Record<Importers, Readonly<ImportCatalogs<AnilistMCIT, ImporterMCITypes>[]>>
+>;
 
 export const liveSyncTypes = [
   ManifestReceiverTypes.ANIME,

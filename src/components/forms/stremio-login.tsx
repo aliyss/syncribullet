@@ -1,8 +1,17 @@
-import { $, component$, useSignal, useTask$ } from '@builder.io/qwik';
+import {
+  $,
+  PropFunction,
+  component$,
+  useSignal,
+  useTask$,
+} from '@builder.io/qwik';
 import { server$ } from '@builder.io/qwik-city';
 
 import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
+
+import { preauthString } from '~/utils/auth/preauth';
+import { Importers } from '~/utils/importer/types/importers';
 
 export type AuthPreparationData = {
   success: boolean;
@@ -80,7 +89,11 @@ export const getToken = server$(async function (code: string) {
   }
 });
 
-export default component$(() => {
+export interface StremioLoginProps {
+  saveFromPreAuth$: PropFunction<() => void>;
+}
+
+export default component$<StremioLoginProps>(({ saveFromPreAuth$ }) => {
   const enableButton = useSignal(false);
   const authPreparation = useSignal<AuthPreparationData>({
     success: false,
@@ -103,7 +116,7 @@ export default component$(() => {
 
   const setToken = $((authKey: string) => {
     localStorage.setItem(
-      'stremio',
+      preauthString(Importers.STREMIO),
       JSON.stringify({
         authKey: authKey,
       }),
@@ -124,11 +137,8 @@ export default component$(() => {
     const tokenData = await getToken(authPreparation.value.code);
     if (tokenData.result.authKey || tokenData.result.auth_key) {
       setToken(tokenData.result.authKey || tokenData.result.auth_key || '');
-      // Has to be replaced at some point
-      setTimeout(() => {
-        window.location.reload();
-      }, 30);
     }
+    saveFromPreAuth$();
   });
 
   return (
@@ -137,11 +147,11 @@ export default component$(() => {
         <div class="flex flex-col gap-4 items-center">
           <p>
             <p class="pb-2 text-error">
-              Warning! This receiver is just for better sync validation.
+              Warning! Stremio logins are not supported by stremio. If you use
+              this and something goes wrong, you are on your own.
               <br />
-              No syncing will be done <strong>to</strong> your stremio library.
-              <br />
-              Also this does nothing as of now.
+              Feel free to report issues on Syncribullet GitHub. There will be
+              no support from the Stremio team if anything goes wrong.
             </p>
             <a
               href={authPreparation.value.link}

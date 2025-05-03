@@ -22,6 +22,7 @@ import { getAnilistMetaPreviews } from './api/meta-previews';
 import { syncAnilistMetaObject } from './api/sync';
 import {
   defaultCatalogs,
+  defaultImportCatalogs,
   defaultLiveSyncTypes,
   internalIds,
   liveSyncTypes,
@@ -54,6 +55,7 @@ export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
   defaultCatalogs = defaultCatalogs;
+  defaultImportCatalogs = defaultImportCatalogs;
   liveSyncTypes = liveSyncTypes;
   defaultLiveSyncTypes = defaultLiveSyncTypes;
 

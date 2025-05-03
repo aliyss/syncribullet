@@ -1,5 +1,7 @@
-import type { RequestHandler } from '@builder.io/qwik-city';
+import { component$ } from '@builder.io/qwik';
 
-export const onGet: RequestHandler = async ({ redirect }) => {
-  throw redirect(307, '/');
-};
+import Configure from '~/components/sections/configure';
+
+export default component$(() => {
+  return <Configure />;
+});

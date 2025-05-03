@@ -24,6 +24,7 @@ import { getKitsuMetaPreviews } from './api/meta-previews';
 import { syncKitsuMetaObject } from './api/sync';
 import {
   defaultCatalogs,
+  defaultImportCatalogs,
   defaultLiveSyncTypes,
   internalIds,
   liveSyncTypes,
@@ -60,6 +61,7 @@ export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
   defaultCatalogs = defaultCatalogs;
+  defaultImportCatalogs = defaultImportCatalogs;
   liveSyncTypes = liveSyncTypes;
   defaultLiveSyncTypes = defaultLiveSyncTypes;
 

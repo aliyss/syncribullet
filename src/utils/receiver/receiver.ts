@@ -1,3 +1,5 @@
+import type { ImporterMCITypes, Importers } from '../importer/types/importers';
+import type { ImportCatalogs } from '../importer/types/user-settings/import-catalogs';
 import type {
   ManifestCatalogItem,
   ManifestReceiverTypes,
@@ -26,7 +28,7 @@ export interface ReceiverInfo<R extends Receivers> extends ReceiverInfoBase<R> {
   backgroundColour: string;
   borderColour: string;
   liveSync: boolean;
-  fullSync: boolean;
+  importSync: boolean;
 }
 
 export abstract class ReceiverBase<R extends AllReceivers> {
@@ -41,6 +43,9 @@ export abstract class Receiver<
   public abstract manifestCatalogItems: Readonly<ManifestCatalogItem<MCIT>[]>;
   public abstract defaultCatalogs: Readonly<
     (typeof this.manifestCatalogItems)[number]['id'][]
+  >;
+  public abstract defaultImportCatalogs: Readonly<
+    Record<Importers, Readonly<ImportCatalogs<MCIT, ImporterMCITypes>[]>>
   >;
   public abstract liveSyncTypes: Readonly<ManifestReceiverTypes[]>;
   public abstract defaultLiveSyncTypes: Readonly<
@@ -69,6 +74,27 @@ export abstract class Receiver<
     return this.manifestCatalogItems.filter((item) =>
       (ids ?? this.defaultCatalogs).includes(item.id),
     );
+  }
+
+  public getImportCatalogItems(
+    importerId: Importers,
+    ids?: ImportCatalogs<MCIT, ImporterMCITypes>[],
+  ): ImportCatalogs<MCIT, ImporterMCITypes>[] {
+    return this.manifestCatalogItems
+      .filter((item) =>
+        (ids ?? this.defaultImportCatalogs[importerId])
+          .map((x) => x.id)
+          .includes(item.id),
+      )
+      .map((item) => {
+        const importCatalog = (
+          ids ?? this.defaultImportCatalogs[importerId]
+        ).find((x) => x.id === item.id);
+        return {
+          ...item,
+          filters: importCatalog?.filters || null,
+        };
+      });
   }
 
   public getManifestCatalogIdParsed(

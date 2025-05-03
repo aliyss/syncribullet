@@ -2,6 +2,7 @@ import { ReceiverClient } from '~/utils/receiver/receiver-client';
 
 import {
   defaultCatalogs,
+  defaultImportCatalogs,
   defaultLiveSyncTypes,
   liveSyncTypes,
   manifestCatalogItems,
@@ -14,6 +15,7 @@ export class SimklClientReceiver extends ReceiverClient<SimklMCIT> {
   manifestCatalogItems = manifestCatalogItems;
 
   defaultCatalogs = defaultCatalogs;
+  defaultImportCatalogs = defaultImportCatalogs;
   liveSyncTypes = liveSyncTypes;
   defaultLiveSyncTypes = defaultLiveSyncTypes;
 }

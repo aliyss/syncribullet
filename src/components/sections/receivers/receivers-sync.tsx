@@ -21,7 +21,7 @@ export interface ReceiversLiveSyncProps {
 export default component$<ReceiversLiveSyncProps>(({ receivers, onClick$ }) => {
   return (
     <div class="w-full text-center flex flex-col gap-2">
-      <Subtitle>Live Sync</Subtitle>
+      <Subtitle>Sync</Subtitle>
       <div class="flex flex-wrap gap-2 justify-center pt-1 text-on-background">
         {Object.values(receivers)
           .filter(exists)

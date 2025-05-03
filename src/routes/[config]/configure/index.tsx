@@ -1,5 +1,11 @@
-import type { RequestHandler } from '@builder.io/qwik-city';
+import { component$ } from '@builder.io/qwik';
+import { useLocation } from '@builder.io/qwik-city';
 
-export const onGet: RequestHandler = async ({ redirect, params }) => {
-  throw redirect(307, `/?config=${encodeURIComponent(params.config)}`);
-};
+import Configure from '~/components/sections/configure';
+
+export default component$(() => {
+  const location = useLocation();
+  const configString = location.url.pathname.split('/')[1];
+
+  return <Configure config={configString} />;
+});

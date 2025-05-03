@@ -12,6 +12,7 @@ import type {
 import type { UserSettingsForm } from '~/utils/receiver/types/user-settings/form';
 
 import { Button } from '../buttons/button';
+import ImportSyncSettings from '../sections/receivers/receivers-settings/import-sync-settings';
 import Tab from '../tabs/tab';
 import Subtitle from '../titles/subtitle';
 
@@ -20,7 +21,11 @@ export interface ManifestSettingsProps {
   updateReceiver$: PropFunction<() => void>;
 }
 
-type ManifestSettingsTab = 'Catalogs' | 'Live Sync' | 'Credentials';
+type ManifestSettingsTab =
+  | 'Catalogs'
+  | 'Live Sync'
+  | 'Import Sync'
+  | 'Credentials';
 
 export default component$<ManifestSettingsProps>(
   ({ currentReceiver, updateReceiver$ }) => {
@@ -100,6 +105,13 @@ export default component$<ManifestSettingsProps>(
     });
 
     const activeTab = useSignal<ManifestSettingsTab>('Catalogs');
+    const tabs = ['Catalogs', 'Credentials'];
+    // if (currentReceiver.receiverInfo.importSync) {
+    //   tabs.splice(1, 0, 'Import Sync');
+    // }
+    if (currentReceiver.receiverInfo.liveSync) {
+      tabs.splice(1, 0, 'Live Sync');
+    }
 
     return (
       <Form onSubmit$={handleSubmit} shouldActive={false} class="w-full">
@@ -109,10 +121,11 @@ export default component$<ManifestSettingsProps>(
           </div>
           <Tab
             activeTab={activeTab.value.toString()}
-            tabs={['Catalogs', 'Live Sync', 'Credentials']}
+            tabs={tabs}
             onTabChange$={(tab) => {
               activeTab.value = tab as ManifestSettingsTab;
             }}
+            overflow={activeTab.value !== 'Import Sync'}
           >
             <div class={`${activeTab.value !== 'Catalogs' && 'hidden'}`}>
               <FieldArray name="catalogs">
@@ -191,6 +204,11 @@ export default component$<ManifestSettingsProps>(
                 )}
               </FieldArray>
             </div>
+            {activeTab.value === 'Import Sync' ? (
+              <div>
+                <ImportSyncSettings currentReceiver={currentReceiver} />
+              </div>
+            ) : null}
             <div class={`${activeTab.value !== 'Credentials' && 'hidden'}`}>
               <div class="flex flex-col gap-2">
                 <p class="text-error text-start">
@@ -215,12 +233,14 @@ export default component$<ManifestSettingsProps>(
             </div>
           </Tab>
           <div class="flex flex-row gap-2">
-            <button
+            <Button
               type="submit"
-              class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline bg-primary/30`}
+              class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline`}
+              backgroundColour="bg-primary"
+              borderColour="border-primary"
             >
               Save Settings
-            </button>
+            </Button>
           </div>
         </div>
       </Form>

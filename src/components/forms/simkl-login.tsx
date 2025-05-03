@@ -3,7 +3,11 @@ import { Link, server$, useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
-import type { ApiClientCodeForm, ApiClientForm } from '~/routes';
+
+import type {
+  ApiClientCodeForm,
+  ApiClientForm,
+} from '~/components/sections/configure';
 
 import { preauthString } from '~/utils/auth/preauth';
 import { Receivers } from '~/utils/receiver/types/receivers';

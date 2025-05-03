@@ -1,3 +1,5 @@
+import { ImporterMCITypes, Importers } from '~/utils/importer/types/importers';
+import { ImportCatalogs } from '~/utils/importer/types/user-settings/import-catalogs';
 import {
   ManifestCatalogExtraParameters,
   ManifestReceiverTypes,
@@ -16,7 +18,7 @@ export const receiverInfo: ReceiverInfo<Receivers.KITSU> = {
   backgroundColour: 'bg-[#FF5B38]/60',
   borderColour: 'border-[#FF5B38]',
   liveSync: true,
-  fullSync: true,
+  importSync: false,
 };
 
 export const internalIds = [
@@ -88,6 +90,14 @@ export const defaultCatalogs: Readonly<
   'syncribullet-kitsu-anime-planned',
   'syncribullet-kitsu-anime-completed',
 ] as const satisfies Readonly<(typeof manifestCatalogItems)[number]['id'][]>;
+
+export const defaultImportCatalogs: Readonly<
+  Record<Importers, Readonly<ImportCatalogs<KitsuMCIT, ImporterMCITypes>[]>>
+> = {
+  stremio: [],
+} as const satisfies Readonly<
+  Record<Importers, Readonly<ImportCatalogs<KitsuMCIT, ImporterMCITypes>[]>>
+>;
 
 export const liveSyncTypes = [
   ManifestReceiverTypes.ANIME,

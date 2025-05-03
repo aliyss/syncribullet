@@ -21,6 +21,7 @@ import { getSimklMetaPreviews } from './api/meta-previews';
 import { syncSimklMetaObject } from './api/sync';
 import {
   defaultCatalogs,
+  defaultImportCatalogs,
   defaultLiveSyncTypes,
   internalIds,
   liveSyncTypes,
@@ -54,6 +55,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
   defaultCatalogs = defaultCatalogs;
+  defaultImportCatalogs = defaultImportCatalogs;
   liveSyncTypes = liveSyncTypes;
   defaultLiveSyncTypes = defaultLiveSyncTypes;
 

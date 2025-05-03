@@ -1,3 +1,8 @@
+import type {
+  ImporterMCITypes,
+  Importers,
+} from '~/utils/importer/types/importers';
+import type { ImportCatalogs } from '~/utils/importer/types/user-settings/import-catalogs';
 import {
   ManifestCatalogExtraParameters,
   ManifestReceiverTypes,
@@ -16,7 +21,7 @@ export const receiverInfo: ReceiverInfo<Receivers.SIMKL> = {
   backgroundColour: 'bg-[#0C0F11]/60',
   borderColour: 'border-[#0C0F11]',
   liveSync: true,
-  fullSync: true,
+  importSync: true,
 };
 
 export const internalIds = [[IDSources.SIMKL]] as const satisfies Readonly<
@@ -162,6 +167,21 @@ export const defaultCatalogs: Readonly<
   'syncribullet-simkl-shows-plantowatch',
   'syncribullet-simkl-shows-completed',
 ] as const satisfies Readonly<(typeof manifestCatalogItems)[number]['id'][]>;
+
+export const defaultImportCatalogs: Readonly<
+  Record<Importers, Readonly<ImportCatalogs<SimklMCIT, ImporterMCITypes>[]>>
+> = {
+  stremio: [
+    {
+      id: 'syncribullet-simkl-movies-plantowatch',
+      filters: {
+        stateFlaggedWatched: false,
+      },
+    },
+  ],
+} as const satisfies Readonly<
+  Record<Importers, Readonly<ImportCatalogs<SimklMCIT, ImporterMCITypes>[]>>
+>;
 
 export const liveSyncTypes = [
   ManifestReceiverTypes.ANIME,

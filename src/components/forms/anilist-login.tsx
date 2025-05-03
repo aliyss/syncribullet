@@ -3,11 +3,12 @@ import { Link, useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
-import type { ApiClientForm } from '~/routes';
 
 import { preauthString } from '~/utils/auth/preauth';
 import { Receivers } from '~/utils/receiver/types/receivers';
 import type { AnilistPreAuth } from '~/utils/receivers/anilist/types/auth';
+
+import type { ApiClientForm } from '../sections/configure';
 
 export default component$(() => {
   const nav = useNavigate();

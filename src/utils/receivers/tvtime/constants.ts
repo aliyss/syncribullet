@@ -1,3 +1,5 @@
+import { ImporterMCITypes, Importers } from '~/utils/importer/types/importers';
+import { ImportCatalogs } from '~/utils/importer/types/user-settings/import-catalogs';
 import {
   ManifestCatalogExtraParameters,
   ManifestReceiverTypes,
@@ -16,7 +18,7 @@ export const receiverInfo: ReceiverInfo<Receivers.TVTIME> = {
   backgroundColour: 'bg-[#ffd400]/60',
   borderColour: 'border-[#ffd400]',
   liveSync: true,
-  fullSync: true,
+  importSync: false,
 };
 
 export const internalIds = [[IDSources.IMDB]] as const satisfies Readonly<
@@ -90,6 +92,14 @@ export const defaultCatalogs: Readonly<
   'syncribullet-tvtime-series-watching',
   'syncribullet-tvtime-series-not_started_yet',
 ] as const satisfies Readonly<(typeof manifestCatalogItems)[number]['id'][]>;
+
+export const defaultImportCatalogs: Readonly<
+  Record<Importers, Readonly<ImportCatalogs<TVTimeMCIT, ImporterMCITypes>[]>>
+> = {
+  stremio: [],
+} as const satisfies Readonly<
+  Record<Importers, Readonly<ImportCatalogs<TVTimeMCIT, ImporterMCITypes>[]>>
+>;
 
 export const liveSyncTypes = [
   ManifestReceiverTypes.MOVIE,
