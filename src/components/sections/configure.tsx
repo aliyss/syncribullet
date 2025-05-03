@@ -18,7 +18,7 @@ import SyncribulletTitle from '~/components/titles/syncribullet-title';
 import { configurableReceivers } from '~/utils/connections/receivers';
 
 import { buildClientReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config/buildClientReceivers';
-import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/buildReceiversFromUrl';
+import { decryptCompressToUserConfigBuildMinifiedStringsResult } from '~/utils/config/buildReceiversFromUrl';
 import {
   buildUserConfigBuildMinifiedStringsFromReceivers,
   encryptCompressFromUserConfigBuildMinifiedStrings,
@@ -66,7 +66,7 @@ export enum ReceiversActionType {
 }
 
 export const retrieveConfig = server$(function (url: string) {
-  return decryptCompressToUserConfigBuildMinifiedStrings(
+  return decryptCompressToUserConfigBuildMinifiedStringsResult(
     url,
     this.env.get('PRIVATE_ENCRYPTION_KEY') ||
       '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
@@ -84,11 +84,14 @@ export const buildURL = server$(function (
     | {
         [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverClients>;
       },
+  useEncryptionKey: boolean = true,
 ) {
   return encryptCompressFromUserConfigBuildMinifiedStrings(
     data,
-    this.env.get('PRIVATE_ENCRYPTION_KEY') ||
-      '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+    useEncryptionKey
+      ? this.env.get('PRIVATE_ENCRYPTION_KEY') ||
+          '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED'
+      : '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
   );
 });
 
@@ -116,16 +119,23 @@ export default component$<ConfigureProps>(({ config }) => {
 
   const syncriBulletSettings = useSignal<GeneralSettings>({});
   const syncriBulletUrl = useSignal<string | undefined>();
+  const useEncryptionKey = useSignal<boolean>(true);
 
   useVisibleTask$(async () => {
     if (config) {
-      const configData = await retrieveConfig(encodeURIComponent(config));
-      const configReceivers = Array.isArray(configData)
-        ? buildClientReceiversFromUserConfigBuildMinifiedStrings(configData[0])
-        : buildClientReceiversFromUserConfigBuildMinifiedStrings(configData);
+      const configData = await retrieveConfig(config);
+      const configReceivers = Array.isArray(configData.result)
+        ? buildClientReceiversFromUserConfigBuildMinifiedStrings(
+            configData.result[0],
+          )
+        : buildClientReceiversFromUserConfigBuildMinifiedStrings(
+            configData.result,
+          );
 
-      if (Array.isArray(configData)) {
-        syncriBulletSettings.value = configData[1];
+      useEncryptionKey.value = !configData.usedBackup;
+
+      if (Array.isArray(configData.result)) {
+        syncriBulletSettings.value = configData.result[1];
       }
       receivers.value = {
         [Receivers.SIMKL]: noSerialize(configReceivers[Receivers.SIMKL]),

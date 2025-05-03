@@ -5,7 +5,7 @@ import Configure from '~/components/sections/configure';
 
 export default component$(() => {
   const location = useLocation();
-  const configString = location.url.pathname.split('/')[1];
+  const configString = location.params.config;
 
   return <Configure config={configString} />;
 });

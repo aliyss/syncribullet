@@ -117,6 +117,49 @@ export const buildUserConfigBuildFromUserConfigBuildMinifiedStringClients = <
   } as NonNullable<T['userSettings']>;
 };
 
+export const decryptCompressToUserConfigBuildMinifiedStringsResult = (
+  urlString: string,
+  encryptionKey: string,
+): {
+  result:
+    | [
+        {
+          [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverServers>;
+        },
+        GeneralSettings,
+      ]
+    | {
+        [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverServers>;
+      };
+  usedBackup: boolean;
+} => {
+  if (encryptionKey !== '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED') {
+    const decrypted = decrypt(urlString, encryptionKey);
+    try {
+      return {
+        result: JSON.parse(
+          decodeURIComponent(decompress(decompress(decrypted))),
+        ),
+        usedBackup: false,
+      };
+    } catch (e) {
+      return decryptCompressToUserConfigBuildMinifiedStringsResult(
+        urlString,
+        '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+      );
+    }
+  }
+  const decrypted = decrypt(urlString, encryptionKey);
+  try {
+    return {
+      result: JSON.parse(decodeURIComponent(decompress(decompress(decrypted)))),
+      usedBackup: true,
+    };
+  } catch (e) {
+    throw new Error('Failed to decrypt and decompress');
+  }
+};
+
 export const decryptCompressToUserConfigBuildMinifiedStrings = (
   urlString: string,
   encryptionKey: string,
@@ -130,11 +173,21 @@ export const decryptCompressToUserConfigBuildMinifiedStrings = (
   | {
       [key in Receivers]?: UserConfigBuildMinifiedString<ReceiverServers>;
     } => {
+  if (encryptionKey !== '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED') {
+    const decrypted = decrypt(urlString, encryptionKey);
+    try {
+      return JSON.parse(decodeURIComponent(decompress(decompress(decrypted))));
+    } catch (e) {
+      return decryptCompressToUserConfigBuildMinifiedStrings(
+        urlString,
+        '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
+      );
+    }
+  }
   const decrypted = decrypt(urlString, encryptionKey);
   try {
     return JSON.parse(decodeURIComponent(decompress(decompress(decrypted))));
   } catch (e) {
-    console.error(e);
     throw new Error('Failed to decrypt and decompress');
   }
 };
