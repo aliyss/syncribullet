@@ -2,17 +2,9 @@
 SyncriBullet is a Stremio Addon that synchronizes your watchlist with other services.
 
 > [!NOTE]
+> - (2025.05.03) Added support for reconfiguring the addon.
 > - (2025.03.09) Added support for TVTime! (awful API btw)
 > - (2025.03.06) Added support for Kitsu! (also helps with NSFW content)
-
-
-> [!CAUTION]
-> syncribullet v2 is almost a complete rewrite and is not compatible with v1.
-
-Reasoning: v1 was a mess and I wanted to cleanup. Also stuff is now at least kind of encrypted. Sorry (not sorry) for the inconvenience.
-If you are looking for v1, you can find it [here](https://github.com/aliyss/syncribullet/tree/v1) and self-host it.
-
-Complaints? [Click this](https://github.com/aliyss/syncribullet/issues/34)
 
 
 ## Table of Contents
