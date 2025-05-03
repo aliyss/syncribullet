@@ -1,5 +1,4 @@
 import { defineConfig } from "vite";
-// import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -9,7 +8,7 @@ export default defineConfig(() => {
     build: {
       sourcemap: true,
     },
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths(), 
+    plugins: [qwikCity({ trailingSlash: false }), qwikVite(), tsconfigPaths(), 
       // sentryVitePlugin(
       //   {
       //     org: process.env.SENTRY_ORG,
