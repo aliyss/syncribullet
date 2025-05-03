@@ -32,9 +32,7 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     config,
   );
 
-  const newManifest = {
-    ...manifest,
-  };
+  const newManifest = JSON.parse(JSON.stringify(manifest));
 
   newManifest.catalogs = [
     ...(receivers.simkl?.userSettings.catalogs ?? []),
