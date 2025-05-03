@@ -1,6 +1,8 @@
 import { component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
 
+import { manifest } from '~/utils/manifest';
+
 import { GithubIcon } from '../icons/github';
 
 export default component$(() => {
@@ -14,7 +16,7 @@ export default component$(() => {
         <span class="bg-[#FF5B38] text-on-background-dark">r</span>
         <span class="bg-[#0C0F11] text-on-background-dark">i</span>
         Bullet
-        <span class="ml-2 text-base">(v2)</span>
+        <span class="ml-2 text-base">(v{manifest.version})</span>
       </h1>
       <div>
         <Link
