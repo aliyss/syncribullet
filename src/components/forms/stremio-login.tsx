@@ -1,6 +1,7 @@
+import type {
+  PropFunction} from '@builder.io/qwik';
 import {
   $,
-  PropFunction,
   component$,
   useSignal,
   useTask$,

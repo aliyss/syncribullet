@@ -8,7 +8,11 @@ export default defineConfig(() => {
     build: {
       sourcemap: true,
     },
-    plugins: [qwikCity({ trailingSlash: false }), qwikVite(), tsconfigPaths(), 
+    plugins: [
+      qwikCity({ 
+        trailingSlash: false,
+      }),
+      qwikVite(), tsconfigPaths(), 
       // sentryVitePlugin(
       //   {
       //     org: process.env.SENTRY_ORG,

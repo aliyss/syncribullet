@@ -1,5 +1,5 @@
-import { ImporterMCITypes, Importers } from '~/utils/importer/types/importers';
-import { ImportCatalogs } from '~/utils/importer/types/user-settings/import-catalogs';
+import type { ImporterMCITypes, Importers } from '~/utils/importer/types/importers';
+import type { ImportCatalogs } from '~/utils/importer/types/user-settings/import-catalogs';
 import {
   ManifestCatalogExtraParameters,
   ManifestReceiverTypes,
