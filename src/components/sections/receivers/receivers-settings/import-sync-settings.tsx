@@ -3,7 +3,7 @@ import {
   component$,
   noSerialize,
   useSignal,
-  useVisibleTask$,
+  useTask$,
 } from '@builder.io/qwik';
 import type { NoSerialize } from '@builder.io/qwik';
 
@@ -26,6 +26,7 @@ export default component$<ReceiversImportSyncSettingsProps>(
       [key in Importers]: NoSerialize<ImporterClients>;
     }>({
       [Importers.STREMIO]: undefined,
+      [Importers.SIMKL]: undefined,
     });
 
     const currentImporter = useSignal<Importers>(Importers.STREMIO);
@@ -35,14 +36,21 @@ export default component$<ReceiversImportSyncSettingsProps>(
         [Importers.STREMIO]: noSerialize(
           configuredImporters[Importers.STREMIO],
         ),
+        [Importers.SIMKL]: noSerialize(configuredImporters[Importers.SIMKL]),
       };
 
       Object.values(importers.value).forEach((importer) => {
         importer?.getUserConfig();
+        if (
+          currentReceiver.receiverInfo.id.toString() ===
+          importer?.importerInfo.id.toString()
+        ) {
+          currentReceiver.importer = importer;
+        }
       });
     });
 
-    useVisibleTask$(async () => {
+    useTask$(() => {
       updateImporters();
     });
 
@@ -60,6 +68,23 @@ export default component$<ReceiversImportSyncSettingsProps>(
         }
       }
     });
+
+    if (!currentReceiver.receiverInfo.importSync) {
+      return (
+        <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 bg-secondary/20 flex flex-col">
+          <h2 class="w-full text-xl font-bold text-center md:text-xl">
+            {currentReceiver.receiverInfo.text}
+          </h2>
+          <div class="flex flex-col gap-6 pt-5 md:flex-row">
+            <div class="flex flex-col gap-4 w-full text-center">
+              <div class="flex flex-col gap-2 items-center pt-1 text-on-background">
+                <p>Import Sync is not available for this receiver.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div>

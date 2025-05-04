@@ -1,12 +1,14 @@
 import { $, component$, useSignal } from '@builder.io/qwik';
+import type { PropFunction } from '@builder.io/qwik';
 
 import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
 
 import type { KnownNoSerialize } from '~/utils/helpers/qwik-types';
-import type {
-  ImporterClients,
-  ImporterMCITypes,
+import {
+  type ImporterClients,
+  type ImporterMCITypes,
+  Importers,
 } from '~/utils/importer/types/importers';
 import type {
   ReceiverClients,
@@ -16,24 +18,30 @@ import type { UserSettingsImportForm } from '~/utils/receiver/types/user-setting
 
 import { Button } from '../buttons/button';
 import { ChevronDown } from '../icons/chevron';
+import { ImportersSettingsView } from '../sections/importers/importers-settings';
 import Subtitle from '../titles/subtitle';
 
 export interface ManifestSettingsProps {
   currentReceiver: KnownNoSerialize<ReceiverClients>;
   currentImporter: KnownNoSerialize<ImporterClients>;
+  updateView$: PropFunction<(view: ImportersSettingsView) => void>;
 }
 
 export default component$<ManifestSettingsProps>(
-  ({ currentReceiver, currentImporter }) => {
+  ({ currentReceiver, currentImporter, updateView$ }) => {
     type FormSettings = Pick<
       UserSettingsImportForm<ReceiverMCITypes, ImporterMCITypes>,
       'catalogs'
     >;
 
-    // const userConfig = useSignal(currentReceiver.getUserConfig());
+    const userConfig = useSignal(currentReceiver.getUserConfig());
 
     const currentCatalogs = useSignal(
-      currentReceiver.getImportCatalogItems(currentImporter.importerInfo.id),
+      currentReceiver.getImportCatalogItems(
+        currentImporter.importerInfo.id,
+        userConfig.value?.importCatalog?.[currentImporter.importerInfo.id] ??
+          undefined,
+      ),
     );
 
     const formDefault = useSignal<FormSettings>({
@@ -44,9 +52,14 @@ export default component$<ManifestSettingsProps>(
         return {
           id: catalog.id,
           name: catalog.name,
-          value: currentCatalog ? true : false,
+          value: currentCatalog ? currentCatalog.value : false,
           filters: currentCatalog?.filters ?? {
-            stateFlaggedWatched: false,
+            moviesStateFlaggedWatched: false,
+            moviesStateFlaggedUnwatched: false,
+            seriesStateFlaggedWatched: false,
+            seriesStateFlaggedUnwatched: false,
+            seriesUseCinemetaComparison: null,
+            seriesBackfillEpisodes: null,
           },
         };
       }),
@@ -58,26 +71,17 @@ export default component$<ManifestSettingsProps>(
     });
 
     const handleSubmit = $<SubmitHandler<FormSettings>>((values) => {
-      const catalogValues =
-        JSON.stringify(
-          values.catalogs
-            .filter((catalog) => catalog.value)
-            .map((catalog) => catalog.id)
-            .sort((a, b) => a.localeCompare(b)),
-        ) !==
-        JSON.stringify(
-          [...currentReceiver.defaultCatalogs].sort((a, b) =>
-            a.localeCompare(b),
-          ),
-        )
-          ? currentReceiver.getManifestCatalogItems(
-              values.catalogs
-                .filter((catalog) => catalog.value)
-                .map((catalog) => catalog.id),
-            )
-          : undefined;
-
-      console.log('Catalogs', catalogValues);
+      currentReceiver.mergeUserConfig({
+        importCatalog: {
+          ...currentReceiver.userSettings?.importCatalog,
+          [Importers.STREMIO]:
+            currentReceiver.userSettings?.importCatalog?.['stremio'] || [],
+          [Importers.SIMKL]:
+            currentReceiver.userSettings?.importCatalog?.['simkl'] || [],
+          [currentImporter.importerInfo.id]: values.catalogs,
+        },
+      });
+      updateView$(ImportersSettingsView.LOAD_LIBRARY);
     });
 
     const toggledFilters = useSignal<string[]>([]);
@@ -152,25 +156,158 @@ export default component$<ManifestSettingsProps>(
                     </div>
                     {toggledFilters.value.includes('catalogs.' + index) && (
                       <div class="flex flex-col gap-2 pl-6 pt-4 text-sm">
-                        <Field
-                          name={`catalogs.${index}.filters.stateFlaggedWatched`}
-                          type="boolean"
-                        >
-                          {(field, props) => (
-                            <div class="flex flex-row gap-2">
-                              <input
-                                type="checkbox"
-                                placeholder="List"
-                                class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
-                                checked={field.value}
-                                {...props}
-                              />
-                              <div class="flex flex-row gap-2">
-                                Was marked as "FlaggedWatched"
-                              </div>
-                            </div>
-                          )}
-                        </Field>
+                        <div class="flex flex-col gap-2">
+                          <Field
+                            name={`catalogs.${index}.filters.moviesStateFlaggedWatched`}
+                            type="boolean"
+                          >
+                            {(field, props) => {
+                              if (field.value === null) {
+                                return <></>;
+                              }
+                              return (
+                                <div class="flex flex-row gap-2 items-center">
+                                  <input
+                                    type="checkbox"
+                                    placeholder="List"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    checked={field.value}
+                                    {...props}
+                                  />
+                                  <div class="flex flex-row gap-2">
+                                    Movies: Was marked as "FlaggedWatched"
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Field>
+                          <Field
+                            name={`catalogs.${index}.filters.moviesStateFlaggedUnwatched`}
+                            type="boolean"
+                          >
+                            {(field, props) => {
+                              if (field.value === null) {
+                                return <></>;
+                              }
+                              return (
+                                <div class="flex flex-row gap-2 items-center">
+                                  <input
+                                    type="checkbox"
+                                    placeholder="List"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    checked={field.value}
+                                    {...props}
+                                  />
+                                  <div class="flex flex-row gap-2">
+                                    Movies: Was marked as "FlaggedUnwatched"
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Field>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                          <Field
+                            name={`catalogs.${index}.filters.seriesStateFlaggedWatched`}
+                            type="boolean"
+                          >
+                            {(field, props) => {
+                              if (field.value === null) {
+                                return <></>;
+                              }
+                              return (
+                                <div class="flex flex-row gap-2 items-center">
+                                  <input
+                                    type="checkbox"
+                                    placeholder="List"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    checked={field.value}
+                                    {...props}
+                                  />
+                                  <div class="flex flex-row gap-2">
+                                    Series: Was marked as "FlaggedWatched"
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Field>
+                          <Field
+                            name={`catalogs.${index}.filters.seriesStateFlaggedUnwatched`}
+                            type="boolean"
+                          >
+                            {(field, props) => {
+                              if (field.value === null) {
+                                return <></>;
+                              }
+                              return (
+                                <div class="flex flex-row gap-2 items-center">
+                                  <input
+                                    type="checkbox"
+                                    placeholder="List"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    checked={field.value}
+                                    {...props}
+                                  />
+                                  <div class="flex flex-row gap-2">
+                                    Series: Was marked as "FlaggedUnwatched"
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Field>
+                          <Field
+                            name={`catalogs.${index}.filters.seriesUseCinemetaComparison`}
+                            type="boolean"
+                          >
+                            {(field, props) => {
+                              if (
+                                field.value === null ||
+                                field.value === undefined
+                              ) {
+                                return <></>;
+                              }
+                              return (
+                                <div class="flex flex-row gap-2 items-center">
+                                  <input
+                                    type="checkbox"
+                                    placeholder="List"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    checked={field.value}
+                                    {...props}
+                                  />
+                                  <div class="flex flex-row gap-2">
+                                    Series: Use Cinemeta comparison
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Field>
+                          <Field
+                            name={`catalogs.${index}.filters.seriesBackfillEpisodes`}
+                            type="boolean"
+                          >
+                            {(field, props) => {
+                              if (field.value === null) {
+                                return <></>;
+                              }
+                              return (
+                                <div class="flex flex-row gap-2 text-start items-center">
+                                  <input
+                                    type="checkbox"
+                                    placeholder="List"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    checked={field.value}
+                                    {...props}
+                                  />
+                                  <div class="flex flex-row gap-2 text-start">
+                                    Series: Mark all episodes before the current
+                                    as watched
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Field>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -185,7 +322,7 @@ export default component$<ManifestSettingsProps>(
               backgroundColour="bg-primary"
               borderColour="border-primary"
             >
-              Start Import
+              Load {currentImporter.importerInfo.text} Library
             </Button>
           </div>
         </div>

@@ -58,7 +58,8 @@ export default component$<ReceiversSettingsProps>(
                 <AnilistLogin />
               ) : currentReceiver.receiverInfo.id === 'kitsu' ? (
                 <KitsuLogin />
-              ) : currentReceiver.receiverInfo.id === 'tvtime' ? (
+              ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+              currentReceiver.receiverInfo.id === 'tvtime' ? (
                 <TvtimeLogin />
               ) : (
                 <></>

@@ -1,8 +1,15 @@
 import type { ImporterMCIT, Importers } from '~/utils/importer/types/importers';
 
-export type StremioMCIT = ImporterMCIT<Importers.STREMIO> & {
+import type { StremioImportLibraryItem } from './library-item';
+
+export type StremioMCITFilters = ['seriesUseCinemetaComparison'];
+
+export type ImporterStremioMCIT = ImporterMCIT<
+  Importers.STREMIO,
+  StremioMCITFilters,
+  StremioImportLibraryItem
+> & {
   auth?: {
     authKey: string;
   };
-  importCatalogFilters: ['stateFlaggedWatched'];
 };

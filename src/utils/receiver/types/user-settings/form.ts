@@ -1,4 +1,5 @@
 import type { ImporterMCITypes } from '~/utils/importer/types/importers';
+import type { GlobalFilterPrecalculatedValues } from '~/utils/importer/types/user-settings/import-catalogs';
 
 import type { ReceiverMCITypes } from '../receivers';
 import type { UserSettingsCatalog } from './catalog';
@@ -40,7 +41,11 @@ export type UserSettingsFormImportCatalog<
   id: USC['id'];
   name: USC['name'];
   value: boolean;
-  filters: Record<IMCT['importCatalogFilters'][number], boolean>;
+  filters: Record<
+    IMCT['importCatalogFilters'][number],
+    boolean | null | undefined
+  > &
+    GlobalFilterPrecalculatedValues;
 };
 
 export type UserSettingsImportForm<

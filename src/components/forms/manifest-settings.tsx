@@ -104,14 +104,14 @@ export default component$<ManifestSettingsProps>(
       updateReceiver$();
     });
 
-    const activeTab = useSignal<ManifestSettingsTab>('Catalogs');
-    const tabs = ['Catalogs', 'Credentials'];
+    const tabs: ManifestSettingsTab[] = ['Catalogs', 'Credentials'];
     // if (currentReceiver.receiverInfo.importSync) {
     //   tabs.splice(1, 0, 'Import Sync');
     // }
     if (currentReceiver.receiverInfo.liveSync) {
       tabs.splice(1, 0, 'Live Sync');
     }
+    const activeTab = useSignal<ManifestSettingsTab>(tabs[0]);
 
     return (
       <Form onSubmit$={handleSubmit} shouldActive={false} class="w-full">
@@ -204,7 +204,8 @@ export default component$<ManifestSettingsProps>(
                 )}
               </FieldArray>
             </div>
-            {activeTab.value === 'Import Sync' ? (
+            {currentReceiver.receiverInfo.importSync &&
+            activeTab.value === 'Import Sync' ? (
               <div>
                 <ImportSyncSettings currentReceiver={currentReceiver} />
               </div>
@@ -232,16 +233,18 @@ export default component$<ManifestSettingsProps>(
               </div>
             </div>
           </Tab>
-          <div class="flex flex-row gap-2">
-            <Button
-              type="submit"
-              class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline`}
-              backgroundColour="bg-primary"
-              borderColour="border-primary"
-            >
-              Save Settings
-            </Button>
-          </div>
+          {activeTab.value !== 'Import Sync' && (
+            <div class="flex flex-row gap-2">
+              <Button
+                type="submit"
+                class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline`}
+                backgroundColour="bg-primary"
+                borderColour="border-primary"
+              >
+                Save Settings
+              </Button>
+            </div>
+          )}
         </div>
       </Form>
     );

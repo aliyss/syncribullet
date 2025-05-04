@@ -1,4 +1,8 @@
-import type { ImporterMCITypes, Importers } from '../importer/types/importers';
+import type {
+  ImporterClients,
+  ImporterMCITypes,
+  Importers,
+} from '../importer/types/importers';
 import type { ImportCatalogs } from '../importer/types/user-settings/import-catalogs';
 import type {
   ManifestCatalogItem,
@@ -53,6 +57,7 @@ export abstract class Receiver<
   >;
 
   public userSettings: UserSettings<MCIT> | null = null;
+  public importer: ImporterClients | null = null;
 
   public get minifiedManifestCatalogItems() {
     return minifyManifestCatalogItems<MCIT>(this.manifestCatalogItems);
@@ -78,7 +83,7 @@ export abstract class Receiver<
 
   public getImportCatalogItems(
     importerId: Importers,
-    ids?: ImportCatalogs<MCIT, ImporterMCITypes>[],
+    ids?: Readonly<ImportCatalogs<MCIT, ImporterMCITypes>[]>,
   ): ImportCatalogs<MCIT, ImporterMCITypes>[] {
     return this.manifestCatalogItems
       .filter((item) =>
@@ -92,6 +97,7 @@ export abstract class Receiver<
         ).find((x) => x.id === item.id);
         return {
           ...item,
+          value: importCatalog?.value || false,
           filters: importCatalog?.filters || null,
         };
       });

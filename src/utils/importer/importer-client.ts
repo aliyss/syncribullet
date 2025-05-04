@@ -4,6 +4,8 @@ import type { ImporterMCITypes } from './types/importers';
 export abstract class ImporterClient<
   MCIT extends ImporterMCITypes,
 > extends Importer<MCIT> {
+  loadFromReceiver = false;
+
   public setUserConfig(
     userSettings: ImporterClient<MCIT>['userSettings'],
   ): void {
@@ -14,8 +16,9 @@ export abstract class ImporterClient<
     );
   }
 
-  constructor() {
+  constructor(loadFromReceiver = false) {
     super();
+    this.loadFromReceiver = loadFromReceiver;
     this.userSettings = null;
   }
 
@@ -52,6 +55,22 @@ export abstract class ImporterClient<
       }
     } else {
       this.userSettings = null;
+    }
+    if (this.loadFromReceiver) {
+      const receiverUserSettings = localStorage.getItem(
+        'user-settings-' + this.importerInfo.id,
+      );
+      if (receiverUserSettings) {
+        try {
+          const parsedReceiverUserSettings = JSON.parse(receiverUserSettings);
+          this.userSettings = {
+            auth: parsedReceiverUserSettings.auth ?? undefined,
+            ...this.userSettings,
+          };
+        } catch (e) {
+          this.userSettings = null;
+        }
+      }
     }
     return this.userSettings;
   }

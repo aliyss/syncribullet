@@ -1,11 +1,5 @@
-import type {
-  PropFunction} from '@builder.io/qwik';
-import {
-  $,
-  component$,
-  useSignal,
-  useTask$,
-} from '@builder.io/qwik';
+import type { PropFunction } from '@builder.io/qwik';
+import { $, component$, useSignal, useTask$ } from '@builder.io/qwik';
 import { server$ } from '@builder.io/qwik-city';
 
 import { useForm } from '@modular-forms/qwik';
@@ -146,14 +140,14 @@ export default component$<StremioLoginProps>(({ saveFromPreAuth$ }) => {
     <>
       <FormAuth onSubmit$={handleSubmitAuth}>
         <div class="flex flex-col gap-4 items-center">
+          <p class="pb-2 text-error">
+            Warning! Stremio logins are not supported by stremio. If you use
+            this and something goes wrong, you are on your own.
+            <br />
+            Feel free to report issues on Syncribullet GitHub. There will be no
+            support from the Stremio team if anything goes wrong.
+          </p>
           <p>
-            <p class="pb-2 text-error">
-              Warning! Stremio logins are not supported by stremio. If you use
-              this and something goes wrong, you are on your own.
-              <br />
-              Feel free to report issues on Syncribullet GitHub. There will be
-              no support from the Stremio team if anything goes wrong.
-            </p>
             <a
               href={authPreparation.value.link}
               class="text-primary"
@@ -163,6 +157,8 @@ export default component$<StremioLoginProps>(({ saveFromPreAuth$ }) => {
               Click this link
             </a>{' '}
             and submit after new device has been registered.
+          </p>
+          <div>
             <FieldAuth name="code">
               {(_, props) => (
                 <input
@@ -175,7 +171,7 @@ export default component$<StremioLoginProps>(({ saveFromPreAuth$ }) => {
                 />
               )}
             </FieldAuth>
-          </p>
+          </div>
           <button
             disabled={!enableButton.value}
             type="submit"

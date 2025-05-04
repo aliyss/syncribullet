@@ -59,9 +59,7 @@ export interface CurrentReceiver {
 }
 
 export enum ReceiversActionType {
-  Catalogs = 'Catalogs',
-  LiveSync = 'LiveSync',
-  ImportSync = 'ImportSync',
+  Sync = 'Sync',
   Settings = 'Settings',
 }
 
@@ -114,7 +112,7 @@ export default component$<ConfigureProps>(({ config }) => {
 
   const currentReceiver = useSignal<Receivers | null>();
   const currentViewType = useSignal<ReceiversActionType | null>(
-    ReceiversActionType.Catalogs,
+    ReceiversActionType.Sync,
   );
 
   const syncriBulletSettings = useSignal<GeneralSettings>({});
@@ -182,7 +180,7 @@ export default component$<ConfigureProps>(({ config }) => {
           }}
         />
         {currentReceiver.value &&
-        currentViewType.value === ReceiversActionType.LiveSync &&
+        currentViewType.value === ReceiversActionType.Sync &&
         receivers.value[currentReceiver.value] ? (
           <ReceiversSettings
             currentReceiver={receivers.value[currentReceiver.value]!}

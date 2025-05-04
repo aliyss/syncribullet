@@ -100,6 +100,11 @@ export const createIDsFromCatalogString = (
     usableId = {
       anilist: parseInt(tempId[0]),
     };
+  } else if (id.startsWith('anilist_')) {
+    tempId = id.slice('anilist_'.length).split(':');
+    usableId = {
+      anilist: parseInt(tempId[0]),
+    };
   } else if (id.startsWith('mal:')) {
     tempId = id.slice('mal:'.length).split(':');
     usableId = {
@@ -165,4 +170,38 @@ export const createIDsFromCatalogString = (
     ids: usableId,
     count,
   };
+};
+
+export const compareIDs = (id1: Partial<IDs>, id2: Partial<IDs>): boolean => {
+  if (id1.imdb && id2.imdb) {
+    return id1.imdb === id2.imdb;
+  }
+  if (id1.anilist && id2.anilist) {
+    return id1.anilist === id2.anilist;
+  }
+  if (id1.kitsu && id2.kitsu) {
+    return id1.kitsu === id2.kitsu;
+  }
+  if (id1.kitsu && id2['kitsu-nsfw']) {
+    return id1.kitsu === id2['kitsu-nsfw'];
+  }
+  if (id1['kitsu-nsfw'] && id2.kitsu) {
+    return id1['kitsu-nsfw'] === id2.kitsu;
+  }
+  if (id1.mal && id2.mal) {
+    return id1.mal === id2.mal;
+  }
+  if (id1.tmdb && id2.tmdb) {
+    return id1.tmdb === id2.tmdb;
+  }
+  if (id1.tvdb && id2.tvdb) {
+    return id1.tvdb === id2.tvdb;
+  }
+  if (id1.simkl && id2.simkl) {
+    return id1.simkl === id2.simkl;
+  }
+  if (id1.tvtime && id2.tvtime) {
+    return id1.tvtime === id2.tvtime;
+  }
+  return false;
 };
