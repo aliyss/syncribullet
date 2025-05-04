@@ -106,14 +106,8 @@ export const defaultCatalogs: Readonly<
 export const defaultImportCatalogs: Readonly<
   Record<Importers, Readonly<ImportCatalogs<AnilistMCIT, ImporterMCITypes>[]>>
 > = {
-  stremio: [
-    {
-      id: 'syncribullet-anilist-anime-CURRENT',
-      filters: {
-        stateFlaggedWatched: false,
-      },
-    },
-  ],
+  simkl: [],
+  stremio: [],
 } as const satisfies Readonly<
   Record<Importers, Readonly<ImportCatalogs<AnilistMCIT, ImporterMCITypes>[]>>
 >;

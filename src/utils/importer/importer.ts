@@ -5,7 +5,7 @@ import type {
   ImporterMCITypes,
   Importers,
 } from './types/importers';
-import { ImportCatalogDataUncalculated } from './types/user-settings/import-catalogs';
+import type { ImportCatalogDataUncalculated } from './types/user-settings/import-catalogs';
 import type { UserSettings } from './types/user-settings/settings';
 
 export interface ImporterInfoBase<R extends AllImporters> {

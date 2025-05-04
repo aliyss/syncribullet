@@ -1,4 +1,7 @@
-import type { ImporterMCITypes, Importers } from '~/utils/importer/types/importers';
+import type {
+  ImporterMCITypes,
+  Importers,
+} from '~/utils/importer/types/importers';
 import type { ImportCatalogs } from '~/utils/importer/types/user-settings/import-catalogs';
 import {
   ManifestCatalogExtraParameters,
@@ -96,6 +99,7 @@ export const defaultCatalogs: Readonly<
 export const defaultImportCatalogs: Readonly<
   Record<Importers, Readonly<ImportCatalogs<TVTimeMCIT, ImporterMCITypes>[]>>
 > = {
+  simkl: [],
   stremio: [],
 } as const satisfies Readonly<
   Record<Importers, Readonly<ImportCatalogs<TVTimeMCIT, ImporterMCITypes>[]>>
