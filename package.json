@@ -56,7 +56,7 @@
     "rimraf": "^5.0.1",
     "tailwindcss": "^4.1.7",
     "typescript": "5.4.5",
-    "undici": "*",
+    "undici": "^7.10.0",
     "vite": "5.3.5",
     "vite-tsconfig-paths": "^4.2.1"
   },
