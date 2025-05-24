@@ -2,7 +2,7 @@
 SyncriBullet is a Stremio Addon that synchronizes your watchlist with other services.
 
 > [!NOTE]
-> - (2025.05.24) Added import sync for Simkl!
+> - (2025.05.24) Added import sync for Simkl!<br />
 >       - No clean error handling yet, open up a PR to help out.<br />
 >       - Also delete cache if you want to rerun it from scratch.<br />
 >       - I did the most I could, for any issues please open up an issue.<br />
