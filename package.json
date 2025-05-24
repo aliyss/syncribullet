@@ -4,7 +4,7 @@
   "author": "aliyss",
   "version": "2.0.5",
   "engines": {
-    "node": "^20.19.0"
+    "node": "^22.14.0"
   },
   "private": true,
   "type": "module",
