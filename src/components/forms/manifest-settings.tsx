@@ -105,9 +105,9 @@ export default component$<ManifestSettingsProps>(
     });
 
     const tabs: ManifestSettingsTab[] = ['Catalogs', 'Credentials'];
-    // if (currentReceiver.receiverInfo.importSync) {
-    //   tabs.splice(1, 0, 'Import Sync');
-    // }
+    if (currentReceiver.receiverInfo.importSync) {
+      tabs.splice(1, 0, 'Import Sync');
+    }
     if (currentReceiver.receiverInfo.liveSync) {
       tabs.splice(1, 0, 'Live Sync');
     }
@@ -143,7 +143,7 @@ export default component$<ManifestSettingsProps>(
                                 <input
                                   type="checkbox"
                                   placeholder="List"
-                                  class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                  class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                   checked={field.value}
                                   {...props}
                                 />
@@ -187,7 +187,7 @@ export default component$<ManifestSettingsProps>(
                                 <input
                                   type="checkbox"
                                   placeholder="List"
-                                  class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                  class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                   checked={field.value}
                                   {...props}
                                 />
@@ -221,6 +221,7 @@ export default component$<ManifestSettingsProps>(
                   <Button
                     type="button"
                     borderColour="border-error"
+                    class={`text-on-error`}
                     backgroundColour="bg-error"
                     onClick$={async () => {
                       currentReceiver.removeUserConfig();
@@ -237,7 +238,7 @@ export default component$<ManifestSettingsProps>(
             <div class="flex flex-row gap-2">
               <Button
                 type="submit"
-                class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline`}
+                class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline text-on-primary`}
                 backgroundColour="bg-primary"
                 borderColour="border-primary"
               >

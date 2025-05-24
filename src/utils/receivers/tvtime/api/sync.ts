@@ -29,7 +29,7 @@ export const syncTVTimeMetaObject = async (
     if (response.status >= 200 && response.status < 300) {
       try {
         return await response.data;
-      } catch (error) {
+      } catch {
         return;
       }
     } else {

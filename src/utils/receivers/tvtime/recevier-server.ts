@@ -27,6 +27,8 @@ import {
   liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
+  receiverTypeMapping,
+  receiverTypeReverseMapping,
   syncIds,
 } from './constants';
 import type { TVTimeCatalogStatus } from './types/catalog/catalog-status';
@@ -41,18 +43,9 @@ import type {
 export class TVTimeServerReceiver extends ReceiverServer<TVTimeMCIT> {
   internalIds = internalIds;
   syncIds = syncIds;
-  receiverTypeMapping = {
-    [TVTimeCatalogType.MOVIE]: ManifestReceiverTypes.MOVIE,
-    [TVTimeCatalogType.SERIES]: ManifestReceiverTypes.SERIES,
-  };
-  receiverTypeReverseMapping = {
-    [ManifestReceiverTypes.MOVIE]: TVTimeCatalogType.MOVIE,
-    [ManifestReceiverTypes.SERIES]: TVTimeCatalogType.SERIES,
-    [ManifestReceiverTypes.ANIME]: undefined,
-    [ManifestReceiverTypes.CHANNELS]: undefined,
-    [ManifestReceiverTypes.TV]: undefined,
-  };
 
+  receiverTypeMapping = receiverTypeMapping;
+  receiverTypeReverseMapping = receiverTypeReverseMapping;
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
   defaultCatalogs = defaultCatalogs;
@@ -252,8 +245,8 @@ export class TVTimeServerReceiver extends ReceiverServer<TVTimeMCIT> {
       'tvtime' in ids.ids && ids.ids.tvtime
         ? ids.ids.tvtime
         : 'tvdb' in ids.ids && ids.ids.tvdb && !ids.count
-        ? ids.ids.tvdb
-        : undefined;
+          ? ids.ids.tvdb
+          : undefined;
 
     if (!id) {
       throw new Error('No valid ID found for TVTime!');

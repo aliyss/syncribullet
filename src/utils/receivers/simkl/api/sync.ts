@@ -52,7 +52,7 @@ export async function syncSimklMetaObject(
     });
     return await response.data;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw new Error('Failed to fetch data from Simkl API!');
   }
 }

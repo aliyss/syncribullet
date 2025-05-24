@@ -63,7 +63,7 @@ export const syncKitsuMetaObject = async (
     if (response.status >= 200 && response.status < 300) {
       try {
         return await response.json();
-      } catch (error) {
+      } catch {
         return;
       }
     } else {

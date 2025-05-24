@@ -12,6 +12,7 @@ import type { ReceiverInfo } from '~/utils/receiver/receiver';
 import { IDSources } from '~/utils/receiver/types/id';
 import { Receivers } from '~/utils/receiver/types/receivers';
 
+import { SimklCatalogType } from './types/catalog/catalog-type';
 import type { SimklMCIT } from './types/manifest';
 
 export const receiverInfo: ReceiverInfo<Receivers.SIMKL> = {
@@ -179,10 +180,16 @@ export const defaultImportCatalogs: Readonly<
       filters: {
         moviesStateFlaggedWatched: false,
         moviesStateFlaggedUnwatched: true,
+        moviesStateFlaggedDropped: false,
         seriesStateFlaggedWatched: null,
         seriesStateFlaggedUnwatched: null,
+        seriesStateFlaggedDropped: null,
+        seriesStateFlaggedOnHold: null,
+        seriesPreferStateFlaggedWatchedOverWatchCount: null,
         seriesUseCinemetaComparison: null,
+        seriesStateHasWatchCount: null,
         seriesBackfillEpisodes: null,
+        supportsTypes: [ManifestReceiverTypes.MOVIE],
       },
     },
     {
@@ -191,22 +198,34 @@ export const defaultImportCatalogs: Readonly<
       filters: {
         moviesStateFlaggedWatched: true,
         moviesStateFlaggedUnwatched: false,
+        moviesStateFlaggedDropped: false,
         seriesStateFlaggedWatched: null,
         seriesStateFlaggedUnwatched: null,
+        seriesStateFlaggedDropped: null,
+        seriesStateFlaggedOnHold: null,
+        seriesPreferStateFlaggedWatchedOverWatchCount: null,
+        seriesStateHasWatchCount: null,
         seriesUseCinemetaComparison: null,
         seriesBackfillEpisodes: null,
+        supportsTypes: [ManifestReceiverTypes.MOVIE],
       },
     },
     {
       id: 'syncribullet-simkl-movies-dropped',
-      value: false,
+      value: true,
       filters: {
         moviesStateFlaggedWatched: false,
         moviesStateFlaggedUnwatched: true,
+        moviesStateFlaggedDropped: true,
         seriesStateFlaggedWatched: null,
         seriesStateFlaggedUnwatched: null,
+        seriesStateFlaggedDropped: null,
+        seriesStateFlaggedOnHold: null,
+        seriesPreferStateFlaggedWatchedOverWatchCount: null,
+        seriesStateHasWatchCount: null,
         seriesUseCinemetaComparison: null,
         seriesBackfillEpisodes: null,
+        supportsTypes: [ManifestReceiverTypes.MOVIE],
       },
     },
     {
@@ -215,10 +234,16 @@ export const defaultImportCatalogs: Readonly<
       filters: {
         moviesStateFlaggedWatched: null,
         moviesStateFlaggedUnwatched: null,
+        moviesStateFlaggedDropped: null,
         seriesStateFlaggedWatched: false,
-        seriesStateFlaggedUnwatched: false,
+        seriesStateFlaggedUnwatched: true,
+        seriesStateFlaggedDropped: false,
+        seriesStateFlaggedOnHold: false,
+        seriesStateHasWatchCount: true,
+        seriesPreferStateFlaggedWatchedOverWatchCount: true,
         seriesUseCinemetaComparison: true,
         seriesBackfillEpisodes: true,
+        supportsTypes: [ManifestReceiverTypes.SERIES],
       },
     },
     {
@@ -227,10 +252,16 @@ export const defaultImportCatalogs: Readonly<
       filters: {
         moviesStateFlaggedWatched: null,
         moviesStateFlaggedUnwatched: null,
+        moviesStateFlaggedDropped: null,
         seriesStateFlaggedWatched: false,
         seriesStateFlaggedUnwatched: true,
+        seriesStateFlaggedDropped: false,
+        seriesStateFlaggedOnHold: false,
+        seriesStateHasWatchCount: false,
+        seriesPreferStateFlaggedWatchedOverWatchCount: true,
         seriesUseCinemetaComparison: false,
         seriesBackfillEpisodes: false,
+        supportsTypes: [ManifestReceiverTypes.SERIES],
       },
     },
     {
@@ -239,34 +270,52 @@ export const defaultImportCatalogs: Readonly<
       filters: {
         moviesStateFlaggedWatched: null,
         moviesStateFlaggedUnwatched: null,
+        moviesStateFlaggedDropped: null,
         seriesStateFlaggedWatched: true,
         seriesStateFlaggedUnwatched: false,
+        seriesStateFlaggedDropped: false,
+        seriesStateFlaggedOnHold: false,
+        seriesStateHasWatchCount: null,
+        seriesPreferStateFlaggedWatchedOverWatchCount: true,
         seriesUseCinemetaComparison: false,
-        seriesBackfillEpisodes: false,
+        seriesBackfillEpisodes: true,
+        supportsTypes: [ManifestReceiverTypes.SERIES],
       },
     },
     {
       id: 'syncribullet-simkl-shows-hold',
-      value: false,
+      value: true,
       filters: {
         moviesStateFlaggedWatched: null,
         moviesStateFlaggedUnwatched: null,
+        moviesStateFlaggedDropped: null,
         seriesStateFlaggedWatched: false,
         seriesStateFlaggedUnwatched: true,
+        seriesStateFlaggedDropped: false,
+        seriesStateFlaggedOnHold: true,
+        seriesPreferStateFlaggedWatchedOverWatchCount: true,
+        seriesStateHasWatchCount: true,
         seriesUseCinemetaComparison: true,
         seriesBackfillEpisodes: true,
+        supportsTypes: [ManifestReceiverTypes.SERIES],
       },
     },
     {
       id: 'syncribullet-simkl-shows-dropped',
-      value: false,
+      value: true,
       filters: {
         moviesStateFlaggedWatched: null,
         moviesStateFlaggedUnwatched: null,
+        moviesStateFlaggedDropped: null,
         seriesStateFlaggedWatched: false,
         seriesStateFlaggedUnwatched: true,
+        seriesStateFlaggedDropped: true,
+        seriesStateFlaggedOnHold: false,
+        seriesStateHasWatchCount: true,
+        seriesPreferStateFlaggedWatchedOverWatchCount: true,
         seriesUseCinemetaComparison: true,
         seriesBackfillEpisodes: true,
+        supportsTypes: [ManifestReceiverTypes.SERIES],
       },
     },
     {
@@ -275,10 +324,19 @@ export const defaultImportCatalogs: Readonly<
       filters: {
         moviesStateFlaggedWatched: null,
         moviesStateFlaggedUnwatched: null,
+        moviesStateFlaggedDropped: null,
         seriesStateFlaggedWatched: false,
-        seriesStateFlaggedUnwatched: false,
+        seriesStateFlaggedUnwatched: true,
+        seriesStateFlaggedDropped: false,
+        seriesStateFlaggedOnHold: false,
+        seriesStateHasWatchCount: true,
+        seriesPreferStateFlaggedWatchedOverWatchCount: false,
         seriesUseCinemetaComparison: true,
         seriesBackfillEpisodes: true,
+        supportsTypes: [
+          ManifestReceiverTypes.SERIES,
+          ManifestReceiverTypes.MOVIE,
+        ],
       },
     },
     {
@@ -287,10 +345,19 @@ export const defaultImportCatalogs: Readonly<
       filters: {
         moviesStateFlaggedWatched: false,
         moviesStateFlaggedUnwatched: true,
+        moviesStateFlaggedDropped: false,
         seriesStateFlaggedWatched: false,
         seriesStateFlaggedUnwatched: true,
+        seriesStateFlaggedDropped: false,
+        seriesStateFlaggedOnHold: false,
+        seriesStateHasWatchCount: false,
+        seriesPreferStateFlaggedWatchedOverWatchCount: false,
         seriesUseCinemetaComparison: false,
         seriesBackfillEpisodes: false,
+        supportsTypes: [
+          ManifestReceiverTypes.SERIES,
+          ManifestReceiverTypes.MOVIE,
+        ],
       },
     },
     {
@@ -299,34 +366,61 @@ export const defaultImportCatalogs: Readonly<
       filters: {
         moviesStateFlaggedWatched: true,
         moviesStateFlaggedUnwatched: false,
+        moviesStateFlaggedDropped: false,
         seriesStateFlaggedWatched: true,
         seriesStateFlaggedUnwatched: false,
+        seriesStateFlaggedDropped: false,
+        seriesStateFlaggedOnHold: false,
+        seriesStateHasWatchCount: null,
+        seriesPreferStateFlaggedWatchedOverWatchCount: false,
         seriesUseCinemetaComparison: false,
-        seriesBackfillEpisodes: false,
+        seriesBackfillEpisodes: true,
+        supportsTypes: [
+          ManifestReceiverTypes.SERIES,
+          ManifestReceiverTypes.MOVIE,
+        ],
       },
     },
     {
       id: 'syncribullet-simkl-anime-hold',
-      value: false,
+      value: true,
       filters: {
         moviesStateFlaggedWatched: false,
         moviesStateFlaggedUnwatched: true,
+        moviesStateFlaggedDropped: null,
         seriesStateFlaggedWatched: false,
         seriesStateFlaggedUnwatched: true,
+        seriesStateFlaggedDropped: false,
+        seriesStateFlaggedOnHold: true,
+        seriesStateHasWatchCount: true,
+        seriesPreferStateFlaggedWatchedOverWatchCount: false,
         seriesUseCinemetaComparison: true,
         seriesBackfillEpisodes: true,
+        supportsTypes: [
+          ManifestReceiverTypes.SERIES,
+          ManifestReceiverTypes.MOVIE,
+        ],
       },
     },
     {
       id: 'syncribullet-simkl-anime-dropped',
-      value: false,
+      value: true,
       filters: {
         moviesStateFlaggedWatched: false,
         moviesStateFlaggedUnwatched: true,
+        moviesStateFlaggedDropped: true,
         seriesStateFlaggedWatched: false,
         seriesStateFlaggedUnwatched: true,
+        seriesStateFlaggedDropped: true,
+        seriesStateFlaggedOnHold: false,
+        seriesStateHasWatchCount: true,
+        seriesPreferStateFlaggedWatchedOverWatchCount: false,
         seriesUseCinemetaComparison: true,
         seriesBackfillEpisodes: true,
+        supportsTypes: [
+          ManifestReceiverTypes.SERIES,
+          ManifestReceiverTypes.MOVIE,
+        ],
       },
     },
   ],
@@ -342,3 +436,16 @@ export const liveSyncTypes = [
 
 export const defaultLiveSyncTypes: Readonly<(typeof liveSyncTypes)[number][]> =
   liveSyncTypes;
+
+export const receiverTypeMapping = {
+  [SimklCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
+  [SimklCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
+  [SimklCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
+};
+export const receiverTypeReverseMapping = {
+  [ManifestReceiverTypes.MOVIE]: SimklCatalogType.MOVIES,
+  [ManifestReceiverTypes.SERIES]: SimklCatalogType.SHOWS,
+  [ManifestReceiverTypes.ANIME]: SimklCatalogType.ANIME,
+  [ManifestReceiverTypes.CHANNELS]: SimklCatalogType.SHOWS,
+  [ManifestReceiverTypes.TV]: SimklCatalogType.SHOWS,
+};

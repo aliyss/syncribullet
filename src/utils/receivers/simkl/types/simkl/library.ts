@@ -3,14 +3,19 @@ import type { IDs } from '~/utils/receiver/types/id';
 
 import type { SimklCatalogStatus } from '../catalog/catalog-status';
 
-export type SimklIds = IDs;
+export type SimklIds = IDs & {
+  simkl: number;
+};
 
-export interface SimklMovieAddToList {
+export interface SimklAddToList {
   title?: string;
   ids: RequireAtLeastOne<SimklIds>;
   to?: string;
   watched_at?: string;
+  status?: SimklCatalogStatus;
 }
+
+export type SimklMovieAddToList = SimklAddToList;
 
 export interface SimklShowEpisodeAddToList {
   number?: number;
@@ -23,13 +28,9 @@ export interface SimklShowSeasonAddToList {
   episodes?: SimklShowEpisodeAddToList[];
 }
 
-export interface SimklShowAddToList {
-  title?: string;
-  ids: RequireAtLeastOne<SimklIds>;
-  to?: string;
-  watched_at?: string;
+export type SimklShowAddToList = SimklAddToList & {
   seasons?: SimklShowSeasonAddToList[];
-}
+};
 
 export interface SimklLibraryObjectShow {
   title: string;
@@ -52,14 +53,18 @@ export interface SimklLibraryObjectShow {
   };
   runtime: number;
   anime_type?: SimklLibraryAnimeType;
-  ids: RequireAtLeastOne<SimklIds>;
+  ids: RequireAtLeastOne<SimklIds> & {
+    simkl: number;
+  };
 }
 
 export interface SimklLibraryObjectMovie {
   title: string;
   poster: string;
   year?: number;
-  ids: RequireAtLeastOne<SimklIds>;
+  ids: RequireAtLeastOne<SimklIds> & {
+    simkl: number;
+  };
 }
 
 export interface SimklLibraryObjectBase {

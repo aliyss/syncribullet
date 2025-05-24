@@ -50,7 +50,7 @@ export abstract class ImporterClient<
     if (data) {
       try {
         this.userSettings = JSON.parse(data);
-      } catch (e) {
+      } catch {
         this.userSettings = null;
       }
     } else {
@@ -67,7 +67,7 @@ export abstract class ImporterClient<
             auth: parsedReceiverUserSettings.auth ?? undefined,
             ...this.userSettings,
           };
-        } catch (e) {
+        } catch {
           this.userSettings = null;
         }
       }

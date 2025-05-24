@@ -55,7 +55,7 @@ export abstract class ReceiverClient<
     if (data) {
       try {
         this.userSettings = JSON.parse(data);
-      } catch (e) {
+      } catch {
         this.userSettings = null;
       }
     } else {

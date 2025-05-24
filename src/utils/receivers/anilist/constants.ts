@@ -12,6 +12,7 @@ import type { ReceiverInfo } from '~/utils/receiver/receiver';
 import { IDSources } from '~/utils/receiver/types/id';
 import { Receivers } from '~/utils/receiver/types/receivers';
 
+import { AnilistCatalogType } from './types/catalog/catalog-type';
 import type { AnilistMCIT } from './types/manifest';
 
 export const receiverInfo: ReceiverInfo<Receivers.ANILIST> = {
@@ -21,7 +22,7 @@ export const receiverInfo: ReceiverInfo<Receivers.ANILIST> = {
   backgroundColour: 'bg-[#00cdff]/60',
   borderColour: 'border-[#00cdff]',
   liveSync: true,
-  importSync: true,
+  importSync: false,
 };
 
 export const internalIds = [[IDSources.ANILIST]] as const satisfies Readonly<
@@ -120,3 +121,16 @@ export const liveSyncTypes = [
 
 export const defaultLiveSyncTypes: Readonly<(typeof liveSyncTypes)[number][]> =
   liveSyncTypes;
+
+export const receiverTypeMapping = {
+  [AnilistCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
+  [AnilistCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
+  [AnilistCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
+};
+export const receiverTypeReverseMapping = {
+  [ManifestReceiverTypes.MOVIE]: AnilistCatalogType.ANIME,
+  [ManifestReceiverTypes.SERIES]: AnilistCatalogType.ANIME,
+  [ManifestReceiverTypes.ANIME]: AnilistCatalogType.ANIME,
+  [ManifestReceiverTypes.CHANNELS]: AnilistCatalogType.ANIME,
+  [ManifestReceiverTypes.TV]: AnilistCatalogType.ANIME,
+};

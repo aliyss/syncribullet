@@ -30,11 +30,13 @@ import {
   liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
+  receiverTypeMapping,
+  receiverTypeReverseMapping,
   syncIds,
 } from './constants';
 import { buildLibraryObjectUserDescription } from './meta/description';
 import type { KitsuCatalogStatus } from './types/catalog/catalog-status';
-import { KitsuCatalogType } from './types/catalog/catalog-type';
+import type { KitsuCatalogType } from './types/catalog/catalog-type';
 import type { KitsuAnimeEntry } from './types/kitsu/anime-entry';
 import type {
   KitsuLibraryEntry,
@@ -45,19 +47,9 @@ import type { KitsuMCIT } from './types/manifest';
 export class KitsuServerReceiver extends ReceiverServer<KitsuMCIT> {
   internalIds = internalIds;
   syncIds = syncIds;
-  receiverTypeMapping = {
-    [KitsuCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
-    [KitsuCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
-    [KitsuCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
-  };
-  receiverTypeReverseMapping = {
-    [ManifestReceiverTypes.MOVIE]: KitsuCatalogType.ANIME,
-    [ManifestReceiverTypes.SERIES]: KitsuCatalogType.ANIME,
-    [ManifestReceiverTypes.ANIME]: KitsuCatalogType.ANIME,
-    [ManifestReceiverTypes.CHANNELS]: KitsuCatalogType.ANIME,
-    [ManifestReceiverTypes.TV]: KitsuCatalogType.ANIME,
-  };
 
+  receiverTypeMapping = receiverTypeMapping;
+  receiverTypeReverseMapping = receiverTypeReverseMapping;
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
   defaultCatalogs = defaultCatalogs;

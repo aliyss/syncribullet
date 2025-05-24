@@ -63,7 +63,7 @@ export async function getMappingIdsTVTimeIMDB(
     }
     return ids;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw new Error('Failed to fetch ids from Haglund API!');
   }
 }

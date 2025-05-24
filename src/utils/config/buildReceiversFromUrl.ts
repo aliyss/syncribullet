@@ -142,7 +142,7 @@ export const decryptCompressToUserConfigBuildMinifiedStringsResult = (
         ),
         usedBackup: false,
       };
-    } catch (e) {
+    } catch {
       return decryptCompressToUserConfigBuildMinifiedStringsResult(
         urlString,
         '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
@@ -155,7 +155,7 @@ export const decryptCompressToUserConfigBuildMinifiedStringsResult = (
       result: JSON.parse(decodeURIComponent(decompress(decompress(decrypted)))),
       usedBackup: true,
     };
-  } catch (e) {
+  } catch {
     throw new Error('Failed to decrypt and decompress');
   }
 };
@@ -177,7 +177,7 @@ export const decryptCompressToUserConfigBuildMinifiedStrings = (
     const decrypted = decrypt(urlString, encryptionKey);
     try {
       return JSON.parse(decodeURIComponent(decompress(decompress(decrypted))));
-    } catch (e) {
+    } catch {
       return decryptCompressToUserConfigBuildMinifiedStrings(
         urlString,
         '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
@@ -187,7 +187,7 @@ export const decryptCompressToUserConfigBuildMinifiedStrings = (
   const decrypted = decrypt(urlString, encryptionKey);
   try {
     return JSON.parse(decodeURIComponent(decompress(decompress(decrypted))));
-  } catch (e) {
+  } catch {
     throw new Error('Failed to decrypt and decompress');
   }
 };

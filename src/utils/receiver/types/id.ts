@@ -55,7 +55,10 @@ export const createIDCatalogString = (
     return `mal:${ids.mal}`;
   }
   if (ids.imdb) {
-    return `${ids.imdb}`;
+    if (ids.imdb.startsWith('tt')) {
+      return `${ids.imdb}`;
+    }
+    return `tt${ids.imdb}`;
   }
   if (ids.tmdb) {
     return `tmdb:${ids.tmdb}`;

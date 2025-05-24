@@ -43,14 +43,12 @@ export default component$<ImportersSettingsProps>(
     >(undefined);
     const libraryDiff = useSignal<
       Awaited<
-        ReturnType<
-          NonNullable<(typeof currentImporter)['filterLibraryUncalculatedDiff']>
-        >
+        ReturnType<NonNullable<(typeof currentImporter)['sortLibraryDiff']>>
       >
     >([]);
 
     return (
-      <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 bg-secondary/20 flex flex-col">
+      <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 bg-secondary-container flex flex-col">
         <h2 class="w-full text-xl font-bold text-center md:text-xl">
           {currentImporter.importerInfo.text}
         </h2>
@@ -65,18 +63,30 @@ export default component$<ImportersSettingsProps>(
                   currentReceiver={currentReceiver}
                   currentImporter={currentImporter}
                   updateView$={async () => {
-                    view.value = ImportersSettingsView.LOAD_LIBRARY;
-
                     const userConfig = currentReceiver.getUserConfig();
+                    if (!userConfig || !userConfig.importCatalog) {
+                      view.value = ImportersSettingsView.LOAD_LIBRARY;
+                      return;
+                    }
+                    if (!currentReceiver.importer) {
+                      view.value = ImportersSettingsView.LOAD_LIBRARY;
+                      return;
+                    }
 
                     importerLibrary.value =
                       await currentImporter.loadLibraryDiff(
-                        userConfig?.lastImportSync?.[
+                        userConfig.lastImportSync?.[
                           currentImporter.importerInfo.id
                         ]?.lastImport,
                       );
+
+                    if (!importerLibrary.value.length) {
+                      alert('No items left in the library to import.');
+                      return;
+                    }
+
                     receiverLibrary.value =
-                      await currentReceiver.importer?.loadLibraryDiff(
+                      await currentReceiver.importer.loadLibraryDiff(
                         new Date(
                           Math.min(
                             ...importerLibrary.value.map((obj) =>
@@ -85,13 +95,17 @@ export default component$<ImportersSettingsProps>(
                           ),
                         ).toISOString(),
                       );
-                    if (receiverLibrary.value) {
-                      libraryDiff.value =
-                        await currentImporter.filterLibraryUncalculatedDiff(
-                          importerLibrary.value,
-                          receiverLibrary.value,
-                        );
-                    }
+
+                    libraryDiff.value = await currentImporter.sortLibraryDiff(
+                      await currentImporter.filterLibraryUncalculatedDiff(
+                        importerLibrary.value,
+                        receiverLibrary.value,
+                      ),
+                      userConfig.importCatalog[currentImporter.importerInfo.id],
+                      currentReceiver,
+                    );
+
+                    view.value = ImportersSettingsView.LOAD_LIBRARY;
                   }}
                 />
               ) : currentImporter.userSettings &&
@@ -106,7 +120,12 @@ export default component$<ImportersSettingsProps>(
                       importedCatalogs={importerLibrary.value}
                       receiverCatalogItems={receiverLibrary.value}
                       libraryDiff={libraryDiff.value}
-                      updateView$={() => {}}
+                      updateView$={(newView: ImportersSettingsView) => {
+                        view.value = newView;
+                        libraryDiff.value = [];
+                        importerLibrary.value = [];
+                        receiverLibrary.value = undefined;
+                      }}
                     />
                   ) : (
                     <div class="flex flex-col gap-2 items-center pt-1 text-on-background">

@@ -28,6 +28,8 @@ import {
   liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
+  receiverTypeMapping,
+  receiverTypeReverseMapping,
   syncIds,
 } from './constants';
 import { buildLibraryObjectUserDescription } from './meta/description';
@@ -39,19 +41,9 @@ import type { AnilistMCIT } from './types/manifest';
 export class AnilistServerReceiver extends ReceiverServer<AnilistMCIT> {
   internalIds = internalIds;
   syncIds = syncIds;
-  receiverTypeMapping = {
-    [AnilistCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
-    [AnilistCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
-    [AnilistCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
-  };
-  receiverTypeReverseMapping = {
-    [ManifestReceiverTypes.MOVIE]: AnilistCatalogType.ANIME,
-    [ManifestReceiverTypes.SERIES]: AnilistCatalogType.ANIME,
-    [ManifestReceiverTypes.ANIME]: AnilistCatalogType.ANIME,
-    [ManifestReceiverTypes.CHANNELS]: AnilistCatalogType.ANIME,
-    [ManifestReceiverTypes.TV]: AnilistCatalogType.ANIME,
-  };
 
+  receiverTypeMapping = receiverTypeMapping;
+  receiverTypeReverseMapping = receiverTypeReverseMapping;
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
   defaultCatalogs = defaultCatalogs;

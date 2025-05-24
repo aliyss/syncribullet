@@ -27,6 +27,8 @@ import {
   liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
+  receiverTypeMapping,
+  receiverTypeReverseMapping,
   syncIds,
 } from './constants';
 import { buildLibraryObjectUserDescription } from './meta/description';
@@ -39,18 +41,8 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
   internalIds = internalIds;
   syncIds = syncIds;
 
-  receiverTypeMapping = {
-    [SimklCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
-    [SimklCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
-    [SimklCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
-  };
-  receiverTypeReverseMapping = {
-    [ManifestReceiverTypes.MOVIE]: SimklCatalogType.MOVIES,
-    [ManifestReceiverTypes.SERIES]: SimklCatalogType.SHOWS,
-    [ManifestReceiverTypes.ANIME]: SimklCatalogType.ANIME,
-    [ManifestReceiverTypes.CHANNELS]: SimklCatalogType.SHOWS,
-    [ManifestReceiverTypes.TV]: SimklCatalogType.SHOWS,
-  };
+  receiverTypeMapping = receiverTypeMapping;
+  receiverTypeReverseMapping = receiverTypeReverseMapping;
 
   receiverInfo = receiverInfo;
   manifestCatalogItems = manifestCatalogItems;
@@ -110,10 +102,10 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
 
   async _convertObjectToMetaObject(
     object: SimklLibraryListEntry,
-    oldIds:
+    _oldIds:
       | PickByArrays<IDs, DeepWriteable<SimklServerReceiver['internalIds']>>
       | undefined,
-    oldType: SimklCatalogType,
+    _oldType: SimklCatalogType,
     potentialType: ManifestReceiverTypes,
   ): Promise<MetaObject> {
     let newIds: RequireAtLeastOne<IDs> | undefined;
@@ -187,7 +179,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
           if (e instanceof Error && e.message.includes('Not found')) {
             // Do nothing
           } else if (e instanceof Error && e.message.includes('meta object')) {
-            console.log(e.message);
+            console.error(e.message);
           } else {
             console.error(e);
           }
@@ -208,7 +200,7 @@ export class SimklServerReceiver extends ReceiverServer<SimklMCIT> {
           if (e instanceof Error && e.message.includes('Not found')) {
             // Do nothing
           } else if (e instanceof Error && e.message.includes('meta object')) {
-            console.log(e.message);
+            console.error(e.message);
           } else {
             // console.error(e);
           }

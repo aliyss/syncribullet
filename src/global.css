@@ -2,9 +2,176 @@
  * Tailwind CSS imports
  * View the full documentation at https://tailwindcss.com
  */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  --color-primary: rgb(153, 212, 162);
+  --color-surface-tint: rgb(153, 212, 162);
+  --color-on-primary: rgb(0, 57, 24);
+  --color-primary-container: rgb(24, 81, 43);
+  --color-on-primary-container: rgb(180, 241, 189);
+  --color-secondary: rgb(183, 204, 183);
+  --color-on-secondary: rgb(35, 52, 38);
+  --color-secondary-container: rgb(57, 75, 59);
+  --color-on-secondary-container: rgb(211, 232, 210);
+  --color-tertiary: rgb(255, 121, 198);
+  --color-on-tertiary: rgb(0, 0, 0);
+  --color-tertiary-container: rgb(153, 55, 153);
+  --color-on-tertiary-container: rgb(255, 221, 255);
+  --color-error: rgb(255, 180, 171);
+  --color-on-error: rgb(105, 0, 5);
+  --color-error-container: rgb(147, 0, 10);
+  --color-on-error-container: rgb(255, 218, 214);
+  --color-background: rgb(16, 21, 16);
+  --color-on-background: rgb(223, 228, 220);
+  --color-surface: rgb(16, 21, 16);
+  --color-on-surface: rgb(223, 228, 220);
+  --color-surface-variant: rgb(65, 73, 65);
+  --color-on-surface-variant: rgb(193, 201, 190);
+  --color-outline: rgb(139, 147, 138);
+  --color-outline-variant: rgb(65, 73, 65);
+  --color-shadow: rgb(0, 0, 0);
+  --color-scrim: rgb(0, 0, 0);
+  --color-inverse-surface: rgb(223, 228, 220);
+  --color-inverse-on-surface: rgb(45, 50, 44);
+  --color-inverse-primary: rgb(50, 105, 65);
+  --color-primary-fixed: rgb(180, 241, 189);
+  --color-on-primary-fixed: rgb(0, 33, 11);
+  --color-primary-fixed-dim: rgb(153, 212, 162);
+  --color-on-primary-fixed-variant: rgb(24, 81, 43);
+  --color-secondary-fixed: rgb(211, 232, 210);
+  --color-on-secondary-fixed: rgb(14, 31, 18);
+  --color-secondary-fixed-dim: rgb(183, 204, 183);
+  --color-on-secondary-fixed-variant: rgb(57, 75, 59);
+  --color-tertiary-fixed: rgb(251, 226, 135);
+  --color-on-tertiary-fixed: rgb(34, 27, 0);
+  --color-tertiary-fixed-dim: rgb(221, 197, 110);
+  --color-on-tertiary-fixed-variant: rgb(84, 70, 0);
+  --color-surface-dim: rgb(16, 21, 16);
+  --color-surface-bright: rgb(53, 58, 53);
+  --color-surface-container-lowest: rgb(11, 15, 11);
+  --color-surface-container-low: rgb(24, 29, 24);
+  --color-surface-container: rgb(28, 33, 28);
+  --color-surface-container-high: rgb(38, 43, 38);
+  --color-surface-container-highest: rgb(49, 54, 49);
+
+  --color-info: rgb(221, 197, 110);
+  --color-on-info: rgb(58, 48, 0);
+  --color-info-container: rgb(84, 70, 0);
+  --color-on-info-container: rgb(251, 226, 135);
+  --color-purple: rgb(153, 121, 255);
+  --color-on-purple: rgb(0, 0, 0);
+  --color-purple-container: rgb(81, 55, 153);
+  --color-on-purple-container: rgb(234, 221, 255);
+
+  --color-error-light-hover: rgb(194, 20, 83);
+  --color-error-light-press: rgb(197, 31, 91);
+  --color-error-light-focus: rgb(197, 31, 91);
+  --color-error-light-drag: rgb(200, 41, 98);
+  --color-error-hover: rgb(243, 164, 175);
+  --color-error-press: rgb(237, 156, 168);
+  --color-error-focus: rgb(237, 156, 168);
+  --color-error-drag: rgb(231, 149, 162);
+  --color-error-container-light-hover: rgb(240, 200, 204);
+  --color-error-container-light-press: rgb(232, 191, 195);
+  --color-error-container-light-focus: rgb(232, 191, 195);
+  --color-error-container-light-drag: rgb(224, 182, 187);
+  --color-error-container-hover: rgb(154, 17, 63);
+  --color-error-container-press: rgb(158, 26, 71);
+  --color-error-container-focus: rgb(158, 26, 71);
+  --color-error-container-drag: rgb(163, 35, 77);
+  --color-background-light-hover: rgb(236, 233, 237);
+  --color-background-light-press: rgb(226, 224, 228);
+  --color-background-light-focus: rgb(226, 224, 228);
+  --color-background-light-drag: rgb(218, 215, 219);
+  --color-background: rgb(18, 18, 20);
+  --color-on-background: rgb(228, 226, 230);
+  --color-background-hover: rgb(43, 43, 47);
+  --color-background-press: rgb(51, 51, 55);
+  --color-background-focus: rgb(51, 51, 55);
+  --color-background-drag: rgb(59, 59, 63);
+  --color-surface-light-hover: rgb(236, 233, 237);
+  --color-surface-light-press: rgb(226, 224, 228);
+  --color-surface-light-focus: rgb(226, 224, 228);
+  --color-surface-light-drag: rgb(218, 215, 219);
+  --color-surface-hover: rgb(43, 43, 47);
+  --color-surface-press: rgb(51, 51, 55);
+  --color-surface-focus: rgb(51, 51, 55);
+  --color-surface-drag: rgb(59, 59, 63);
+  --color-surface-variant-light-hover: rgb(214, 213, 224);
+  --color-surface-variant-light-press: rgb(207, 206, 217);
+  --color-surface-variant-light-focus: rgb(207, 206, 217);
+  --color-surface-variant-light-drag: rgb(201, 200, 211);
+  --color-surface-variant-hover: rgb(79, 80, 89);
+  --color-surface-variant-press: rgb(85, 86, 95);
+  --color-surface-variant-focus: rgb(85, 86, 95);
+  --color-surface-variant-drag: rgb(90, 91, 100);
+  --color-inverse-surface-light-hover: rgb(63, 63, 67);
+  --color-inverse-surface-light-press: rgb(72, 71, 75);
+  --color-inverse-surface-light-focus: rgb(72, 71, 75);
+  --color-inverse-surface-light-drag: rgb(79, 79, 83);
+  --color-inverse-surface-hover: rgb(210, 208, 212);
+  --color-inverse-surface-press: rgb(200, 199, 202);
+  --color-inverse-surface-focus: rgb(200, 199, 202);
+  --color-inverse-surface-drag: rgb(191, 190, 193);
+  --color-warning-light-hover: rgb(161, 85, 24);
+  --color-warning-light-press: rgb(165, 93, 35);
+  --color-warning-light-focus: rgb(165, 93, 35);
+  --color-warning-light-drag: rgb(169, 101, 44);
+  --color-warning-container-light-hover: rgb(239, 203, 185);
+  --color-warning-container-light-press: rgb(230, 195, 177);
+  --color-warning-container-light-focus: rgb(230, 195, 177);
+  --color-warning-container-light-drag: rgb(222, 187, 169);
+  --color-warning: rgb(178, 154, 88);
+  --color-warning-hover: rgb(242, 170, 129);
+  --color-warning-press: rgb(234, 164, 123);
+  --color-warning-focus: rgb(234, 164, 123);
+  --color-warning-drag: rgb(227, 158, 117);
+  --color-warning-container-hover: rgb(128, 65, 16);
+  --color-warning-container-press: rgb(134, 72, 24);
+  --color-warning-container-focus: rgb(134, 72, 24);
+  --color-warning-container-drag: rgb(139, 79, 32);
+  --color-success-light-hover: rgb(20, 120, 82);
+  --color-success-light-press: rgb(31, 127, 90);
+  --color-success-light-focus: rgb(31, 127, 90);
+  --color-success-light-drag: rgb(41, 132, 97);
+  --color-success: rgb(105, 235, 167);
+  --color-success-container-light-hover: rgb(105, 235, 167);
+  --color-success-container-light-press: rgb(100, 225, 160);
+  --color-success-container-light-focus: rgb(100, 225, 160);
+  --color-success-container-light-drag: rgb(96, 217, 154);
+  --color-success-hover: rgb(76, 210, 145);
+  --color-success-press: rgb(72, 203, 139);
+  --color-success-focus: rgb(72, 203, 139);
+  --color-success-drag: rgb(69, 196, 135);
+  --color-success-container-hover: rgb(9, 95, 60);
+  --color-success-container-press: rgb(14, 103, 66);
+  --color-success-container-focus: rgb(14, 103, 66);
+  --color-success-container-drag: rgb(18, 109, 71);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 /**
  * WHAT IS THIS FILE?
@@ -17,4 +184,6 @@ html {
 }
 
 body {
+  color: var(--color-on-background);
+  background-color: var(--color-black);
 }

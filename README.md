@@ -2,6 +2,11 @@
 SyncriBullet is a Stremio Addon that synchronizes your watchlist with other services.
 
 > [!NOTE]
+> - (2025.05.24) Added import sync for Simkl!
+>       - No clean error handling yet, open up a PR to help out.
+>       - Also delete cache if you want to rerun it from scratch.
+>       - I did the most I could, for any issues please open up an issue.
+>       - A mess up in an existing watchlist may be still possible. Read everything carefully before running it.
 > - (2025.05.03) Added support for reconfiguring the addon.
 > - (2025.03.09) Added support for TVTime! (awful API btw)
 > - (2025.03.06) Added support for Kitsu! (also helps with NSFW content)
@@ -70,7 +75,7 @@ Import Sync is theoretically a one-time action where the whole library get's syn
 - [ ] Import Sync from Stremio to Anilist
 - [ ] Import Sync from Stremio to Kitsu
 - [ ] Import Sync from Stremio to MyAnimelist
-- [ ] Import Sync from Stremio to Simkl (Alternative until tested: [simkl-stremio](https://github.com/aliyss/simkl-stremio))
+- [x] Import Sync from Stremio to Simkl
 - [ ] Import Sync from Stremio to Trakt (Alternative until tested: [trakt-stremio-import](https://github.com/aliyss/trakt-stremio-import))
 - [ ] Import Sync from Stremio to TVTime
 

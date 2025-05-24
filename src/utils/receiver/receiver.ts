@@ -15,6 +15,10 @@ import {
 } from './manifest';
 import type { MinifiedManifestReceiverTypes } from './manifest';
 import type {
+  ManifestReceiverTypesMapping,
+  ManifestReceiverTypesReverseMapping,
+} from './types/manifest-types';
+import type {
   AllReceivers,
   ReceiverMCITypes,
   Receivers,
@@ -56,6 +60,13 @@ export abstract class Receiver<
     (typeof this.liveSyncTypes)[number][]
   >;
 
+  abstract receiverTypeMapping: ManifestReceiverTypesMapping<
+    MCIT['receiverCatalogType']
+  >;
+  abstract receiverTypeReverseMapping: ManifestReceiverTypesReverseMapping<
+    MCIT['receiverCatalogType']
+  >;
+
   public userSettings: UserSettings<MCIT> | null = null;
   public importer: ImporterClients | null = null;
 
@@ -92,13 +103,21 @@ export abstract class Receiver<
           .includes(item.id),
       )
       .map((item) => {
+        const importCatalogDefault = this.defaultImportCatalogs[
+          importerId
+        ].find((x) => x.id === item.id);
         const importCatalog = (
           ids ?? this.defaultImportCatalogs[importerId]
         ).find((x) => x.id === item.id);
         return {
           ...item,
           value: importCatalog?.value || false,
-          filters: importCatalog?.filters || null,
+          filters: importCatalog?.filters
+            ? {
+                ...importCatalogDefault?.filters,
+                ...importCatalog.filters,
+              }
+            : null,
         };
       });
   }

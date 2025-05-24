@@ -1,3 +1,5 @@
+import type { ImportCatalogEntityType } from '~/utils/importer/types/user-settings/import-catalogs';
+
 export interface StremioImportLibraryItem extends Record<string, unknown> {
   _id: string;
   removed: boolean;
@@ -19,7 +21,7 @@ export interface StremioImportLibraryItem extends Record<string, unknown> {
     episode?: number;
   };
   name: string;
-  type: 'movie' | 'series';
+  type: ImportCatalogEntityType;
   poster?: string;
   posterShape?: string;
   background?: string;

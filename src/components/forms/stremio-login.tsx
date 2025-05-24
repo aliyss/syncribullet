@@ -42,7 +42,7 @@ export const getLink = server$(async function () {
       },
     );
     return (await data.json()) as AuthPreparationData;
-  } catch (e) {
+  } catch {
     return {
       success: false,
       code: '',
@@ -72,7 +72,7 @@ export const getToken = server$(async function (code: string) {
       },
     );
     return (await data.json()) as AuthData;
-  } catch (e) {
+  } catch {
     return {
       authKey: '',
       auth_key: '',
@@ -122,7 +122,7 @@ export default component$<StremioLoginProps>(({ saveFromPreAuth$ }) => {
     if (!authPreparation.value.code) {
       try {
         authPreparation.value = await getLink();
-      } catch (e) {
+      } catch {
         /**/
       }
     }
@@ -167,7 +167,7 @@ export default component$<StremioLoginProps>(({ saveFromPreAuth$ }) => {
                   type="text"
                   value={authPreparation.value.code}
                   placeholder="Code"
-                  class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0 disabled:border-outline/20"
+                  class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0 disabled:border-outline/20"
                 />
               )}
             </FieldAuth>

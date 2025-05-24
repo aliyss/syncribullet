@@ -25,6 +25,7 @@ import {
 } from '~/utils/config/buildUrlFromReceivers';
 import type { UserConfigBuildMinifiedString } from '~/utils/config/types';
 import { exists } from '~/utils/helpers/array';
+import type { KnownNoSerialize } from '~/utils/helpers/qwik-types';
 // Types
 import { Receivers } from '~/utils/receiver/types/receivers';
 import type { ReceiverClients } from '~/utils/receiver/types/receivers';
@@ -111,9 +112,7 @@ export default component$<ConfigureProps>(({ config }) => {
   });
 
   const currentReceiver = useSignal<Receivers | null>();
-  const currentViewType = useSignal<ReceiversActionType | null>(
-    ReceiversActionType.Sync,
-  );
+  const currentViewType = useSignal<ReceiversActionType | null>();
 
   const syncriBulletSettings = useSignal<GeneralSettings>({});
   const syncriBulletUrl = useSignal<string | undefined>();
@@ -136,19 +135,35 @@ export default component$<ConfigureProps>(({ config }) => {
         syncriBulletSettings.value = configData.result[1];
       }
       receivers.value = {
-        [Receivers.SIMKL]: noSerialize(configReceivers[Receivers.SIMKL]),
-        [Receivers.ANILIST]: noSerialize(configReceivers[Receivers.ANILIST]),
-        [Receivers.KITSU]: noSerialize(configReceivers[Receivers.KITSU]),
-        [Receivers.TVTIME]: noSerialize(configReceivers[Receivers.TVTIME]),
+        [Receivers.SIMKL]: noSerialize(
+          configReceivers[Receivers.SIMKL],
+        ) as NoSerialize<ReceiverClients>,
+        [Receivers.ANILIST]: noSerialize(
+          configReceivers[Receivers.ANILIST],
+        ) as NoSerialize<ReceiverClients>,
+        [Receivers.KITSU]: noSerialize(
+          configReceivers[Receivers.KITSU],
+        ) as NoSerialize<ReceiverClients>,
+        [Receivers.TVTIME]: noSerialize(
+          configReceivers[Receivers.TVTIME],
+        ) as NoSerialize<ReceiverClients>,
       };
       return;
     }
     const configuredReceivers = configurableReceivers();
     receivers.value = {
-      [Receivers.SIMKL]: noSerialize(configuredReceivers[Receivers.SIMKL]),
-      [Receivers.ANILIST]: noSerialize(configuredReceivers[Receivers.ANILIST]),
-      [Receivers.KITSU]: noSerialize(configuredReceivers[Receivers.KITSU]),
-      [Receivers.TVTIME]: noSerialize(configuredReceivers[Receivers.TVTIME]),
+      [Receivers.SIMKL]: noSerialize(
+        configuredReceivers[Receivers.SIMKL],
+      ) as NoSerialize<ReceiverClients>,
+      [Receivers.ANILIST]: noSerialize(
+        configuredReceivers[Receivers.ANILIST],
+      ) as NoSerialize<ReceiverClients>,
+      [Receivers.KITSU]: noSerialize(
+        configuredReceivers[Receivers.KITSU],
+      ) as NoSerialize<ReceiverClients>,
+      [Receivers.TVTIME]: noSerialize(
+        configuredReceivers[Receivers.TVTIME],
+      ) as NoSerialize<ReceiverClients>,
     };
 
     const settings = localStorage.getItem('syncribullet-settings');
@@ -183,7 +198,11 @@ export default component$<ConfigureProps>(({ config }) => {
         currentViewType.value === ReceiversActionType.Sync &&
         receivers.value[currentReceiver.value] ? (
           <ReceiversSettings
-            currentReceiver={receivers.value[currentReceiver.value]!}
+            currentReceiver={
+              receivers.value[
+                currentReceiver.value
+              ] as KnownNoSerialize<ReceiverClients>
+            }
             updateReceiver$={() => {
               receivers.value = {
                 ...receivers.value,

@@ -30,7 +30,11 @@ export async function getSimklLibraryItems(
       staleIfError: 60 * 60 * 5,
     },
   });
-  const previews = response.data;
+  const previews = response.data || {
+    movies: [],
+    shows: [],
+    anime: [],
+  };
   return [
     ...(previews.movies ?? []),
     ...(previews.shows ?? []),

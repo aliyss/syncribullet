@@ -23,7 +23,7 @@ export default component$<SendersSectionProps>(({ onClick$, url }) => {
       {url && (
         <div class="flex flex-col gap-4 pt-5">
           <input
-            class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+            class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
             value={url}
             readOnly
           />

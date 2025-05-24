@@ -28,7 +28,7 @@ export const getCode = server$(async function (
       `https://api.simkl.com/oauth/pin?client_id=${client_id}&redirect=${redirect_url}`,
     );
     return await data.json();
-  } catch (e) {
+  } catch {
     return { user_code: '', verification_url: '' };
   }
 });
@@ -79,7 +79,7 @@ export default component$(() => {
           client_id.value = true;
           setToken();
         }
-      } catch (e) {
+      } catch {
         /**/
       }
     }
@@ -97,7 +97,7 @@ export default component$(() => {
       code.value = responseData;
       client_id.value = client_id_p;
       setToken();
-    } catch (e) {
+    } catch {
       /**/
     }
   });
@@ -132,7 +132,7 @@ export default component$(() => {
                   type="text"
                   value={field.value}
                   placeholder="Client Id"
-                  class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                  class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                 />
               )}
             </Field>
@@ -155,7 +155,7 @@ export default component$(() => {
                   value={code.value.user_code}
                   disabled
                   placeholder="Copy Code"
-                  class="py-2.5 px-3 w-full h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                  class="py-2.5 px-3 w-full h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                 />
               )}
             </FieldCode>

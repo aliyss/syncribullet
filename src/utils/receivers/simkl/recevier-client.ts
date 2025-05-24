@@ -7,6 +7,8 @@ import {
   liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
+  receiverTypeMapping,
+  receiverTypeReverseMapping,
 } from './constants';
 import type { SimklMCIT } from './types/manifest';
 
@@ -18,4 +20,7 @@ export class SimklClientReceiver extends ReceiverClient<SimklMCIT> {
   defaultImportCatalogs = defaultImportCatalogs;
   liveSyncTypes = liveSyncTypes;
   defaultLiveSyncTypes = defaultLiveSyncTypes;
+
+  receiverTypeMapping = receiverTypeMapping;
+  receiverTypeReverseMapping = receiverTypeReverseMapping;
 }

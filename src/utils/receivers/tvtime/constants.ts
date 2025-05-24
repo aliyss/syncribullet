@@ -12,6 +12,7 @@ import type { ReceiverInfo } from '~/utils/receiver/receiver';
 import { IDSources } from '~/utils/receiver/types/id';
 import { Receivers } from '~/utils/receiver/types/receivers';
 
+import { TVTimeCatalogType } from './types/catalog/catalog-type';
 import type { TVTimeMCIT } from './types/manifest';
 
 export const receiverInfo: ReceiverInfo<Receivers.TVTIME> = {
@@ -112,3 +113,15 @@ export const liveSyncTypes = [
 
 export const defaultLiveSyncTypes: Readonly<(typeof liveSyncTypes)[number][]> =
   liveSyncTypes;
+
+export const receiverTypeMapping = {
+  [TVTimeCatalogType.MOVIE]: ManifestReceiverTypes.MOVIE,
+  [TVTimeCatalogType.SERIES]: ManifestReceiverTypes.SERIES,
+};
+export const receiverTypeReverseMapping = {
+  [ManifestReceiverTypes.MOVIE]: TVTimeCatalogType.MOVIE,
+  [ManifestReceiverTypes.SERIES]: TVTimeCatalogType.SERIES,
+  [ManifestReceiverTypes.ANIME]: undefined,
+  [ManifestReceiverTypes.CHANNELS]: undefined,
+  [ManifestReceiverTypes.TV]: undefined,
+};

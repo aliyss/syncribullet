@@ -12,6 +12,7 @@ import type { ReceiverInfo } from '~/utils/receiver/receiver';
 import { IDSources } from '~/utils/receiver/types/id';
 import { Receivers } from '~/utils/receiver/types/receivers';
 
+import { KitsuCatalogType } from './types/catalog/catalog-type';
 import type { KitsuMCIT } from './types/manifest';
 
 export const receiverInfo: ReceiverInfo<Receivers.KITSU> = {
@@ -111,3 +112,16 @@ export const liveSyncTypes = [
 
 export const defaultLiveSyncTypes: Readonly<(typeof liveSyncTypes)[number][]> =
   liveSyncTypes;
+
+export const receiverTypeMapping = {
+  [KitsuCatalogType.MOVIES]: ManifestReceiverTypes.MOVIE,
+  [KitsuCatalogType.SHOWS]: ManifestReceiverTypes.SERIES,
+  [KitsuCatalogType.ANIME]: ManifestReceiverTypes.ANIME,
+};
+export const receiverTypeReverseMapping = {
+  [ManifestReceiverTypes.MOVIE]: KitsuCatalogType.ANIME,
+  [ManifestReceiverTypes.SERIES]: KitsuCatalogType.ANIME,
+  [ManifestReceiverTypes.ANIME]: KitsuCatalogType.ANIME,
+  [ManifestReceiverTypes.CHANNELS]: KitsuCatalogType.ANIME,
+  [ManifestReceiverTypes.TV]: KitsuCatalogType.ANIME,
+};

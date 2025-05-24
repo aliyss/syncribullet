@@ -23,7 +23,7 @@ export const validateCode = server$(async function (
       ...(await data.json()),
       client_id,
     };
-  } catch (e) {
+  } catch {
     return;
   }
 });

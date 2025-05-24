@@ -71,7 +71,7 @@ export default component$<ReceiversImportSyncSettingsProps>(
 
     if (!currentReceiver.receiverInfo.importSync) {
       return (
-        <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 bg-secondary/20 flex flex-col">
+        <div class="p-6 w-full max-w-2xl rounded-xl border shadow-xl border-outline/20 flex flex-col">
           <h2 class="w-full text-xl font-bold text-center md:text-xl">
             {currentReceiver.receiverInfo.text}
           </h2>

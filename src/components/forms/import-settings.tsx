@@ -10,9 +10,10 @@ import {
   type ImporterMCITypes,
   Importers,
 } from '~/utils/importer/types/importers';
-import type {
-  ReceiverClients,
-  ReceiverMCITypes,
+import {
+  type ReceiverClients,
+  type ReceiverMCITypes,
+  Receivers,
 } from '~/utils/receiver/types/receivers';
 import type { UserSettingsImportForm } from '~/utils/receiver/types/user-settings/form';
 
@@ -49,17 +50,30 @@ export default component$<ManifestSettingsProps>(
         const currentCatalog = currentCatalogs.value.find(
           (x) => x.id === catalog.id,
         );
+        const currentCatalogDefaultFilters =
+          currentReceiver.getImportCatalogItems(
+            currentImporter.importerInfo.id,
+          );
         return {
           id: catalog.id,
           name: catalog.name,
           value: currentCatalog ? currentCatalog.value : false,
-          filters: currentCatalog?.filters ?? {
+          filters: {
             moviesStateFlaggedWatched: false,
             moviesStateFlaggedUnwatched: false,
+            moviesStateFlaggedDropped: false,
             seriesStateFlaggedWatched: false,
             seriesStateFlaggedUnwatched: false,
+            seriesStateFlaggedDropped: false,
+            seriesStateFlaggedOnHold: false,
+            seriesStateHasWatchCount: null,
+            seriesPreferStateFlaggedWatchedOverWatchCount: null,
             seriesUseCinemetaComparison: null,
             seriesBackfillEpisodes: null,
+            supportsTypes: [],
+            ...currentCatalogDefaultFilters.find((x) => x.id === catalog.id)
+              ?.filters,
+            ...currentCatalog?.filters,
           },
         };
       }),
@@ -71,6 +85,7 @@ export default component$<ManifestSettingsProps>(
     });
 
     const handleSubmit = $<SubmitHandler<FormSettings>>((values) => {
+      console.log('submit', values.catalogs);
       currentReceiver.mergeUserConfig({
         importCatalog: {
           ...currentReceiver.userSettings?.importCatalog,
@@ -89,8 +104,58 @@ export default component$<ManifestSettingsProps>(
     return (
       <Form onSubmit$={handleSubmit} shouldActive={false} class="w-full">
         <div class="flex flex-col gap-4 w-full">
-          <div class="flex">
+          <div class="flex flex-col gap-3">
             <Subtitle>Import Settings</Subtitle>
+            <div class="w-full text-start flex flex-col gap-2">
+              <p class="text-sm text-on-surface">
+                Select the catalogs you want to import from your library. You
+                can also select the filters you want to apply to each catalog. I
+                recommend to keep the default configuration though.
+              </p>
+              <ul class="text-sm text-on-surface list-disc pl-4">
+                <li>
+                  <strong class="text-info">
+                    Prefer "FlaggedWatched" over "HasWatchCount":
+                  </strong>{' '}
+                  will mark a Series as completed if the Series has been marked
+                  as completed on {currentImporter.importerInfo.text}.
+                </li>
+                <li>
+                  <strong class="text-info">
+                    Determine which episodes were marked as watched:
+                  </strong>{' '}
+                  will use {currentImporter.importerInfo.text} to determine
+                  which episodes have been marked as watched. In this case you
+                  don't need to edit the season or episode count. If you do edit
+                  the item manually, it will assume that all the episodes have
+                  been marked as watched before the edited count.
+                </li>
+                <li>
+                  <strong class="text-info">
+                    Mark all episodes before the current as watched:
+                  </strong>{' '}
+                  will skip "Determine which episodes were marked as watched"
+                  and mark all episodes before the current as watched.
+                </li>
+              </ul>
+              <div class="w-full text-start flex flex-col gap-2">
+                {currentReceiver.receiverInfo.id === Receivers.SIMKL && (
+                  <p class="text-sm text-on-surface">
+                    <span class="text-info">
+                      Note: Simkl has following special internal logics:
+                      <ul class="list-disc pl-4 text-on-surface">
+                        <li>
+                          You can add status: "completed" to mark a show as
+                          completed. However, if the show is still airing, it
+                          will be added to your "watching" watchlist instead and
+                          all aired episodes will be marked as watched.
+                        </li>
+                      </ul>
+                    </span>
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
           <FieldArray name="catalogs">
             {(fieldArray) => (
@@ -105,7 +170,7 @@ export default component$<ManifestSettingsProps>(
                               <input
                                 type="checkbox"
                                 placeholder="List"
-                                class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                 checked={field.value}
                                 {...props}
                               />
@@ -170,7 +235,7 @@ export default component$<ManifestSettingsProps>(
                                   <input
                                     type="checkbox"
                                     placeholder="List"
-                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                     checked={field.value}
                                     {...props}
                                   />
@@ -194,7 +259,7 @@ export default component$<ManifestSettingsProps>(
                                   <input
                                     type="checkbox"
                                     placeholder="List"
-                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                     checked={field.value}
                                     {...props}
                                   />
@@ -220,7 +285,7 @@ export default component$<ManifestSettingsProps>(
                                   <input
                                     type="checkbox"
                                     placeholder="List"
-                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                     checked={field.value}
                                     {...props}
                                   />
@@ -244,12 +309,67 @@ export default component$<ManifestSettingsProps>(
                                   <input
                                     type="checkbox"
                                     placeholder="List"
-                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                     checked={field.value}
                                     {...props}
                                   />
                                   <div class="flex flex-row gap-2">
                                     Series: Was marked as "FlaggedUnwatched"
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Field>
+                          <Field
+                            name={`catalogs.${index}.filters.seriesStateHasWatchCount`}
+                            type="boolean"
+                          >
+                            {(field, props) => {
+                              if (
+                                field.value === null ||
+                                field.value === undefined
+                              ) {
+                                return <></>;
+                              }
+                              return (
+                                <div class="flex flex-row gap-2 items-center">
+                                  <input
+                                    type="checkbox"
+                                    placeholder="List"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
+                                    checked={field.value}
+                                    {...props}
+                                  />
+                                  <div class="flex flex-row gap-2">
+                                    Series: Was marked as "HasWatchCount"
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Field>
+                          <Field
+                            name={`catalogs.${index}.filters.seriesPreferStateFlaggedWatchedOverWatchCount`}
+                            type="boolean"
+                          >
+                            {(field, props) => {
+                              if (
+                                field.value === null ||
+                                field.value === undefined
+                              ) {
+                                return <></>;
+                              }
+                              return (
+                                <div class="flex flex-row gap-2 items-center">
+                                  <input
+                                    type="checkbox"
+                                    placeholder="List"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
+                                    checked={field.value}
+                                    {...props}
+                                  />
+                                  <div class="flex flex-row gap-2">
+                                    Series: Prefer "FlaggedWatched" over
+                                    "HasWatchCount"
                                   </div>
                                 </div>
                               );
@@ -271,12 +391,13 @@ export default component$<ManifestSettingsProps>(
                                   <input
                                     type="checkbox"
                                     placeholder="List"
-                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                     checked={field.value}
                                     {...props}
                                   />
                                   <div class="flex flex-row gap-2">
-                                    Series: Use Cinemeta comparison
+                                    Series: Determine which episodes were marked
+                                    as watched
                                   </div>
                                 </div>
                               );
@@ -295,7 +416,7 @@ export default component$<ManifestSettingsProps>(
                                   <input
                                     type="checkbox"
                                     placeholder="List"
-                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+                                    class="font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
                                     checked={field.value}
                                     {...props}
                                   />
@@ -318,11 +439,11 @@ export default component$<ManifestSettingsProps>(
           <div class="flex flex-row gap-2">
             <Button
               type="submit"
-              class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline`}
+              class={`inline-flex items-center py-1.5 px-4 text-sm font-medium text-center rounded-full border border-outline text-on-primary`}
               backgroundColour="bg-primary"
               borderColour="border-primary"
             >
-              Load {currentImporter.importerInfo.text} Library
+              Load Library Items
             </Button>
           </div>
         </div>

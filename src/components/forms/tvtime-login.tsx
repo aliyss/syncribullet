@@ -103,7 +103,7 @@ export default component$(() => {
               type="text"
               value={field.value}
               placeholder="Email"
-              class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+              class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
             />
           )}
         </Field>
@@ -114,7 +114,7 @@ export default component$(() => {
               type="password"
               value={field.value}
               placeholder="Password"
-              class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline outline-0"
+              class="py-2.5 px-3 h-10 font-sans text-lg font-normal rounded-lg border transition-all focus:border-2 bg-background/20 text-on-surface outline-solid outline-0"
             />
           )}
         </Field>

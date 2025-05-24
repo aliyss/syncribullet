@@ -7,6 +7,8 @@ import {
   liveSyncTypes,
   manifestCatalogItems,
   receiverInfo,
+  receiverTypeMapping,
+  receiverTypeReverseMapping,
 } from './constants';
 import type { AnilistMCIT } from './types/manifest';
 
@@ -18,4 +20,7 @@ export class AnilistClientReceiver extends ReceiverClient<AnilistMCIT> {
   defaultImportCatalogs = defaultImportCatalogs;
   liveSyncTypes = liveSyncTypes;
   defaultLiveSyncTypes = defaultLiveSyncTypes;
+
+  receiverTypeMapping = receiverTypeMapping;
+  receiverTypeReverseMapping = receiverTypeReverseMapping;
 }

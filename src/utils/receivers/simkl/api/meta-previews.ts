@@ -29,9 +29,14 @@ export async function getSimklMetaPreviews(
         },
       },
     );
-    return await response.data;
+    return (
+      (await response.data) || {
+        movies: [],
+        shows: [],
+      }
+    );
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw new Error('Failed to fetch data from Simkl API!');
   }
 }
