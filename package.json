@@ -56,11 +56,11 @@
     "rimraf": "^5.0.1",
     "tailwindcss": "^4.1.7",
     "typescript": "5.4.5",
-    "undici": "*",
     "vite": "5.3.5",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
+    "undici": "*",
     "@sentry/node": "^9.3.0",
     "@sentry/profiling-node": "^9.3.0",
     "@sentry/vite-plugin": "^3.2.1",
