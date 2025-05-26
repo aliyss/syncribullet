@@ -7,7 +7,20 @@ import { decryptCompressToUserConfigBuildMinifiedStrings } from '~/utils/config/
 import { ReceiverServerExtended } from '~/utils/receiver/receiver-server-extended';
 import type { StreamObject } from '~/utils/receiver/types/stream-object';
 
-export const onGet: RequestHandler = async ({ json, params, env, url }) => {
+export const onGet: RequestHandler = async ({
+  json,
+  params,
+  env,
+  url,
+  headers,
+}) => {
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
+  headers.set(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
+  );
+  headers.set('Access-Control-Allow-Credentials', 'true');
   // if (
   //   !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
   //   request.headers.get('host') !== env.get('PRIVATE_SYNCRIBULLET_HOST')

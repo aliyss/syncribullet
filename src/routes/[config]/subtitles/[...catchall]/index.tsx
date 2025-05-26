@@ -21,7 +21,15 @@ export const onGet: RequestHandler = async ({
   env,
   redirect,
   query,
+  headers,
 }) => {
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
+  headers.set(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
+  );
+  headers.set('Access-Control-Allow-Credentials', 'true');
   // if (
   //   !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
   //   !ALLOWED_REFERERS.includes(request.headers.get('referer') ?? '') &&
@@ -43,9 +51,8 @@ export const onGet: RequestHandler = async ({
 
   const [userConfig] = Array.isArray(config) ? config : [config, {}];
 
-  const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
-    userConfig,
-  );
+  const receivers =
+    await buildReceiversFromUserConfigBuildMinifiedStrings(userConfig);
 
   const [potentialReceiverType, metaProgress] = params.catchall
     .slice(0, -'.json'.length)

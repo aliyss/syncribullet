@@ -12,7 +12,14 @@ import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config
 import { exists } from '~/utils/helpers/array';
 import type { ReceiverServers } from '~/utils/receiver/types/receivers';
 
-export const onGet: RequestHandler = async ({ json, params, env }) => {
+export const onGet: RequestHandler = async ({ json, params, env, headers }) => {
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
+  headers.set(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
+  );
+  headers.set('Access-Control-Allow-Credentials', 'true');
   // if (
   //   !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
   //   request.headers.get('host') !== env.get('PRIVATE_SYNCRIBULLET_HOST')
@@ -38,9 +45,8 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
 
   const [userConfig] = Array.isArray(config) ? config : [config, {}];
 
-  const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
-    userConfig,
-  );
+  const receivers =
+    await buildReceiversFromUserConfigBuildMinifiedStrings(userConfig);
 
   const [potentialReceiverType, catalogId, searchParams] = params.catchall
     .slice(0, -'.json'.length)
