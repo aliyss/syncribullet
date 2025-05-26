@@ -63,6 +63,7 @@ export default component$(() => {
   useTask$(async () => {
     if (!client_id.value) {
       try {
+        console.log(JSON.stringify(location.url));
         const data = await getCode(
           location.url.protocol +
             '//' +
