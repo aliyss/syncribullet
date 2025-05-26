@@ -20,6 +20,9 @@ export const getCode = server$(async function (
   if (!client_id) {
     client_id = this.env.get('PRIVATE_SIMKL_CLIENT_ID');
   }
+  console.log('getCode', redirect_url);
+  console.log('client_id', client_id);
+  console.log('redirect_url', this.env.get('PRIVATE_SIMKL_CLIENT_ID'));
   if (!client_id) {
     return { user_code: '', verification_url: '' };
   }
@@ -63,18 +66,7 @@ export default component$(() => {
   useTask$(async () => {
     if (!client_id.value) {
       try {
-        console.log(JSON.stringify(location.url));
-        const data = await getCode(
-          location.url.protocol +
-            '//' +
-            location.url.host +
-            `${
-              location.url.host.startsWith('localhost')
-                ? ''
-                : '.baby-beamup.club'
-            }` +
-            '/oauth/simkl/',
-        );
+        const data = await getCode(location.url.origin + '/oauth/simkl/');
         code.value = data;
         if (code.value.user_code) {
           client_id.value = true;
@@ -88,8 +80,7 @@ export default component$(() => {
 
   const handleSubmit = $<SubmitHandler<ApiClientForm>>(async (values) => {
     try {
-      const redirect_url =
-        location.url.protocol + '//' + location.url.host + '/oauth/simkl/';
+      const redirect_url = location.url.origin + '/oauth/simkl/';
       const client_id_p = values.client_id;
       const data = await fetch(
         `https://api.simkl.com/oauth/pin?client_id=${client_id_p}&redirect=${redirect_url}`,
