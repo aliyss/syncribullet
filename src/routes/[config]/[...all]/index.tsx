@@ -6,7 +6,15 @@ import { manifest } from '~/utils/manifest';
 import type { ManifestResource } from '~/utils/manifest';
 import { ReceiverServerExtended } from '~/utils/receiver/receiver-server-extended';
 
-export const onGet: RequestHandler = async ({ json, params, env }) => {
+export const onGet: RequestHandler = async ({ json, params, env, headers }) => {
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
+  headers.set(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
+  );
+  headers.set('Access-Control-Allow-Credentials', 'true');
+
   if (params.config === 'manifest.json') {
     json(200, {
       ...manifest,
@@ -28,9 +36,8 @@ export const onGet: RequestHandler = async ({ json, params, env }) => {
     ? userConfig
     : [userConfig, {}];
 
-  const receivers = await buildReceiversFromUserConfigBuildMinifiedStrings(
-    config,
-  );
+  const receivers =
+    await buildReceiversFromUserConfigBuildMinifiedStrings(config);
 
   const newManifest = JSON.parse(JSON.stringify(manifest));
 
