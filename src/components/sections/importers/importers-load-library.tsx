@@ -603,7 +603,7 @@ export default component$(
                 updateView$(ImportersSettingsView.SETTINGS);
               }}
             >
-              Start Sync
+              Start Import
             </Button>
           </div>
         </div>

@@ -20,7 +20,6 @@ import type { UserSettingsImportForm } from '~/utils/receiver/types/user-setting
 import { Button } from '../buttons/button';
 import { ChevronDown } from '../icons/chevron';
 import { ImportersSettingsView } from '../sections/importers/importers-settings';
-import Subtitle from '../titles/subtitle';
 
 export interface ManifestSettingsProps {
   currentReceiver: KnownNoSerialize<ReceiverClients>;
@@ -105,11 +104,13 @@ export default component$<ManifestSettingsProps>(
       <Form onSubmit$={handleSubmit} shouldActive={false} class="w-full">
         <div class="flex flex-col gap-4 w-full">
           <div class="flex flex-col gap-3">
-            <Subtitle>Import Settings</Subtitle>
             <div class="w-full text-start flex flex-col gap-2">
               <p class="text-sm text-on-surface">
-                Select the catalogs you want to import from your library. You
-                can also select the filters you want to apply to each catalog. I
+                This will export all your catalogs from{' '}
+                {currentImporter.importerInfo.text} and import it to{' '}
+                {currentReceiver.receiverInfo.text}. Please select the catalogs
+                you want to export from your Stremio library. You can also
+                select the filters you want to apply to each catalog. I
                 recommend to keep the default configuration though.
               </p>
               <ul class="text-sm text-on-surface list-disc pl-4">

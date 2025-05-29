@@ -24,7 +24,7 @@ export interface ManifestSettingsProps {
 type ManifestSettingsTab =
   | 'Catalogs'
   | 'Live Sync'
-  | 'Import Sync'
+  | 'Catalog Import'
   | 'Credentials';
 
 export default component$<ManifestSettingsProps>(
@@ -106,7 +106,7 @@ export default component$<ManifestSettingsProps>(
 
     const tabs: ManifestSettingsTab[] = ['Catalogs', 'Credentials'];
     if (currentReceiver.receiverInfo.importSync) {
-      tabs.splice(1, 0, 'Import Sync');
+      tabs.splice(1, 0, 'Catalog Import');
     }
     if (currentReceiver.receiverInfo.liveSync) {
       tabs.splice(1, 0, 'Live Sync');
@@ -125,7 +125,7 @@ export default component$<ManifestSettingsProps>(
             onTabChange$={(tab) => {
               activeTab.value = tab as ManifestSettingsTab;
             }}
-            overflow={activeTab.value !== 'Import Sync'}
+            overflow={activeTab.value !== 'Catalog Import'}
           >
             <div class={`${activeTab.value !== 'Catalogs' && 'hidden'}`}>
               <FieldArray name="catalogs">
@@ -205,7 +205,7 @@ export default component$<ManifestSettingsProps>(
               </FieldArray>
             </div>
             {currentReceiver.receiverInfo.importSync &&
-            activeTab.value === 'Import Sync' ? (
+            activeTab.value === 'Catalog Import' ? (
               <div>
                 <ImportSyncSettings currentReceiver={currentReceiver} />
               </div>
@@ -234,7 +234,7 @@ export default component$<ManifestSettingsProps>(
               </div>
             </div>
           </Tab>
-          {activeTab.value !== 'Import Sync' && (
+          {activeTab.value !== 'Catalog Import' && (
             <div class="flex flex-row gap-2">
               <Button
                 type="submit"
