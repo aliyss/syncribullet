@@ -46,15 +46,7 @@ export default component$(() => {
           and set the redirect_uri to{' '}
           <p>
             <span class="rounded-full text-primary bg-surface">
-              {loc.url.protocol +
-                '//' +
-                loc.url.host +
-                `${
-                  loc.url.host.startsWith('localhost')
-                    ? ''
-                    : '.baby-beamup.club'
-                }` +
-                '/oauth/anilist/'}
+              {loc.url.protocol + '//' + loc.url.host + '/oauth/anilist/'}
             </span>
           </p>
         </p>
