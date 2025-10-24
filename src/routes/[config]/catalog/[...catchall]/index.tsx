@@ -12,7 +12,20 @@ import { buildReceiversFromUserConfigBuildMinifiedStrings } from '~/utils/config
 import { exists } from '~/utils/helpers/array';
 import type { ReceiverServers } from '~/utils/receiver/types/receivers';
 
-export const onGet: RequestHandler = async ({ json, params, env, headers }) => {
+export const onGet: RequestHandler = async ({
+  json,
+  params,
+  env,
+  headers,
+  cacheControl,
+}) => {
+  cacheControl({
+    // Max once every 20min, revalidate on the server to get a fresh version of this page
+    maxAge: 60 * 20,
+    // Always serve a cached response by default, up to a week stale
+    staleWhileRevalidate: 60 * 10,
+  });
+
   headers.set('Access-Control-Allow-Origin', '*');
   headers.set('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
   headers.set(
@@ -20,6 +33,11 @@ export const onGet: RequestHandler = async ({ json, params, env, headers }) => {
     'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
   );
   headers.set('Access-Control-Allow-Credentials', 'true');
+  headers.set(
+    'Cache-Control',
+    'public, max-age=1200, stale-while-revalidate=600',
+  );
+
   // if (
   //   !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&
   //   request.headers.get('host') !== env.get('PRIVATE_SYNCRIBULLET_HOST')
