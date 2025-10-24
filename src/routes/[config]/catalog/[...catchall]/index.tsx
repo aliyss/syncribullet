@@ -124,5 +124,7 @@ export const onGet: RequestHandler = async ({ json, params, env, headers }) => {
       }
       return true;
     }),
+    cacheMaxAge: 20 * 60,
+    staleRevalidate: 30 * 60,
   });
 };
