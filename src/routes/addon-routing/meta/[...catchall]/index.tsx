@@ -86,7 +86,7 @@ export const onGet: RequestHandler = async ({ json, params }) => {
       json(200, {
         meta: metaObject,
         cacheMaxAge: 24 * 60 * 60,
-        staleRevalidate: 28 * 60 * 60,
+        staleRevalidate: 60 * 10,
       });
       return;
     } catch (e) {
