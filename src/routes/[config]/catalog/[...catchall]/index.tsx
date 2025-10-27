@@ -33,10 +33,10 @@ export const onGet: RequestHandler = async ({
     'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization',
   );
   headers.set('Access-Control-Allow-Credentials', 'true');
-  headers.set(
-    'Cache-Control',
-    'public, max-age=1200, stale-while-revalidate=600',
-  );
+  // headers.set(
+  //   'Cache-Control',
+  //   'public, max-age=1200, stale-while-revalidate=600',
+  // );
 
   // if (
   //   !ALLOWED_ORIGINS.includes(request.headers.get('origin') ?? '') &&

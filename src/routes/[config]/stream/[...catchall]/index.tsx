@@ -85,8 +85,8 @@ export const onGet: RequestHandler = async ({
 
   json(200, {
     streams: streamObjects,
-    cacheMaxAge: 60 * 60,
-    staleRevalidate: 60 * 60,
+    cacheMaxAge: 20 * 60,
+    staleRevalidate: 30 * 60,
   });
   return;
 };
