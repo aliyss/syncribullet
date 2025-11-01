@@ -34,7 +34,7 @@ RUN set -eux; \
         echo "PRIVATE_ENCRYPTION_KEY=${PRIVATE_ENCRYPTION_KEY}" > .env.built; \
     else \
         echo "⚡ No PRIVATE_ENCRYPTION_KEY provided — generating one"; \
-        PRIVATE_ENCRYPTION_KEY=$(openssl rand -base64 32); \
+        PRIVATE_ENCRYPTION_KEY=$(openssl rand -base64 48 | tr -dc 'a-zA-Z0-9' | head -c 32 ; echo); \
         echo "PRIVATE_ENCRYPTION_KEY=${PRIVATE_ENCRYPTION_KEY}" > .env.built; \
     fi
 
@@ -71,7 +71,7 @@ ENTRYPOINT ["/bin/sh", "-c", " \
             export $(grep PRIVATE_ENCRYPTION_KEY /etc/environment | xargs); \
             MSG='🔐 Using build-time PRIVATE_ENCRYPTION_KEY'; \
         else \
-            export PRIVATE_ENCRYPTION_KEY=$(openssl rand -base64 32); \
+            export PRIVATE_ENCRYPTION_KEY=$(openssl rand -base64 48 | tr -dc 'a-zA-Z0-9' | head -c 32 ; echo); \
             MSG='🔐 Generated runtime PRIVATE_ENCRYPTION_KEY'; \
         fi; \
     else \
@@ -86,9 +86,9 @@ ENTRYPOINT ["/bin/sh", "-c", " \
 # --- Build examples ---
 # docker build -t syncribullet:local -f Dockerfile.local .
 # docker build --build-arg PRIVATE_ENCRYPTION_KEY=runtime -t syncribullet:local -f Dockerfile.local .
-# docker build --build-arg PRIVATE_ENCRYPTION_KEY=s0m3-bu1ld-k3y -t syncribullet:local -f Dockerfile.local .
+# docker build --build-arg PRIVATE_ENCRYPTION_KEY=s0m3bu1ldk3y -t syncribullet:local -f Dockerfile.local .
 # docker build --no-cache -t syncribullet:local -f Dockerfile.local .
 
 # --- Run examples ---
 # docker run --rm -it -p 3000:3000 syncribullet:local
-# docker run --rm -it -p 3000:3000 -e PRIVATE_ENCRYPTION_KEY=s0m3-runt1m3-k3y syncribullet:local
+# docker run --rm -it -p 3000:3000 -e PRIVATE_ENCRYPTION_KEY=s0m3runt1m3k3y syncribullet:local

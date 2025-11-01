@@ -23,6 +23,8 @@ SyncriBullet is a Stremio Addon that synchronizes your watchlist with other serv
     - [Two-Way Sync](#two-way-sync)
     - [Catalogs](#catalogs)
 - [Use the Addon](#use-the-addon)
+    - [Hosted](#hosted)
+    - [Docker](#docker)
 - [Modify and Build yourself](#modify-and-build-yourself)
     - [Build](#build)
     - [Start](#start)
@@ -99,7 +101,27 @@ Stremio Catalog Support, self explanatory if you are using stremio.
 
 ## Use the Addon
 
-[Click here!](https://56bca7d190fc-syncribullet.baby-beamup.club/)
+### Hosted
+
+- Hosted by Stremio: [Click here!](https://56bca7d190fc-syncribullet.baby-beamup.club/)
+    - Catalog updates are limited to every 4hrs
+
+### Docker
+
+Either get the image from [docker](https://hub.docker.com/r/aliyss/syncribullet). Or clone this repo.
+```bash
+# From Docker Hub
+docker pull aliyss/syncribullet:latest
+
+# From GitHub
+git clone https://github.com/aliyss/syncribullet.git
+docker build --build-arg PRIVATE_ENCRYPTION_KEY=runtime -t aliyss/syncribullet -f Dockerfile.local .
+```
+
+Afterwards run the image, by replacing s0m3runt1m3k3y with your own encryption key. Make sure your encryption key only contains alphanumeric characters and numbers (`^[a-zA-Z0-9]$`): 
+```bash
+docker run --rm -it -p 3000:3000 -e PRIVATE_ENCRYPTION_KEY=s0m3runt1m3k3y aliyss/syncribullet
+```
 
 ## Modify and Build yourself
 
