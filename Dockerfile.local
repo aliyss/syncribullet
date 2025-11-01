@@ -1,0 +1,87 @@
+# --- Build stage ---
+FROM node:20-alpine3.21 AS base
+
+WORKDIR /app
+
+# Optional build argument for encryption key
+ARG PRIVATE_ENCRYPTION_KEY
+
+# Install rimraf globally for build scripts
+RUN npm install -g rimraf
+
+# Copy dependency manifests first for caching
+COPY package*.json ./
+
+# Install dependencies efficiently
+RUN set -eux; \
+    if [ -f package-lock.json ]; then \
+        npm ci --omit=dev; \
+    else \
+        npm install; \
+    fi
+
+# Copy application source
+COPY . .
+
+# Only embed key if provided at build
+RUN set -eux; \
+    if [ -n "${PRIVATE_ENCRYPTION_KEY:-}" ]; then \
+        echo "🔐 Embedding build-time PRIVATE_ENCRYPTION_KEY"; \
+        echo "PRIVATE_ENCRYPTION_KEY=${PRIVATE_ENCRYPTION_KEY}" > .env.built; \
+    else \
+        echo "ℹ️ No PRIVATE_ENCRYPTION_KEY provided at build — skipping embed"; \
+    fi
+
+# Build the app
+RUN npm run build
+
+
+# --- Runtime stage ---
+FROM node:20-alpine3.21 AS runtime
+
+WORKDIR /app
+
+# Install OpenSSL for optional runtime key generation
+RUN apk add --no-cache openssl
+
+# Copy built app from build stage
+COPY --from=base /app ./
+
+# Load built-in .env.built variables if present
+RUN if [ -f .env.built ]; then cat .env.built >> /etc/environment; fi
+
+# Expose port
+EXPOSE 3000
+
+# Create and use a non-root user
+RUN adduser -D appuser
+USER appuser
+
+# Optional runtime env var: SHOW_PRIVATE_ENCRYPTION_KEY
+# When true, prints the key. When false (default), suppresses it.
+ENTRYPOINT ["/bin/sh", "-c", " \
+    if [ -z \"$PRIVATE_ENCRYPTION_KEY\" ]; then \
+        if grep -q PRIVATE_ENCRYPTION_KEY /etc/environment 2>/dev/null; then \
+            export $(grep PRIVATE_ENCRYPTION_KEY /etc/environment | xargs); \
+            MSG='🔐 Using build-time PRIVATE_ENCRYPTION_KEY'; \
+        else \
+            export PRIVATE_ENCRYPTION_KEY=$(openssl rand -base64 32); \
+            MSG='🔐 Generated runtime PRIVATE_ENCRYPTION_KEY'; \
+        fi; \
+    else \
+        MSG='🔐 Using provided PRIVATE_ENCRYPTION_KEY'; \
+    fi; \
+    if [ \"$SHOW_PRIVATE_ENCRYPTION_KEY\" = \"true\" ]; then \
+        echo \"$MSG: $PRIVATE_ENCRYPTION_KEY\"; \
+    fi; \
+    exec npm run start:local \
+"]
+
+# --- Build examples ---
+# docker build -t syncribullet:local -f Dockerfile.local .
+# docker build --build-arg PRIVATE_ENCRYPTION_KEY=s0m3-bu1ld-k3y -t syncribullet:local -f Dockerfile.local .
+# docker build --no-cache -t syncribullet:local -f Dockerfile.local .
+
+# --- Run examples ---
+# docker run --rm -it -p 3000:3000 syncribullet:local
+# docker run --rm -it -p 3000:3000 -e PRIVATE_ENCRYPTION_KEY=s0m3-runt1m3-k3y syncribullet:local
