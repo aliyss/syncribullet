@@ -84,7 +84,6 @@ export default component$<ManifestSettingsProps>(
     });
 
     const handleSubmit = $<SubmitHandler<FormSettings>>((values) => {
-      console.log('submit', values.catalogs);
       currentReceiver.mergeUserConfig({
         importCatalog: {
           ...currentReceiver.userSettings?.importCatalog,

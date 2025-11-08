@@ -29,7 +29,6 @@ const buildFromUserConfig = <T extends ReceiverClients>(
   receiverClient: T,
 ): UserConfigBuildMinified<T> => {
   const userConfig = receiverClient.getUserConfig();
-  console.log(userConfig, 'x');
   return {
     auth: userConfig?.auth,
     catalogs: userConfig?.catalogs
