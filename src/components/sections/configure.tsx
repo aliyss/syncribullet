@@ -263,6 +263,8 @@ export default component$<ConfigureProps>(({ config }) => {
                 hasSettings = true;
               }
 
+              console.log(urlData);
+
               const url = hasSettings
                 ? await buildURL([urlData, settings])
                 : await buildURL(urlData);

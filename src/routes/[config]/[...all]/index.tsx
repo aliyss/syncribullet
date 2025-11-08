@@ -31,6 +31,7 @@ export const onGet: RequestHandler = async ({ json, params, env, headers }) => {
     env.get('PRIVATE_ENCRYPTION_KEY') ||
       '__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED',
   );
+  console.log(userConfig);
 
   const [config, settings] = Array.isArray(userConfig)
     ? userConfig

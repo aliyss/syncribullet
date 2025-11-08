@@ -71,19 +71,28 @@ export const buildUserConfigBuildFromUserConfigBuildMinifiedString = async <
   receiverClient: T,
   userConfigBuildMinifiedString: UserConfigBuildMinifiedString<T>,
 ): Promise<NonNullable<T['userSettings']>> => {
+  let noCatalogs = undefined;
+  if (
+    typeof userConfigBuildMinifiedString.c === 'string' &&
+    !userConfigBuildMinifiedString.c
+  ) {
+    noCatalogs = [];
+  }
   return {
     auth: userConfigBuildMinifiedString.a,
-    catalogs: userConfigBuildMinifiedString.c
-      ? await mapGenresToCatalogs(
-          receiverClient.getManifestCatalogItems(
-            receiverClient
-              .getMinifiedManifestCatalogItemsFromSmallIds(
-                userConfigBuildMinifiedString.c.split(','),
-              )
-              .map((item) => item.id),
-          ),
-        )
-      : await mapGenresToCatalogs(receiverClient.getManifestCatalogItems()),
+    catalogs:
+      noCatalogs ??
+      (userConfigBuildMinifiedString.c
+        ? await mapGenresToCatalogs(
+            receiverClient.getManifestCatalogItems(
+              receiverClient
+                .getMinifiedManifestCatalogItemsFromSmallIds(
+                  userConfigBuildMinifiedString.c.split(','),
+                )
+                .map((item) => item.id),
+            ),
+          )
+        : await mapGenresToCatalogs(receiverClient.getManifestCatalogItems())),
     liveSync: userConfigBuildMinifiedString.l
       ? receiverClient.getLiveSyncTypesFromSmallIds(
           userConfigBuildMinifiedString.l.split(','),
