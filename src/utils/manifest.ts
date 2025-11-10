@@ -97,7 +97,7 @@ export interface Manifest<MCIT extends ReceiverMCITypes>
 
 export const manifest: Manifest<ReceiverMCITypes> = {
   id: `com.aliyss.syncribullet`,
-  name: 'syncribullet',
+  name: 'SyncriBullet',
   version,
   description,
   logo: 'https://github.com/aliyss/syncribullet/blob/master/public/android-chrome-192x192.png?raw=true',
