@@ -8,7 +8,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'SyncriBullet',
+  title: 'syncribullet',
   meta: [
     {
       name: 'description',

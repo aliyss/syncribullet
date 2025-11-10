@@ -144,7 +144,7 @@ export default component$<StremioLoginProps>(({ saveFromPreAuth$ }) => {
             Warning! Stremio logins are not supported by stremio. If you use
             this and something goes wrong, you are on your own.
             <br />
-            Feel free to report issues on Syncribullet GitHub. There will be no
+            Feel free to report issues on syncribullet GitHub. There will be no
             support from the Stremio team if anything goes wrong.
           </p>
           <p>

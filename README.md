@@ -1,5 +1,5 @@
 # syncribullet (v2)
-SyncriBullet is a Stremio Addon that synchronizes your watchlist with other services.
+syncribullet is a Stremio Addon that synchronizes your watchlist with other services.
 
 > [!NOTE]
 > - (2025.05.24) Added import sync for Simkl!<br />
@@ -152,7 +152,7 @@ npm run start:dev
 ## What else?
 
 ### Naming
-I chose the name SyncriBullet, because I want to blend all of the tracking websites together in a synchronised mix. There's not much more to it.
+I chose the name syncribullet, because I want to blend all of the tracking websites together in a synchronised mix. There's not much more to it.
 
 ### Pull Requests
 Feel free to open pull requests if you think there can be improvements made. I will add an eslint check asap.

@@ -24,7 +24,7 @@ export default component$<ReceiversLiveSyncProps>(({ onClick$ }) => {
           }
           onClick$={() => onClick$('syncribullet-settings')}
         >
-          SyncriBullet
+          syncribullet
         </Button>
       </div>
     </div>
