@@ -46,6 +46,7 @@ export const onGet: RequestHandler = async ({ json, params, env, headers }) => {
     ...(receivers.anilist?.userSettings.catalogs ?? []),
     ...(receivers.kitsu?.userSettings.catalogs ?? []),
     ...(receivers.tvtime?.userSettings.catalogs ?? []),
+    ...(receivers.mdblist?.userSettings.catalogs ?? []),
   ];
 
   if (settings.externalStreamAddons) {

@@ -12,6 +12,7 @@ export enum IDSources {
   TRAKT = 'trakt',
   AOZORA = 'aozora',
   TVTIME = 'tvtime',
+  MDBLIST = 'mdblist',
 }
 
 export type IDs = Record<IDSources, ID | undefined> & {
@@ -26,6 +27,7 @@ export type IDs = Record<IDSources, ID | undefined> & {
   [IDSources.TRAKT]: number | undefined;
   [IDSources.AOZORA]: string | undefined;
   [IDSources.TVTIME]: string | undefined;
+  [IDSources.MDBLIST]: number | undefined;
 };
 
 export const testMaybeAnime = (ids: Partial<IDs>): boolean => {
@@ -70,7 +72,10 @@ export const createIDCatalogString = (
     return `simkl:${ids.simkl}`;
   }
   if (ids.tvtime) {
-    return `tvtime:${ids.simkl}`;
+    return `tvtime:${ids.tvtime}`;
+  }
+  if (ids.mdblist) {
+    return `mdblist:${ids.mdblist}`;
   }
 };
 
@@ -137,6 +142,11 @@ export const createIDsFromCatalogString = (
     tempId = id.slice('tvtime:'.length).split(':');
     usableId = {
       tvtime: tempId[0],
+    };
+  } else if (id.startsWith('mdblist:')) {
+    tempId = id.slice('mdblist:'.length).split(':');
+    usableId = {
+      mdblist: parseInt(tempId[0]),
     };
   } else if (id.startsWith('tt')) {
     tempId = id.split(':');
@@ -205,6 +215,9 @@ export const compareIDs = (id1: Partial<IDs>, id2: Partial<IDs>): boolean => {
   }
   if (id1.tvtime && id2.tvtime) {
     return id1.tvtime === id2.tvtime;
+  }
+  if (id1.mdblist && id2.mdblist) {
+    return id1.mdblist === id2.mdblist;
   }
   return false;
 };

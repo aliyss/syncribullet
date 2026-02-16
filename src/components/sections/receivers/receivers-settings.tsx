@@ -4,6 +4,7 @@ import type { PropFunction } from '@builder.io/qwik';
 import AnilistLogin from '~/components/forms/anilist-login';
 import KitsuLogin from '~/components/forms/kitsu-login';
 import ManifestSettings from '~/components/forms/manifest-settings';
+import MdblistLogin from '~/components/forms/mdblist-login';
 import SimklLogin from '~/components/forms/simkl-login';
 import TvtimeLogin from '~/components/forms/tvtime-login';
 
@@ -52,6 +53,12 @@ export default component$<ReceiversSettingsProps>(
                   currentReceiver={currentReceiver}
                   updateReceiver$={updateReceiver$}
                 />
+              ) : currentReceiver.userSettings &&
+                currentReceiver.receiverInfo.id === Receivers.MDBLIST ? (
+                <ManifestSettings
+                  currentReceiver={currentReceiver}
+                  updateReceiver$={updateReceiver$}
+                />
               ) : currentReceiver.receiverInfo.id === 'simkl' ? (
                 <SimklLogin />
               ) : currentReceiver.receiverInfo.id === 'anilist' ? (
@@ -61,6 +68,11 @@ export default component$<ReceiversSettingsProps>(
               ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
               currentReceiver.receiverInfo.id === 'tvtime' ? (
                 <TvtimeLogin />
+              ) : currentReceiver.receiverInfo.id === 'mdblist' ? (
+                <MdblistLogin
+                  currentReceiver={currentReceiver}
+                  updateReceiver$={updateReceiver$}
+                />
               ) : (
                 <></>
               )}
