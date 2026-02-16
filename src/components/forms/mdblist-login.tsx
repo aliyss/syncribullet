@@ -1,32 +1,45 @@
 import { $, component$, useSignal } from '@builder.io/qwik';
+import type { PropFunction } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
 
 import { useForm } from '@modular-forms/qwik';
 import type { SubmitHandler } from '@modular-forms/qwik';
 
-import { MDBListClientReceiver } from '~/utils/receivers/mdblist/recevier-client';
+import type { KnownNoSerialize } from '~/utils/helpers/qwik-types';
+import type { ReceiverClients } from '~/utils/receiver/types/receivers';
 
 export type ApiKeyForm = {
   apikey: string;
 };
 
-export default component$(() => {
-  const [, { Form, Field }] = useForm<ApiKeyForm>({
-    loader: useSignal({ apikey: '' }),
-  });
+export interface MdblistLoginProps {
+  currentReceiver: KnownNoSerialize<ReceiverClients>;
+  updateReceiver$: PropFunction<() => void>;
+}
 
-  const handleSubmit = $<SubmitHandler<ApiKeyForm>>((values) => {
-    if (!values.apikey) {
-      return;
-    }
-
-    const mdblistReceiver = new MDBListClientReceiver();
-    mdblistReceiver.mergeUserConfig({
-      auth: {
-        apikey: values.apikey,
-      },
+export default component$<MdblistLoginProps>(
+  ({ currentReceiver, updateReceiver$ }) => {
+    const [, { Form, Field }] = useForm<ApiKeyForm>({
+      loader: useSignal({ apikey: '' }),
     });
-  });
+
+    const handleSubmit = $<SubmitHandler<ApiKeyForm>>((values) => {
+      if (!values.apikey) {
+        return;
+      }
+
+      currentReceiver.mergeUserConfig({
+        auth: {
+          apikey: values.apikey,
+        },
+      });
+
+      // Reload the user config to update the in-memory state
+      currentReceiver.getUserConfig();
+
+      // Trigger reactivity in the parent component
+      updateReceiver$();
+    });
 
   return (
     <Form onSubmit$={handleSubmit}>

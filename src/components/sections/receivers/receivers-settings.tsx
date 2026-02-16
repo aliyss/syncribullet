@@ -69,7 +69,10 @@ export default component$<ReceiversSettingsProps>(
               currentReceiver.receiverInfo.id === 'tvtime' ? (
                 <TvtimeLogin />
               ) : currentReceiver.receiverInfo.id === 'mdblist' ? (
-                <MdblistLogin />
+                <MdblistLogin
+                  currentReceiver={currentReceiver}
+                  updateReceiver$={updateReceiver$}
+                />
               ) : (
                 <></>
               )}
