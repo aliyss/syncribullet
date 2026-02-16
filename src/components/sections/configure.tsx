@@ -109,6 +109,7 @@ export default component$<ConfigureProps>(({ config }) => {
     [Receivers.ANILIST]: undefined,
     [Receivers.KITSU]: undefined,
     [Receivers.TVTIME]: undefined,
+    [Receivers.MDBLIST]: undefined,
   });
 
   const currentReceiver = useSignal<Receivers | null>();
@@ -147,6 +148,9 @@ export default component$<ConfigureProps>(({ config }) => {
         [Receivers.TVTIME]: noSerialize(
           configReceivers[Receivers.TVTIME],
         ) as NoSerialize<ReceiverClients>,
+        [Receivers.MDBLIST]: noSerialize(
+          configReceivers[Receivers.MDBLIST],
+        ) as NoSerialize<ReceiverClients>,
       };
       return;
     }
@@ -163,6 +167,9 @@ export default component$<ConfigureProps>(({ config }) => {
       ) as NoSerialize<ReceiverClients>,
       [Receivers.TVTIME]: noSerialize(
         configuredReceivers[Receivers.TVTIME],
+      ) as NoSerialize<ReceiverClients>,
+      [Receivers.MDBLIST]: noSerialize(
+        configuredReceivers[Receivers.MDBLIST],
       ) as NoSerialize<ReceiverClients>,
     };
 

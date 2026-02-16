@@ -43,6 +43,7 @@ syncribullet is a Stremio Addon that synchronizes your watchlist with other serv
 Currently the addon synchronizes with following services:
 - Anilist
 - Kitsu
+- MDBList
 - Simkl
 - TVTime
 
@@ -66,6 +67,7 @@ Dynamic Sync is when an item in the _Senders_ is updated, that it get's reflecte
 
 - [X] Dynamic Sync from Stremio to Anilist
 - [X] Dynamic Sync from Stremio to Kitsu
+- [X] Dynamic Sync from Stremio to MDBList
 - [ ] Dynamic Sync from Stremio to MyAnimelist
 - [X] Dynamic Sync from Stremio to Simkl
 - [ ] Dynamic Sync from Stremio to Trakt (Already native Support use that)
@@ -76,6 +78,7 @@ Import Sync is theoretically a one-time action where the whole library get's syn
 
 - [ ] Import Sync from Stremio to Anilist
 - [ ] Import Sync from Stremio to Kitsu
+- [ ] Import Sync from Stremio to MDBList
 - [ ] Import Sync from Stremio to MyAnimelist
 - [x] Import Sync from Stremio to Simkl
 - [ ] Import Sync from Stremio to Trakt (Alternative until tested: [trakt-stremio-import](https://github.com/aliyss/trakt-stremio-import))
@@ -94,6 +97,7 @@ Stremio Catalog Support, self explanatory if you are using stremio.
 
 - [X] Anilist
 - [X] Kitsu
+- [X] MDBList
 - [ ] MyAnimelist
 - [X] Simkl
 - [ ] Trakt

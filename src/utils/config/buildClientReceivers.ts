@@ -24,6 +24,9 @@ export const buildClientReceiversFromUserConfigBuildMinifiedStrings = <
       case Receivers.TVTIME:
         urlData[key].withUserConfig(value);
         break;
+      case Receivers.MDBLIST:
+        urlData[key].withUserConfig(value);
+        break;
     }
   });
 
