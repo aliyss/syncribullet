@@ -43,7 +43,7 @@ syncribullet is a Stremio Addon that synchronizes your watchlist with other serv
 Currently the addon synchronizes with following services:
 - Anilist
 - Kitsu
-- MDBList
+- MDBList (implemented by @cgarst)
 - Simkl
 - TVTime
 
